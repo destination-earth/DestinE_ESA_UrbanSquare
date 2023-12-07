@@ -13,10 +13,10 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 Flooding can be characterized through storm surge maps and consequential floods in a specific area of interest. Users will have access to the potential inundation effects due to varying climate scenarios up to 2100. 
 
 ## [🌊​ Flood​](./flood/)
-Users will have access to a full environment for forecasting the flood risk in their territory over a period of one year from the initial conditions. 
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
 
 ## [🏝️ Sea level Rise](./sea_level_rise/)
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+Flooding can be characterized through storm surge maps and consequential floods in a specific area of interest. Users will have access to the potential inundation effects due to varying climate scenarios up to 2100. 
 
 ## [⚙️ Infrastructure](./infrastructure/)
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
