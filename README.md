@@ -1,6 +1,7 @@
 # DestinE ESA UrbanSquare
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+UrbanSquare has the ambition to provide an operational framework to assess the exposure of urban areas to climate risks and to enable the stakeholders to act upon these risks through a set of what-if scenarios. This coupling between a monitoring and a prospective view is essential to enable them to understand the situation today and optimize their future actions.
+The use case is organized along seven “demonstration units” in addition to an integrated Urban Twin system demonstrator.
 
 ## [☁️​ Air pollution​](./air_pollution/)
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
@@ -9,10 +10,10 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
 
 ## [🌩️​ Storm surges​](./storm_surges/)
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+Flooding can be characterized through storm surge maps and consequential floods in a specific area of interest. Users will have access to the potential inundation effects due to varying climate scenarios up to 2100. 
 
 ## [🌊​ Flood​](./flood/)
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+Users will have access to a full environment for forecasting the flood risk in their territory over a period of one year from the initial conditions. 
 
 ## [🏝️ Sea level Rise](./sea_level_rise/)
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
