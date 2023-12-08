@@ -13,3 +13,6 @@ This high resolution modelling follows 3 major steps:
 * Prediction : a programed Flow that uses the pretrained model on an NFS file system, fetches the zarr file and stores the result stack in a new zarr file (that gets updated with each new CAMS data – daily updates)
 * Comparison: with the standard for air quality for short and long term exposures to pollution by World Health Organization
 * Update of the visualization interface – either by re-generating WMS layers or by preparing CSV files for quick access and “consumption” by the interface
+
+
+![dashboard](doc/db_occitanie.png)
