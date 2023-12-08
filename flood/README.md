@@ -1,3 +1,3 @@
 # 🌊​ Flood
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+This use case will focus on forecasting floods and estimating the impact of flood events on the urban environment and the ecosystems in the affected areas with the purpose to help municipal decision makers to analyze and plan resource needs. 
