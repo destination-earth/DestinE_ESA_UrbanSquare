@@ -4,7 +4,7 @@ UrbanSquare has the ambition to provide an operational framework to assess the e
 The use case is organized along seven “demonstration units” in addition to an integrated Urban Twin system demonstrator.
 
 ## [☁️​ Air pollution​](./air_pollution/)
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+Users will have the past and present view of the pollution in their territory and its comparison to the World Health Organisation standards. The demonstrator will integrate examples of relevant policies (for example, transforming roads into walking street, Low Emission Zone deployment, etc) to support decision making and WhatIf scenario simulations. 
 
 ## [🌇 Urban heat](./urban_heat/)
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
