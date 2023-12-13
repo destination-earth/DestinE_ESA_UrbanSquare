@@ -13,13 +13,13 @@ Users shall have access to heat exposure indicator allowing the identification o
 Flooding can be characterized through storm surge maps and consequential floods in a specific area of interest. Users will have access to the potential inundation effects due to varying climate scenarios up to 2100. 
 
 ## [🌊​ Flood​](./flood/)
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+Users will have access to a full environment for forecasting the flood risk in their territory over a period of 1 year from the initial conditions. 
 
 ## [🏝️ Sea level Rise](./sea_level_rise/)
 Flooding can be characterized through storm surge maps and consequential floods in a specific area of interest. Users will have access to the potential inundation effects due to varying climate scenarios up to 2100. 
 
 ## [⚙️ Infrastructure](./infrastructure/)
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+The user will benefit from an updated map of the road infrastructure highlighting the areas that would need action or restoration. 
 
 ## [📌​ Resources](./infrastructure/)
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+The user will benefit from integrated socio-economic data to quantify the potential impacts of a climate risk on the area of interest.
