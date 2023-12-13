@@ -1,3 +1,16 @@
 # ⚙️ Infrastructure
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+# Scope
+The product shall allow the user to benefit from an updated map of the road infrastructure highlighting the areas that would need action or restoration
+
+# Data used
+• Planet – PlanetScope data
+• Sentinel-2 EO:ESA:DAT:SENTINEL-2:MSI:L2A
+• Landsat8 EO:ESA:DAT:LANDSAT8:COL-2
+• EO:ESA:DAT:LANDSAT8:OLI-TIRS
+• Corine LandCover data
+• ESA WorldCover
+
+# “whatif”scenario:
+• Three evacuation scenarios with corresponding view on the road infrastructures
+
