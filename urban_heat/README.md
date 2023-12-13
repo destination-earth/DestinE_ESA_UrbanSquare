@@ -12,3 +12,6 @@ The product shall provide access to heat exposure indicator allowing the identif
 
 # “whatif” scenario:
 • Simulation of three extreme heat waves indicator as per the definition adopted by the EEA
+
+![urban_heat_marseille](https://github.com/destination-earth/DestinE_ESA_UrbanSquare/assets/85285043/6ec76e74-9a57-4448-9f99-73144971ebc9)
+
