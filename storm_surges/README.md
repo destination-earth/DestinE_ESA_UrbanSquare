@@ -9,3 +9,5 @@ The analysis then considers sea level rise scenarios, particularly focusing on t
 In the context of storm surge scenarios, an additional value is added to the sea level, ranging from 0m to 5m, depending on the specific scenario of inundation. Pixels with values other than zero in this context are marked as Layer 4, representing land unaffected by the analyzed scenarios.
 
 The results are organized into layers, including Waterbodies, Sea, Protected Area, Potential Flooded Area, and Land. The hierarchical order of these layers determines the visualization outcome, ensuring that different aspects are displayed in a meaningful way. Overall, this detailed process allows for a comprehensive analysis of the potential impacts of storm surges and sea level rise under different conditions.
+
+![InundataionV2](https://github.com/destination-earth/DestinE_ESA_UrbanSquare/assets/58464670/43d1f919-129b-4c9f-91ba-a615c4db32b5)
