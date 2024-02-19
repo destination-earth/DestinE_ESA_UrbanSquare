@@ -15,9 +15,6 @@ Flooding can be characterized through storm surge maps and consequential floods 
 ## [🌊​ Flood​](./flood/)
 Users will have access to a full environment for forecasting the flood risk in their territory over a period of 1 year from the initial conditions. 
 
-## [🏝️ Sea level Rise](./sea_level_rise/)
-Flooding can be characterized through storm surge maps and consequential floods in a specific area of interest. Users will have access to the potential inundation effects due to varying climate scenarios up to 2100. 
-
 ## [⚙️ Infrastructure](./infrastructure/)
 The user will benefit from an updated map of the road infrastructure highlighting the areas that would need action or restoration. 
 
