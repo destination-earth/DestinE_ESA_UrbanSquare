@@ -1,0 +1,22 @@
+# Développement Web et API
+dash==2.14.2
+dash-bootstrap-components==1.4.1
+dash-mantine-components==0.12.1
+flask==2.2.5
+flask-caching==2.0.2
+dash-daq==0.5.0
+
+# Calcul Scientifique et Traitement de Données
+numpy==1.26.4
+pandas==2.2.1
+
+# Visualisation de Données
+plotly==5.19.0
+pydeck
+
+git+https://git.murmureo.com/share/data-cuber.git@fed3aae6a2a9ede19915cd77cf4cfcd89ebb93dd
+
+rioxarray==0.15.1
+geopandas==0.14.3
+
+gunicorn==21.2.0

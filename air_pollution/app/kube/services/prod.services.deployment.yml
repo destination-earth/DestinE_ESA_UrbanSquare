@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: urban-square-air
+  namespace: prod-urban-square-services
+spec:
+  progressDeadlineSeconds: 3600
+  replicas: 1
+  selector:
+    matchLabels:
+      app: urban-square-air
+  template:
+    metadata:
+      labels:
+        app: urban-square-air
+    spec:
+     containers:
+      - name: backend
+        # image: murmurationsas/dashboard:urban-square-air-25be4682c3c04e1e181d8c854add4a2b79d25a47 # for services.
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: S3_CLOUD
+          value: "wekeo"
+     imagePullSecrets:
+     - name: docker-hub
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: urban-square-air
+  namespace: prod-urban-square-services
+  labels:
+    app: urban-square-air
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: urban-square-air
+

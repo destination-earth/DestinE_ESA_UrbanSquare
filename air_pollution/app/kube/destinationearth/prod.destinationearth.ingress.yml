@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    # nginx.ingress.kubernetes.io/auth-url: "https://services.murmureo.com/oauth2/auth?allowed_groups=urban-square,murmuration"
+    # nginx.ingress.kubernetes.io/auth-signin: "https://services.murmureo.com/oauth2/start?rd=https://$host$escaped_request_uri"
+
+    nginx.ingress.kubernetes.io/auth-url: https://destinationearth.murmureo.com/urban-square/oauth2/auth
+    # # # nginx.ingress.kubernetes.io/auth-signin: https://destinationearth.murmureo.com/urban-square/oauth2/start?rd=https://$host$escaped_request_uri
+    nginx.ingress.kubernetes.io/auth-signin: https://destinationearth.murmureo.com/urban-square/oauth2/start?rd=https://destinationearth.murmureo.com/urban-square/air-quality/toulouse/
+    nginx.ingress.kubernetes.io/auth-response-headers:
+      x-auth-request-user, x-auth-request-email, x-auth-request-groups, X-Forwarded-Preferred-Username, X-Auth-Request-Access-Token
+
+  name: dashboard-air
+  namespace: prod-urban-square
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: destinationearth.murmureo.com
+    http:
+      paths:
+      - path: /urban-square/air-quality/toulouse/
+        pathType: Prefix
+        backend:
+          service:
+            name: urban-square-air
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - destinationearth.murmureo.com
+    secretName: cert-destinationearth.murmureo.com

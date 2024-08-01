@@ -1,0 +1,44 @@
+default:
+  image: $PREFECT_BUILD_IMAGE
+
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
+  IMAGE_NAME: murmurationsas/dashboard
+  IMAGE_TAG: $CI_COMMIT_SHA
+  IMAGE_COMPLETE: $IMAGE_NAME:maqi-france-$IMAGE_TAG
+  WEKEO_S3_ACCESS_KEY: $WEKEO_S3_ACCESS_KEY
+  WEKEO_S3_SECRET_KEY: $WEKEO_S3_SECRET_KEY
+  DEPLOYMENT: "maqi-france"
+  NAMESPACE: "maqi"
+
+services:
+  - docker:20.10-dind
+
+stages:
+  - build
+  - deploy
+
+before_script:
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
+
+
+build-docker:
+  stage: build
+  when: always
+  allow_failure: false
+  script:
+    - docker build -t $IMAGE_COMPLETE .
+      --build-arg WEKEO_S3_ENDPOINT=$WEKEO_S3_ENDPOINT
+      --build-arg WEKEO_S3_ACCESS_KEY=$WEKEO_S3_ACCESS_KEY
+      --build-arg WEKEO_S3_SECRET_KEY=$WEKEO_S3_SECRET_KEY
+    - docker push $IMAGE_COMPLETE
+
+
+deploy-docker:
+  image: murmurationsas/ci-cd:kube-1.0
+  stage: deploy
+  when: on_success
+  needs: [build-docker]
+  script:
+    - kubectl set image deployment/$DEPLOYMENT -n $NAMESPACE backend=$IMAGE_COMPLETE --kubeconfig $KUBE_CONFIG_OVH_PROD
