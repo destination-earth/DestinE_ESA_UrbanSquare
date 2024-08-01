@@ -1,0 +1,34 @@
+# Développement Web et API
+dash==2.14.2
+dash-bootstrap-components==1.4.1
+dash-mantine-components==0.12.1
+flask==2.2.5
+flask-caching==2.0.2
+dash-daq==0.5.0
+
+# Calcul Scientifique et Traitement de Données
+numpy==1.26.4
+pandas==2.2.1
+xarray==2024.3.0
+
+# Visualisation de Données
+plotly==5.19.0
+
+# Manipulation d'Images
+Pillow==10.1.0
+
+# Autres
+geopy==2.3.0
+
+git+https://git.murmureo.com/share/data-cuber.git
+
+rioxarray==0.15.1
+geopandas==0.14.3
+
+gunicorn==21.2.0
+
+netCDF4
+h5netcdf
+zarr
+fsspec
+s3fs

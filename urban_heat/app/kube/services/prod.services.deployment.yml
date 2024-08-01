@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: urban-square-heat
+  namespace: prod-urban-square-services
+spec:
+  progressDeadlineSeconds: 3600
+  replicas: 1
+  selector:
+    matchLabels:
+      app: urban-square-heat
+  template:
+    metadata:
+      labels:
+        app: urban-square-heat
+    spec:
+     containers:
+      - name: backend
+        image: murmurationsas/dashboard:urban-square-heat-9752b8345a403d05ba6d473e78a3149982d4e0d3
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: S3_CLOUD
+          value: "wekeo"
+     imagePullSecrets:
+     - name: docker-hub
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: urban-square-heat
+  namespace: prod-urban-square-services
+  labels:
+    app: urban-square-heat
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: urban-square-heat
+

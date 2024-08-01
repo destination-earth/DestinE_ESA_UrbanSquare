@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/auth-url: "https://services.murmureo.com/oauth2/auth?allowed_groups=urban-square,murmuration"
+    nginx.ingress.kubernetes.io/auth-signin: "https://services.murmureo.com/oauth2/start?rd=https://destinationearth.murmureo.com/urban-square/urban-heat/toulouse/"
+  name: dashboard-heat
+  namespace: dev-urban-square
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: destinationearth.murmureo.com
+    http:
+      paths:
+      - path: /dev//urban-square/urban-heat/toulouse/
+        pathType: Prefix
+        backend:
+          service:
+            name: urban-square-heat
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - destinationearth.murmureo.com
+    secretName: cert-destinationearth.murmureo.com
