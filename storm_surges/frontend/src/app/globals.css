@@ -1,0 +1,97 @@
+/* src/app/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+/* Resetting default margin and padding for body and html */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden; /* Prevent scrolling */
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    ),
+    rgb(var(--background-start-rgb));
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+header, footer {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  text-align: center;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  width: 100%; /* Ensure main content takes full width */
+  height: 100%; /* Ensure main content takes full height */
+  overflow: hidden; /* Prevent scrolling within the main content */
+}
+
+/* .leaflet-control-zoom.leaflet-bar.leaflet-control{
+  opacity: 60%;
+  right: 10px;
+  left: auto;
+} */
+
+/* src/app/globals.css */
+
+/* Move Leaflet zoom control to the top right corner */
+.leaflet-top.leaflet-left {
+  right: 10px;
+  left: auto;
+  opacity: 70%;
+}
+
+/* Ensure the toggle layer button is also styled correctly */
+.leaflet-control-custom {
+  position: absolute;
+  opacity: 70%;
+  top: 80px; /* Adjust as needed to position below the zoom controls */
+  right: 12px;
+  z-index: 1000;
+  background: white;
+  color: black;
+  padding: 4.5px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.vertical-slider {
+  -webkit-appearance: none;
+  appearance: auto; /* Define standard appearance property */
+  transform: rotate(270deg); /* Rotate the slider to make it vertical */
+  transform-origin: center;
+  position: relative;
+  
+}
+
