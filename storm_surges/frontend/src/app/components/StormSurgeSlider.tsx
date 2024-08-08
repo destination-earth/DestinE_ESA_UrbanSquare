@@ -11,10 +11,15 @@ interface StormSurgeSliderProps {
   onChange: (value: number) => void;
 }
 
-const marks = stormSurgeValues.map((value, index) => ({
-  value: index,
-  label: value.toString(),
-}));
+const marks = [
+  { value: 0, label: '0' },
+  { value: 1, label: '0.5' },
+  { value: 2, label: '1' },
+  { value: 3, label: '1.5' },
+  { value: 4, label: '2' },
+  { value: 5, label: '3' },
+  { value: 6, label: '5' },
+];
 
 const Sliderr = styled(Slider)({
     height: 235,
