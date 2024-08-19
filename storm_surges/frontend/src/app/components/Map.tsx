@@ -7,6 +7,7 @@ import L from "leaflet";
 import Drawer from "./Drawer";
 import LoadingIndicator from "./LoadingIndicator";
 import { WMSTileLayer } from "react-leaflet";
+import Image from "next/image";
 
 const Map = () => {
   const center: LatLngExpression = [48.1074, 13.2275];
@@ -115,7 +116,7 @@ const Map = () => {
               cursor: "pointer",
             }}
           >
-            <img
+            <Image
               src="/drawerArrow.svg"
               alt="Open Drawer"
               width="21"
@@ -152,14 +153,16 @@ const Map = () => {
             transparent={false}
             version="1.3.0"
             crs={L.CRS.EPSG4326}
-            params={{
-              time: `${selectedYear}-12-31T00:00:00Z,${selectedYear}-12-31T23:59:59Z`,
-              bbox: "44.20,11.73,45.94,14.18",
-              token: "bf12d6193efa667283ee9643951acfaa",
-              ssp: selectedSSP,
-              confidence: confidenceLevel.toLowerCase(),
-              stormSurge: formatStormSurge(stormSurge),
-            }}
+            params={
+              {
+                time: `${selectedYear}-12-31T00:00:00Z,${selectedYear}-12-31T23:59:59Z`,
+                bbox: "44.20,11.73,45.94,14.18",
+                token: "bf12d6193efa667283ee9643951acfaa",
+                ssp: selectedSSP,
+                confidence: confidenceLevel.toLowerCase(),
+                stormSurge: formatStormSurge(stormSurge),
+              } as any
+            } // Bypass type checking
             opacity={0.5}
             eventHandlers={{
               loading: () => setIsLoading(true),
@@ -182,7 +185,7 @@ const Map = () => {
           marginTop: "5px",
         }}
       >
-        <img src="/layerIcon.svg" alt="Toggle Layer" width="21" height="21" />
+        <Image src="/layerIcon.svg" alt="Toggle Layer" width="21" height="21" />
       </button>
       {isCursorOnMap && (
         <div

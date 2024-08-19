@@ -1,4 +1,5 @@
 // src/app/components/Header.tsx
+import Image from "next/image";
 import React from "react";
 
 const Header = () => {
@@ -15,7 +16,7 @@ const Header = () => {
       }}
     >
       <div style={{ display: "flex", alignItems: "center", padding: "1rem" }}>
-        <img
+        <Image
           src="/desp_logo.svg"
           alt="sistema gmbh"
           width={40}
