@@ -16,7 +16,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <head>
         <title>{metadata.title}</title>
         <meta name="description" content={metadata.description} />
-        <link rel="icon" href="/desp_logo.svg" />
+        <link rel="icon" href="./desp_logo.svg" />
       </head>
       <body>
       <div className="flex flex-col h-screen w-screen overflow-hidden">

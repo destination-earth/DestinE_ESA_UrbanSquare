@@ -17,7 +17,7 @@ const Header = () => {
     >
       <div style={{ display: "flex", alignItems: "center", padding: "1rem" }}>
         <Image
-          src="/desp_logo.svg"
+          src="./desp_logo.svg"
           alt="sistema gmbh"
           width={40}
           height={40}

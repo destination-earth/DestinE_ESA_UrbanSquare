@@ -117,7 +117,7 @@ const Map = () => {
             }}
           >
             <Image
-              src="/drawerArrow.svg"
+              src="./drawerArrow.svg"
               alt="Open Drawer"
               width="21"
               height="21"
@@ -185,7 +185,7 @@ const Map = () => {
           marginTop: "5px",
         }}
       >
-        <Image src="/layerIcon.svg" alt="Toggle Layer" width="21" height="21" />
+        <Image src="./layerIcon.svg" alt="Toggle Layer" width="21" height="21" />
       </button>
       {isCursorOnMap && (
         <div
