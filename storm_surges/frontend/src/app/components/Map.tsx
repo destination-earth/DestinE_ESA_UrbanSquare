@@ -80,6 +80,8 @@ const Map = () => {
     }
   }, [showOverlayLayer]);
 
+  const basePath = process.env.NEXT_PUBLIC_BASEPATH || '';
+
   return (
     <div className="relative flex-1">
       <LoadingIndicator isLoading={isLoading} />
@@ -117,7 +119,7 @@ const Map = () => {
             }}
           >
             <Image
-              src="./drawerArrow.svg"
+              src={`${basePath}/drawerArrow.svg`}
               alt="Open Drawer"
               width="21"
               height="21"
