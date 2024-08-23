@@ -80,7 +80,7 @@ const Map = () => {
     }
   }, [showOverlayLayer]);
 
-  const basePath = process.env.NEXT_PUBLIC_BASEPATH || '';
+  // const basePath = process.env.NEXT_PUBLIC_BASEPATH || '';
 
   return (
     <div className="relative flex-1">
@@ -119,7 +119,7 @@ const Map = () => {
             }}
           >
             <Image
-              src={`${basePath}/drawerArrow.svg`}
+              src="/urban-square/sea-level-rise/drawerArrow.svg"
               alt="Open Drawer"
               width="21"
               height="21"
@@ -187,7 +187,7 @@ const Map = () => {
           marginTop: "5px",
         }}
       >
-        <Image src="./layerIcon.svg" alt="Toggle Layer" width="21" height="21" />
+        <Image src="/urban-square/sea-level-rise/layerIcon.svg" alt="Toggle Layer" width="21" height="21" />
       </button>
       {isCursorOnMap && (
         <div
