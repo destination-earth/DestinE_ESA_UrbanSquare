@@ -11,12 +11,13 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
+  const basePath = process.env.NEXT_PUBLIC_BASEPATH || '';
   return (
     <html lang="en">
       <head>
         <title>{metadata.title}</title>
         <meta name="description" content={metadata.description} />
-        <link rel="icon" href="/urban-square/sea-level-rise/desp_logo.svg" />
+        <link rel="icon" href={basePath + "/desp_logo.svg"} />
       </head>
       <body>
       <div className="flex flex-col h-screen w-screen overflow-hidden">

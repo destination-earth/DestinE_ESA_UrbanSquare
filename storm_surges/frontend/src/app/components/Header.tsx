@@ -3,6 +3,7 @@ import Image from "next/image";
 import React from "react";
 
 const Header = () => {
+  const basePath = process.env.NEXT_PUBLIC_BASEPATH || '';
   return (
     <header
       style={{
@@ -17,7 +18,7 @@ const Header = () => {
     >
       <div style={{ display: "flex", alignItems: "center", padding: "1rem" }}>
         <Image
-          src="/urban-square/sea-level-rise/desp_logo.svg"
+          src={basePath + "/desp_logo.svg"}
           alt="sistema gmbh"
           width={40}
           height={40}
