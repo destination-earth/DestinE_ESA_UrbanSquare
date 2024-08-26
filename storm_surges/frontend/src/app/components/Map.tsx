@@ -80,6 +80,8 @@ const Map = () => {
     }
   }, [showOverlayLayer]);
 
+  const basePath = process.env.BASEPATH || '';
+
   return (
     <div className="relative flex-1">
       <LoadingIndicator isLoading={isLoading} />
@@ -117,7 +119,7 @@ const Map = () => {
             }}
           >
             <Image
-              src="/drawerArrow.svg"
+              src={basePath + '/drawerArrow.svg'}
               alt="Open Drawer"
               width="21"
               height="21"
@@ -185,7 +187,7 @@ const Map = () => {
           marginTop: "5px",
         }}
       >
-        <Image src="/layerIcon.svg" alt="Toggle Layer" width="21" height="21" />
+        <Image src={basePath + '/layerIcon.svg'} alt="Toggle Layer" width="21" height="21" />
       </button>
       {isCursorOnMap && (
         <div
