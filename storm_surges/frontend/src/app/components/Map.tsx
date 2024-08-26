@@ -80,7 +80,7 @@ const Map = () => {
     }
   }, [showOverlayLayer]);
 
-  const basePath = process.env.NEXT_PUBLIC_BASEPATH || '';
+  const basePath = process.env.BASEPATH || '';
 
   return (
     <div className="relative flex-1">

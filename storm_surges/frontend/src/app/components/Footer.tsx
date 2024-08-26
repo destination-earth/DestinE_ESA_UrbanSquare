@@ -3,8 +3,7 @@ import Image from 'next/image';
 import React from 'react';
 
 const Footer = () => {
-  const basePath = process.env.NEXT_PUBLIC_BASEPATH || '';
-  console.log('Base Path (initial):', basePath);
+  const basePath = process.env.BASEPATH || '';
 
   return (
     <footer style={{ backgroundColor: '#0D1527', display: 'flex', paddingTop: '6px', paddingBottom:'6px', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', color: 'white' }}>

@@ -3,7 +3,7 @@ import Image from "next/image";
 import React from "react";
 
 const Header = () => {
-  const basePath = process.env.NEXT_PUBLIC_BASEPATH || '';
+  const basePath = process.env.BASEPATH || '';
   return (
     <header
       style={{
