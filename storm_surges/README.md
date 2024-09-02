@@ -22,8 +22,13 @@ In the context of storm surge scenarios, an additional value is added to the sea
 
 Overall, this detailed process allows for a comprehensive analysis of the potential impacts of storm surges and sea level rise under different conditions.
 
-![Algo](https://github.com/destination-earth/DestinE_ESA_UrbanSquare/blob/main/storm_surges/docs/architecture.png)
 
+![Algo](https://github.com/destination-earth/DestinE_ESA_UrbanSquare/blob/main/storm_surges/docs/architecture.png)
+<p align="center">
+  <img src="https://github.com/destination-earth/DestinE_ESA_UrbanSquare/blob/main/storm_surges/docs/architecture.png" width="75%" height="75%">
+</p>
+
+<p align="center"><em>Algorithm architecture.</em></p>
 
 ![InundataionV2](https://github.com/destination-earth/DestinE_ESA_UrbanSquare/assets/58464670/43d1f919-129b-4c9f-91ba-a615c4db32b5)
 ![innundationLegend_V2](https://github.com/destination-earth/DestinE_ESA_UrbanSquare/assets/58464670/63ad1d82-e915-41fb-bcc1-802d4c84e339)
