@@ -24,14 +24,17 @@ Overall, this detailed process allows for a comprehensive analysis of the potent
 
 <p align="center">
   <img src="https://github.com/destination-earth/DestinE_ESA_UrbanSquare/blob/main/storm_surges/docs/architecture.png" width="55%" height="55%">
+  <img src="https://github.com/destination-earth/DestinE_ESA_UrbanSquare/blob/main/storm_surges/docs/schematics.png" >
 </p>
-
 <p align="center"><em>Algorithm architecture.</em></p>
 
-![InundataionV2](https://github.com/destination-earth/DestinE_ESA_UrbanSquare/assets/58464670/43d1f919-129b-4c9f-91ba-a615c4db32b5)
-![innundationLegend_V2](https://github.com/destination-earth/DestinE_ESA_UrbanSquare/assets/58464670/63ad1d82-e915-41fb-bcc1-802d4c84e339)
 
 ## What-if Scenarios
+
+The tool allow the user to run different what-if scenarios for any area of the globe. Below are the descriptions of the what-if parameters.
+
+
+The scenarios can be run for six model years between 2040-2150, and are configured based on five global Shared Socioeconomic Pathways (SSPs) and seven storm surge heights.
 
 The definition of the five Shared Socioeconomic Pathway (SSP) scenarios are described below (more details IPCC_AR6_SYR_LongerReport.pdf), and they range from optimistic to pessimistic scenarios, as shown in figure 8:
 SSP119:  holds warming to approximately 1.5°C above 1850-1900 in 2100 after slight overshoot (median) and implies net zero CO2 emissions around the middle of the century.
