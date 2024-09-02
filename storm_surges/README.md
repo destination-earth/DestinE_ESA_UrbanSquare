@@ -25,7 +25,7 @@ Overall, this detailed process allows for a comprehensive analysis of the potent
 
 ![Algo](https://github.com/destination-earth/DestinE_ESA_UrbanSquare/blob/main/storm_surges/docs/architecture.png)
 <p align="center">
-  <img src="https://github.com/destination-earth/DestinE_ESA_UrbanSquare/blob/main/storm_surges/docs/architecture.png" width="75%" height="75%">
+  <img src="https://github.com/destination-earth/DestinE_ESA_UrbanSquare/blob/main/storm_surges/docs/architecture.png" width="55%" height="55%">
 </p>
 
 <p align="center"><em>Algorithm architecture.</em></p>
