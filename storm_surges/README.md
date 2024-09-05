@@ -26,17 +26,17 @@ Overall, this detailed process allows for a comprehensive analysis of the potent
   <img src="https://github.com/destination-earth/DestinE_ESA_UrbanSquare/blob/main/storm_surges/docs/architecture.png" width="55%" height="55%">
   <img src="https://github.com/destination-earth/DestinE_ESA_UrbanSquare/blob/main/storm_surges/docs/schematics.png" width="35%" height="35%">
 </p>
-<p align="center"><em>Algorithm architecture.</em></p>
+<p align="center"><em>Inundation risk algorithm architecture and schematics.</em></p>
 
 
 ## What-if Scenarios
 
-The tool allow the user to run different what-if scenarios for any area of the globe. Below are the descriptions of the what-if parameters.
+The tool allows the user to run different what-if scenarios for any area of the globe. Below are the descriptions of the what-if parameters.
 
+The scenarios can be run for six model years between 2040-2150, and are configured based on five global Shared Socioeconomic Pathways (SSPs) and seven storm surge heights (0-5m).
 
-The scenarios can be run for six model years between 2040-2150, and are configured based on five global Shared Socioeconomic Pathways (SSPs) and seven storm surge heights.
+The definition of the five Shared Socioeconomic Pathway (SSP) scenarios are described below (more details IPCC_AR6_SYR_LongerReport.pdf), and they range from optimistic to pessimistic scenarios.
 
-The definition of the five Shared Socioeconomic Pathway (SSP) scenarios are described below (more details IPCC_AR6_SYR_LongerReport.pdf), and they range from optimistic to pessimistic scenarios, as shown in figure 8:
 SSP119:  holds warming to approximately 1.5°C above 1850-1900 in 2100 after slight overshoot (median) and implies net zero CO2 emissions around the middle of the century.
  	
 SSP126:  stays below 2.0°C warming relative to 1850-1900 (median) with implied net zero emissions in the second half of the century.
@@ -47,20 +47,10 @@ SSP370: is a medium to high reference scenario resulting from no additional clim
  	
 SSP585: is a high reference scenario with no additional climate policy. Emission levels as high as SSP585 are not obtained by Integrated 	Assessment Models (IAMs) under any of the SSPs other than the fossil fueled SSP5 socioeconomic development pathway.
 
+When configuring the scenario, the ser can choose between a low confidence level (20% chance) and mediumconfidence level ().
 
-Model years
-2040
-2060
-2080
-2100
-2120
-1250
 
-Storm Surge Height (m)
-0
-0.5
-1
-1.5
-2
-3
-5
+<p align="center">
+  <img src="https://github.com/destination-earth/DestinE_ESA_UrbanSquare/blob/main/storm_surges/docs/architecture.png" width="55%" height="55%">
+</p>
+<p align="center"><em>What-if scenario configuration parameters.</em></p>
