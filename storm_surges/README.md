@@ -62,6 +62,6 @@ When configuring the scenario, the user can choose between low and medium confid
 The capabilities of the sea level rise and storm surge component of Urban Square will be greatly enhanced with the integration with the DestinE data service. In particular, the inundation products in Europe will become more robust and higher in resolution thanks to the EEA 10 m digital elevation model and the use of the sea level projections from the climate change adaptation digital twin, at 5km resolution.
 
 <p align="center">
-  <img src="https://github.com/destination-earth/DestinE_ESA_UrbanSquare/blob/main/storm_surges/docs/destine.jpg" width="85%" height="85%">
+  <img src="https://github.com/destination-earth/DestinE_ESA_UrbanSquare/blob/main/storm_surges/docs/destine.jpg" width="65%" height="65%">
 </p>
 <p align="center"><em></em></p>
