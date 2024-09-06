@@ -55,7 +55,7 @@ When configuring the scenario, the user can choose between low and medium confid
   <img src="https://github.com/destination-earth/DestinE_ESA_UrbanSquare/blob/main/storm_surges/docs/GUI.png"  width="80%" height="150%">
   <img src="https://github.com/destination-earth/DestinE_ESA_UrbanSquare/blob/main/storm_surges/docs/legend.png" width="10%" height="10%">
 </p>
-<p align="center"><em>What-if scenario configuration parameters and example output.</em></p>
+<p align="center"><em>Interface showing the what-if scenario configuration parameters and an example output.</em></p>
 
 
 ## Integration with DestinE
