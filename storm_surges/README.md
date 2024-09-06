@@ -47,10 +47,21 @@ SSP370: is a medium to high reference scenario resulting from no additional clim
  	
 SSP585: is a high reference scenario with no additional climate policy. Emission levels as high as SSP585 are not obtained by Integrated 	Assessment Models (IAMs) under any of the SSPs other than the fossil fueled SSP5 socioeconomic development pathway.
 
-When configuring the scenario, the ser can choose between a low confidence level (20% chance) and mediumconfidence level ().
+When configuring the scenario, the user can choose between low and medium confidence levels, where, ad reported by the IPCC, the low confidence level indicates that there is 20% chance that the event may occur, while a 50% chance for the medium confidence level.
+
 
 
 <p align="center">
   <img src="https://github.com/destination-earth/DestinE_ESA_UrbanSquare/blob/main/storm_surges/docs/GUI.png" width="85%" height="85%">
 </p>
 <p align="center"><em>What-if scenario configuration parameters and example output.</em></p>
+
+
+## Integration with DestinE
+
+The capabilities of the sea level rise and storm surge component of Urban Square will be greatly enhanced with the integration with the DestinE data service. In particular, the inundation products in Europe will become more robust and higher in resolution thanks to the EEA 10 m digital elevation model and the use of the sea level projections from the climate change adaptation digital twin, at 5km resolution.
+
+<p align="center">
+  <img src="https://github.com/destination-earth/DestinE_ESA_UrbanSquare/blob/main/storm_surges/docs/destine.jpg">
+</p>
+<p align="center"><em></em></p>
