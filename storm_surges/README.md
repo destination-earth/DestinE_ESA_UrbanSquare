@@ -14,7 +14,7 @@ The application consists of 30m resolution global maps of inundation risk due to
 
 ### Inundation Layer Modelling
 
-As a first step, the Copernicus waterbodies layer is aligned with the DEM tiles. Then the elevation baseline values are adjusted by using the data for the SSP119 scenario in 2020 at medium confidence level. Areas below the current sea level are marked as Protected Areas (green): since these areas are not currently at risk of inundation, we assume they are protected by infrastructure.
+As a first step, the Copernicus waterbodies layer is aligned with the DEM tiles. Then the elevation baseline values are adjusted by using the data for the SSP119 scenario in 2020 at medium confidence level. Areas below the current sea level are marked as Protected Areas (green): since these areas are not currently at risk of inundation due to the rise of sea level (no other waterbodies are considered), we assume they are protected by infrastructure.
 
 For each what-if scenario, the extent of the inundation is computed by marking pixels with DEM values below zero as Potentially Flooded Areas (red). This process involves up-sampling and cropping the data to align with DEM boundaries.
 
