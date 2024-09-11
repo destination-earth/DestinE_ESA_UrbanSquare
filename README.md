@@ -10,7 +10,7 @@ Users will have the past and present view of the pollution in their territory an
 Users shall have access to heat exposure indicator allowing the identification of heat islands on the area of interest, mapped on land use land cover, urban vegetation and facilities (namely hospitals and clinics). 
 
 ## [🌩️​ Sea level rise​](./storm_surges/)
-The user will have access to 30m resolution global maps of long-term inundation risk due to sea level rise (SLR) and potential storm surges, and thus will be able to assess the impact of future flood events on the most vulnerable coastal areas, under various what-if scenarios. The what-if scenarios can be run for six model years between 2040-2150, and are configured based on five global Shared Socioeconomic Pathways (SSPs) and seven storm surge heights. 
+The user will have access to 30m resolution global maps of long-term inundation risk due to sea level rise (SLR) and potential storm surges, making it easier to assess the impact of future flood events on the most vulnerable coastal areas, under various what-if scenarios, which can be run for six model years between 2040-2150, and are configured based on five global Shared Socioeconomic Pathways (SSPs) and seven storm surge heights. 
 
 
 ## [🌊​ Flood​](./flood/)
