@@ -21,7 +21,7 @@ const Map = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [showOpenButton, setShowOpenButton] = useState(true);
   const [confidenceLevel, setConfidenceLevel] = useState("Medium");
-  const [selectedSSP, setSelectedSSP] = useState("ssp119");
+  const [selectedSSP, setSelectedSSP] = useState<string | null>("ssp126"); // or initialize with null
   const [selectedYear, setSelectedYear] = useState("2150");
   const [stormSurge, setStormSurge] = useState(0);
   const [isLoading, setIsLoading] = useState(false);

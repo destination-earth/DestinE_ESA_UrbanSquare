@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import DrawerSection from "./DrawerSection";
 import ToggleButton from "./ToggleButton";
 import StormSurgeSlider from "./StormSurgeSlider";
@@ -10,8 +10,8 @@ interface DrawerProps {
   handleStormSurgeChange: (value: number) => void;
   handleYearChange: (year: string) => void;
   confidenceLevel: string;
-  selectedSSP: string;
-  setSelectedSSP: (ssp: string) => void; // Add setter function prop
+  selectedSSP: string | null; // Allow null
+  setSelectedSSP: (ssp: string | null) => void; // Allow null // Add setter function prop
   selectedYear: string;
   stormSurge: number;
   isLoading: boolean;
@@ -32,6 +32,19 @@ const Drawer: React.FC<DrawerProps> = ({
   isLoading,
   toggleOverlayLayer,
 }) => {
+
+  const isValidConfiguration = () => {
+    return confidenceLevel && selectedSSP && selectedYear;
+  };
+
+  useEffect(() => {
+    const disabledSSPs = confidenceLevel === "Low" ? ["ssp119", "ssp370"] : [];
+    if (selectedSSP && disabledSSPs.includes(selectedSSP)) {
+      setSelectedSSP(null);
+    }
+  }, [confidenceLevel, selectedSSP, setSelectedSSP]);
+  
+
   return (
     <div
       className={`absolute left-0 bottom-0 z-[99999] bg-white shadow-md transition-transform opacity-80 ${
@@ -232,6 +245,7 @@ const Drawer: React.FC<DrawerProps> = ({
           <ToggleButton
             isLoading={isLoading}
             toggleOverlayLayer={toggleOverlayLayer}
+            isDisabled={!isValidConfiguration()}
           />
         </div>
       </div>
