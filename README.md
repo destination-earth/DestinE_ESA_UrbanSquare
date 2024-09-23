@@ -9,8 +9,9 @@ Users will have the past and present view of the pollution in their territory an
 ## [🌇 Urban heat](./urban_heat/)
 Users shall have access to heat exposure indicator allowing the identification of heat islands on the area of interest, mapped on land use land cover, urban vegetation and facilities (namely hospitals and clinics). 
 
-## [🌩️​ Storm surges​](./storm_surges/)
-Flooding can be characterized through storm surge maps and consequential floods in a specific area of interest. Users will have access to the potential inundation effects due to varying climate scenarios up to 2100. 
+## [🌩️​ Sea level rise​](./storm_surges/)
+The user will have access to 30m resolution global maps of long-term inundation risk due to sea level rise (SLR) and potential storm surges, making it easier to assess the impact of future flood events on the most vulnerable coastal areas, under various what-if scenarios, which can be run for six model years between 2040-2150, and are configured based on five global Shared Socioeconomic Pathways (SSPs) and seven storm surge heights. 
+
 
 ## [🌊​ Flood​](./flood/)
 Users will have access to a full environment for forecasting the flood risk in their territory over a period of 1 year from the initial conditions. 
