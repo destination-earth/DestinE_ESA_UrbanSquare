@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import DrawerSection from "./DrawerSection";
 import ToggleButton from "./ToggleButton";
 import StormSurgeSlider from "./StormSurgeSlider";
+import Image from "next/image";
 
 interface DrawerProps {
   isDrawerOpen: boolean;
@@ -32,7 +33,6 @@ const Drawer: React.FC<DrawerProps> = ({
   isLoading,
   toggleOverlayLayer,
 }) => {
-
   const isValidConfiguration = () => {
     return confidenceLevel && selectedSSP && selectedYear;
   };
@@ -43,7 +43,8 @@ const Drawer: React.FC<DrawerProps> = ({
       setSelectedSSP(null);
     }
   }, [confidenceLevel, selectedSSP, setSelectedSSP]);
-  
+
+  const basePath = process.env.BASEPATH || "";
 
   return (
     <div
@@ -60,21 +61,30 @@ const Drawer: React.FC<DrawerProps> = ({
     >
       <div className="relative flex flex-col h-full">
         <div className="relative flex flex-col">
-          <button
+          {/* <button
             onClick={toggleDrawer}
             style={{
               position: "absolute",
               right: "5px",
-              background: "none",
-              border: "none",
+              top: "10px",
+              borderRadius: "5px",
+              paddingTop: "10px",
+              paddingBottom: "10px",
+              paddingRight: "5px",
+              paddingLeft: "5px",
+              background: "darkgray",
+              border: "1px solid black",
               cursor: "pointer",
-              fontSize: "16px",
-              fontWeight: "bold",
-              color: "black",
             }}
           >
-            X
-          </button>
+            <Image
+              src={basePath + "/drawerArrowBack.svg"}
+              alt="Open Drawer"
+              width="21"
+              height="21"
+            />
+          </button> */}
+
           <h2 className="text-xl font-bold mb-4 text-black pt-4 pl-4">
             What-if Scenario Configuration
           </h2>
@@ -82,7 +92,14 @@ const Drawer: React.FC<DrawerProps> = ({
 
           <div className="flex-grow overflow-y-auto p-2 flex flex-wrap">
             {/* Column 1 */}
-            <div style={{ flex: "1", minWidth: "200px", borderRight: "1px solid black", paddingLeft: "1rem" }}>
+            <div
+              style={{
+                flex: "1",
+                minWidth: "200px",
+                borderRight: "1px solid black",
+                paddingLeft: "1rem",
+              }}
+            >
               <DrawerSection title="Confidence Level">
                 <label className="block mb-2 text-black">
                   <input
@@ -165,7 +182,12 @@ const Drawer: React.FC<DrawerProps> = ({
             {/* Column 2 */}
             <DrawerSection
               title="Year"
-              style={{ flex: "1", minWidth: "200px", borderRight: "1px solid black", paddingLeft: "1rem" }}
+              style={{
+                flex: "1",
+                minWidth: "200px",
+                borderRight: "1px solid black",
+                paddingLeft: "1rem",
+              }}
             >
               <label className="block mb-[19.5px] text-black">
                 <input
@@ -188,45 +210,45 @@ const Drawer: React.FC<DrawerProps> = ({
                 2060
               </label>
               <label className="block mb-[19.5px] text-black">
-                  <input
-                    type="radio"
-                    name="year"
-                    className="mr-2"
-                    checked={selectedYear === "2080"}
-                    onChange={() => handleYearChange("2080")}
-                  />{" "}
-                  2080
-                </label>
-                <label className="block mb-[19.5px] text-black">
-                  <input
-                    type="radio"
-                    name="year"
-                    className="mr-2"
-                    checked={selectedYear === "2100"}
-                    onChange={() => handleYearChange("2100")}
-                  />{" "}
-                  2100
-                </label>
-                <label className="block mb-[19.5px] text-black">
-                  <input
-                    type="radio"
-                    name="year"
-                    className="mr-2"
-                    checked={selectedYear === "2120"}
-                    onChange={() => handleYearChange("2120")}
-                  />{" "}
-                  2120
-                </label>
-                <label className="block mb-[19.5px] text-black">
-                  <input
-                    type="radio"
-                    name="year"
-                    className="mr-2"
-                    checked={selectedYear === "2150"}
-                    onChange={() => handleYearChange("2150")}
-                  />{" "}
-                  2150
-                </label>
+                <input
+                  type="radio"
+                  name="year"
+                  className="mr-2"
+                  checked={selectedYear === "2080"}
+                  onChange={() => handleYearChange("2080")}
+                />{" "}
+                2080
+              </label>
+              <label className="block mb-[19.5px] text-black">
+                <input
+                  type="radio"
+                  name="year"
+                  className="mr-2"
+                  checked={selectedYear === "2100"}
+                  onChange={() => handleYearChange("2100")}
+                />{" "}
+                2100
+              </label>
+              <label className="block mb-[19.5px] text-black">
+                <input
+                  type="radio"
+                  name="year"
+                  className="mr-2"
+                  checked={selectedYear === "2120"}
+                  onChange={() => handleYearChange("2120")}
+                />{" "}
+                2120
+              </label>
+              <label className="block mb-[19.5px] text-black">
+                <input
+                  type="radio"
+                  name="year"
+                  className="mr-2"
+                  checked={selectedYear === "2150"}
+                  onChange={() => handleYearChange("2150")}
+                />{" "}
+                2150
+              </label>
             </DrawerSection>
 
             {/* Column 3 */}
@@ -234,11 +256,39 @@ const Drawer: React.FC<DrawerProps> = ({
               title="Storm Surge"
               style={{ flex: "1", minWidth: "200px", paddingLeft: "1rem" }}
             >
-              <div className="flex flex-col items-start ml-7">
+              <div className="flex  items-start ml-7">
                 <StormSurgeSlider
                   value={stormSurge}
                   onChange={handleStormSurgeChange}
                 />
+              <button
+            onClick={toggleDrawer}
+            style={{
+              position: "absolute",
+              marginLeft: "96px",
+              marginTop: "50px",
+              right: "0px",
+              top: "120px",
+              borderTopLeftRadius: "5px",
+              borderBottomLeftRadius: "5px",
+              paddingTop: "20px",
+              paddingBottom: "20px",
+              paddingRight: "2px",
+              paddingLeft: "2px",
+              background: "darkgray",
+              borderLeft: "1px solid black",
+              borderTop: "1px solid black",
+              borderBottom: "1px solid black",
+              cursor: "pointer",
+            }}
+          >
+            <Image
+              src={basePath + "/drawerArrowBack.svg"}
+              alt="Open Drawer"
+              width="21"
+              height="21"
+            />
+          </button>
               </div>
             </DrawerSection>
           </div>
