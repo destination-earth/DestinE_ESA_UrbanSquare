@@ -1,18 +1,39 @@
 "use client";
 
-import { WMSTileLayer } from "react-leaflet";
-import { useEffect, useState } from "react";
-import { MapContainer, TileLayer } from "react-leaflet";
-import { LatLngExpression, LatLngBounds } from "leaflet";
-import L from "leaflet";
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { FeatureGroup, MapContainer, TileLayer } from "react-leaflet";
+import L, { LatLngExpression, LatLngBounds } from "leaflet";
 import Drawer from "./Drawer";
 import LoadingIndicator from "./LoadingIndicator";
 import Image from "next/image";
+import CachedWMSLayer from "./CachedWMSLayer";
+import { EditControl } from "react-leaflet-draw";
+import "leaflet-draw/dist/leaflet.draw.css";
+import "leaflet/dist/leaflet.css";
 
-// Cache object for storing tile URLs
-const tileCache: Record<string, { url: string; timestamp: number }> = {};
+const customDrawControlStyles = `
+  .leaflet-draw-toolbar {
+    margin-top: 0;
+  }
+  .leaflet-draw-toolbar .leaflet-draw-draw-polygon {
+    margin-right: 50px;
+  }
+  .leaflet-draw-toolbar .leaflet-draw-edit-edit,
+  .leaflet-draw-toolbar .leaflet-draw-edit-remove {
+    margin-right: 50px;
+  }
+`;
 
-const cacheExpiry = 5 * 60 * 1000; // Cache expiry time set to 5 minutes
+interface AreaRequestPayload {
+  geometry: {
+    type: "Polygon";
+    coordinates: number[][][];
+  };
+  ssp: string;
+  confidence: string;
+  storm_surge: string;
+  year: number;
+}
 
 const Map = () => {
   const center: LatLngExpression = [48.1074, 13.2275];
@@ -22,7 +43,6 @@ const Map = () => {
   );
   const [useDefaultLayer, setUseDefaultLayer] = useState(true);
   const [showOverlayLayer, setShowOverlayLayer] = useState(false);
-  const [isCursorOnMap, setIsCursorOnMap] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [showOpenButton, setShowOpenButton] = useState(true);
   const [confidenceLevel, setConfidenceLevel] = useState("Medium");
@@ -31,48 +51,46 @@ const Map = () => {
   const [stormSurge, setStormSurge] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [showLegend, setShowLegend] = useState(false);
+  const [isDrawingMode, setIsDrawingMode] = useState(false);
+  const [apiResponse, setApiResponse] = useState<any>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
 
-  // Function to cache and retrieve tile URLs
-  const getCachedTileUrl = (
-    url: string,
-    zoom: number,
-    tileCoords: { x: number; y: number }
-  ) => {
-    const cacheKey = `${zoom}-${tileCoords.x}-${tileCoords.y}`;
-    const now = Date.now();
+  const formatCoordinates = (leafletLatLngs: L.LatLng[][]): number[][][] => {
+    return leafletLatLngs.map((ring) => {
+      let coordinates = ring.map((coord) => [coord.lng, coord.lat]);
 
-    // If the tile is cached and has not expired, return the cached tile
-    if (
-      tileCache[cacheKey] &&
-      now - tileCache[cacheKey].timestamp < cacheExpiry
-    ) {
-      return tileCache[cacheKey].url;
-    }
+      // Calculate signed area using shoelace formula
+      let area = 0;
+      for (let i = 0; i < coordinates.length - 1; i++) {
+        area +=
+          (coordinates[i + 1][0] - coordinates[i][0]) *
+          (coordinates[i + 1][1] + coordinates[i][1]);
+      }
 
-    // Otherwise, cache the tile and return its URL
-    const tileUrl = `${url}&z=${zoom}&x=${tileCoords.x}&y=${tileCoords.y}`;
-    tileCache[cacheKey] = { url: tileUrl, timestamp: now };
-    return tileUrl;
-  };
+      // If area is negative, it's already counter-clockwise
+      // If area is positive, it's clockwise and needs to be reversed
+      if (area > 0) {
+        coordinates = coordinates.reverse();
+      }
 
-  const buildWMSUrl = (tileCoords: { x: number; y: number }, zoom: number) => {
-    const baseUrl = "https://hulk.adamplatform.eu/wmts?";
-    const params = new URLSearchParams({
-      layers: "InundationMap",
-      styles: "InundationMap;colorrange=(0,2);nodata=2",
-      format: "image/png",
-      transparent: "false",
-      version: "1.3.0",
-      time: `${selectedYear}-12-31T00:00:00Z,${selectedYear}-12-31T23:59:59Z`,
-      bbox: "44.20,11.73,45.94,14.18",
-      token: "bf12d6193efa667283ee9643951acfaa",
-      ssp: selectedSSP!,
-      confidence: confidenceLevel.toLowerCase(),
-      stormSurge: formatStormSurge(stormSurge),
+      // Ensure the polygon is closed
+      if (
+        coordinates.length > 0 &&
+        (coordinates[0][0] !== coordinates[coordinates.length - 1][0] ||
+          coordinates[0][1] !== coordinates[coordinates.length - 1][1])
+      ) {
+        coordinates.push([...coordinates[0]]);
+      }
+
+      // Add debug logging
+      console.log("Area calculated:", area);
+      console.log(
+        "Coordinates orientation:",
+        area > 0 ? "clockwise" : "counter-clockwise"
+      );
+
+      return coordinates;
     });
-
-    // Use the caching logic
-    return getCachedTileUrl(baseUrl + params.toString(), zoom, tileCoords);
   };
 
   const toggleLayer = () => {
@@ -101,22 +119,6 @@ const Map = () => {
     }
   };
 
-  const handleConfidenceChange = (level: string) => {
-    setConfidenceLevel(level);
-    setSelectedSSP("");
-    setShowOverlayLayer(false);
-  };
-
-  const handleStormSurgeChange = (value: number) => {
-    setStormSurge(value);
-    setShowOverlayLayer(false);
-  };
-
-  const handleYearChange = (year: string) => {
-    setSelectedYear(year);
-    setShowOverlayLayer(false);
-  };
-
   const formatStormSurge = (value: number): string => {
     const integerPart = Math.floor(value / 10);
     const decimalPart = (value % 10) / 10;
@@ -135,18 +137,131 @@ const Map = () => {
 
   const basePath = process.env.BASEPATH || "";
 
+  const memoizedToggleDrawer = useCallback(() => {
+    if (isDrawerOpen) {
+      setIsDrawerOpen(false);
+      setShowOpenButton(false);
+      setTimeout(() => {
+        setShowOpenButton(true);
+      }, 200);
+    } else {
+      setIsDrawerOpen(true);
+    }
+  }, [isDrawerOpen]);
+
+  const memoizedHandleConfidenceChange = useCallback((level: string) => {
+    setConfidenceLevel(level);
+    setSelectedSSP("");
+    setShowOverlayLayer(false);
+  }, []);
+
+  const memoizedHandleStormSurgeChange = useCallback((value: number) => {
+    setStormSurge(value);
+    setShowOverlayLayer(false);
+  }, []);
+
+  const memoizedHandleYearChange = useCallback((year: string) => {
+    setSelectedYear(year);
+    setShowOverlayLayer(false);
+  }, []);
+
+  // Memoize the params object for the CachedWMSLayer
+  const wmsParams = useMemo(
+    () => ({
+      time: `${selectedYear}-12-31T00:00:00Z,${selectedYear}-12-31T23:59:59Z`,
+      bbox: "44.20,11.73,45.94,14.18",
+      token: "bf12d6193efa667283ee9643951acfaa",
+      ssp: selectedSSP,
+      confidence: confidenceLevel.toLowerCase(),
+      stormSurge: formatStormSurge(stormSurge),
+    }),
+    [selectedYear, selectedSSP, confidenceLevel, stormSurge]
+  );
+
+  const createApiPayload = (coordinates: number[][][]): AreaRequestPayload => {
+    return {
+      geometry: {
+        type: "Polygon",
+        coordinates: coordinates,
+      },
+      ssp: selectedSSP || "ssp126",
+      confidence: confidenceLevel.toLowerCase(),
+      storm_surge: formatStormSurge(stormSurge),
+      year: parseInt(selectedYear),
+    };
+  };
+
+  const fetchAreaData = async (payload: AreaRequestPayload) => {
+    try {
+      setIsLoading(true);
+      setApiError(null);
+
+      console.log("Sending API request with payload:", {
+        ...payload,
+        ssp: selectedSSP || "ssp126",
+        confidence: confidenceLevel.toLowerCase(),
+        storm_surge: formatStormSurge(stormSurge),
+        year: parseInt(selectedYear),
+      });
+
+      const response = await fetch("/api/area", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.error || `Request failed with status ${response.status}`
+        );
+      }
+
+      const data = await response.json();
+      setApiResponse(data);
+    } catch (error) {
+      setApiError(error instanceof Error ? error.message : "An error occurred");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDrawCreated = (e: any) => {
+    const { layer } = e;
+
+    // Log raw coordinates from Leaflet
+    console.log("Raw Leaflet coordinates:", layer.getLatLngs());
+
+    // Get coordinates from the drawn polygon
+    const leafletCoords = layer.getLatLngs();
+
+    // Format coordinates for the API
+    const formattedCoords = formatCoordinates(leafletCoords);
+    console.log("Formatted coordinates:", formattedCoords);
+
+    // Create the API payload
+    const payload = createApiPayload(formattedCoords);
+    console.log("Final API payload:", payload);
+
+    // Make the API call
+    fetchAreaData(payload);
+  };
+
   return (
     <div className="relative flex-1">
+      <style>{customDrawControlStyles}</style>
       <LoadingIndicator isLoading={isLoading} />
       <Drawer
         isDrawerOpen={isDrawerOpen}
-        toggleDrawer={toggleDrawer}
-        handleConfidenceChange={handleConfidenceChange}
-        handleStormSurgeChange={handleStormSurgeChange}
-        handleYearChange={handleYearChange}
+        toggleDrawer={memoizedToggleDrawer}
+        handleConfidenceChange={memoizedHandleConfidenceChange}
+        handleStormSurgeChange={memoizedHandleStormSurgeChange}
+        handleYearChange={memoizedHandleYearChange}
         confidenceLevel={confidenceLevel}
         selectedSSP={selectedSSP}
-        setSelectedSSP={setSelectedSSP} // Pass the setter function
+        setSelectedSSP={setSelectedSSP}
         selectedYear={selectedYear}
         stormSurge={stormSurge}
         isLoading={isLoading}
@@ -200,31 +315,61 @@ const Map = () => {
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         )}
         {showOverlayLayer && (
-          <WMSTileLayer
+          <CachedWMSLayer
             url="https://hulk.adamplatform.eu/wmts?"
             layers="InundationMap"
             styles="InundationMap;colorrange=(0,2);nodata=2"
             format="image/png"
             transparent={false}
             version="1.3.0"
-            crs={L.CRS.EPSG4326}
             opacity={0.5}
-            params={
-              {
-                time: `${selectedYear}-12-31T00:00:00Z,${selectedYear}-12-31T23:59:59Z`,
-                bbox: "44.20,11.73,45.94,14.18",
-                token: "bf12d6193efa667283ee9643951acfaa",
-                ssp: selectedSSP,
-                confidence: confidenceLevel.toLowerCase(),
-                stormSurge: formatStormSurge(stormSurge),
-              } as any
-            }
-            eventHandlers={{
-              loading: () => setIsLoading(true),
-              load: () => setIsLoading(false),
-            }}
+            params={wmsParams}
+            onLoading={() => setIsLoading(true)}
+            onLoad={() => setIsLoading(false)}
           />
         )}
+        <FeatureGroup>
+          {isDrawingMode && (
+            <EditControl
+              position="topright"
+              onCreated={handleDrawCreated}
+              draw={{
+                rectangle: false,
+                circle: false,
+                circlemarker: false,
+                marker: false,
+                polyline: false,
+                polygon: {
+                  allowIntersection: false,
+                  drawError: {
+                    color: "#e1e100",
+                    message: "<strong>Cannot draw intersecting lines!</strong>",
+                  },
+                  shapeOptions: {
+                    color: "#97009c",
+                    fillOpacity: 0.2,
+                    weight: 2,
+                  },
+                  icon: new L.DivIcon({
+                    iconSize: new L.Point(8, 8),
+                    className: "leaflet-div-icon leaflet-editing-icon",
+                  }),
+                  guidelineDistance: 10,
+                  showLength: true,
+                  metric: true,
+                  feet: false,
+                  vertices: {
+                    radius: 3,
+                    weight: 1,
+                    color: "#97009c",
+                    fillColor: "#ffffff",
+                    fillOpacity: 1,
+                  },
+                },
+              }}
+            />
+          )}
+        </FeatureGroup>
       </MapContainer>
       <button
         className="leaflet-control-custom"
@@ -251,6 +396,31 @@ const Map = () => {
         />
       </button>
 
+      <button
+        className="leaflet-control-custom"
+        onClick={() => setIsDrawingMode(!isDrawingMode)}
+        style={{
+          background: "white",
+          color: "black",
+          border: "1px solid black",
+          borderRadius: "5px",
+          padding: "5px",
+          textAlign: "center",
+          cursor: "pointer",
+          marginTop: "125px",
+          right: "10px",
+          position: "absolute",
+          top: "0px",
+        }}
+      >
+        <Image
+          src={basePath + "/polygon.svg"}
+          alt="Draw Polygon"
+          width="21"
+          height="21"
+        />
+      </button>
+
       {/* Additional Button Below */}
       <button
         className="leaflet-control-custom"
@@ -266,7 +436,7 @@ const Map = () => {
           marginTop: "5px",
           right: "10px",
           position: "absolute",
-          top: "120px",
+          top: "160px",
         }}
       >
         <Image src={basePath + "/info.svg"} alt="Info" width="21" height="21" />
@@ -287,7 +457,7 @@ const Map = () => {
             width: "200px", // Adjust size as needed
             fontSize: "14px",
             color: "black",
-            opacity: '70%',
+            opacity: "70%",
           }}
         >
           {/* Legend content */}
@@ -306,7 +476,9 @@ const Map = () => {
                 marginRight: "10px",
               }}
             ></div>
-            <span>Protected areas <br></br>(2020 baseline)</span>
+            <span>
+              Protected areas <br></br>(2020 baseline)
+            </span>
           </div>
 
           <div style={{ display: "flex", alignItems: "center" }}>
@@ -322,23 +494,6 @@ const Map = () => {
           </div>
         </div>
       )}
-
-      {/* {isCursorOnMap && (
-        <div
-          style={{
-            position: "absolute",
-            bottom: "2px",
-            right: "6px",
-            zIndex: 1000,
-            padding: "2px",
-            background: "rgba(255, 255, 255, 0.8)",
-            border: "1px solid black",
-            borderRadius: "5px",
-            color: "black",
-            fontSize: "12px",
-          }}
-        ></div>
-      )} */}
     </div>
   );
 };
