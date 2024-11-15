@@ -61,30 +61,6 @@ const Drawer: React.FC<DrawerProps> = ({
     >
       <div className="relative flex flex-col h-full">
         <div className="relative flex flex-col">
-          {/* <button
-            onClick={toggleDrawer}
-            style={{
-              position: "absolute",
-              right: "5px",
-              top: "10px",
-              borderRadius: "5px",
-              paddingTop: "10px",
-              paddingBottom: "10px",
-              paddingRight: "5px",
-              paddingLeft: "5px",
-              background: "darkgray",
-              border: "1px solid black",
-              cursor: "pointer",
-            }}
-          >
-            <Image
-              src={basePath + "/drawerArrowBack.svg"}
-              alt="Open Drawer"
-              width="21"
-              height="21"
-            />
-          </button> */}
-
           <h2 className="text-xl font-bold mb-4 text-black pt-4 pl-4">
             What-if Scenario Configuration
           </h2>

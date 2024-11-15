@@ -10,6 +10,7 @@ interface CachedWMSLayerProps {
   transparent: boolean;
   version: string;
   opacity: number;
+  crs?: L.CRS; // Optional CRS property
   params: {
     time: string;
     bbox: string;
@@ -30,6 +31,7 @@ const CachedWMSLayer = ({
   transparent,
   version,
   opacity,
+  crs,
   params,
   onLoading,
   onLoad,
@@ -39,7 +41,6 @@ const CachedWMSLayer = ({
   const previousLayerRef = useRef<L.TileLayer.WMS | null>(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  // Create a stable reference for the layer options
   const layerOptionsRef = useRef({
     layers,
     styles,
@@ -47,6 +48,7 @@ const CachedWMSLayer = ({
     transparent,
     version,
     opacity,
+    crs, // Include CRS here
     ...params,
     updateWhenIdle: false,
     updateWhenZooming: true,
@@ -55,7 +57,7 @@ const CachedWMSLayer = ({
   });
 
   useEffect(() => {
-    // Update the options reference when props change
+    // Update layer options when props change
     layerOptionsRef.current = {
       layers,
       styles,
@@ -63,13 +65,14 @@ const CachedWMSLayer = ({
       transparent,
       version,
       opacity,
+      crs, // Update CRS
       ...params,
       updateWhenIdle: false,
       updateWhenZooming: true,
       keepBuffer: 8,
       updateInterval: 0,
     };
-  }, [layers, styles, format, transparent, version, opacity, params]);
+  }, [layers, styles, format, transparent, version, opacity, crs, params]);
 
   useEffect(() => {
     let isMounted = true;
@@ -77,23 +80,26 @@ const CachedWMSLayer = ({
     const createNewLayer = () => {
       if (!isMounted) return;
 
-      const newLayer = L.tileLayer.wms(url, layerOptionsRef.current);
+      const { crs } = layerOptionsRef.current; // Retrieve CRS from options
+
+      const newLayer = L.tileLayer.wms(url, {
+        ...layerOptionsRef.current,
+        ...(crs && { crs }), // Include CRS only if defined
+      });
 
       // Set up event handlers
-      newLayer.on('loading', () => {
+      newLayer.on("loading", () => {
         if (isMounted) {
           onLoading?.();
-          // Keep the previous layer visible while loading
           if (previousLayerRef.current) {
             previousLayerRef.current.setOpacity(opacity);
           }
         }
       });
 
-      newLayer.on('load', () => {
+      newLayer.on("load", () => {
         if (isMounted) {
           onLoad?.();
-          // Fade out the previous layer gradually
           if (previousLayerRef.current) {
             const fadeOut = (currentOpacity: number) => {
               if (currentOpacity > 0 && isMounted && previousLayerRef.current) {
@@ -109,7 +115,7 @@ const CachedWMSLayer = ({
         }
       });
 
-      // Store the previous layer before adding the new one
+      // Replace previous layer
       if (currentLayerRef.current) {
         if (previousLayerRef.current) {
           map.removeLayer(previousLayerRef.current);
@@ -121,7 +127,6 @@ const CachedWMSLayer = ({
       newLayer.addTo(map);
       currentLayerRef.current = newLayer;
 
-      // After initial load, set flag to false
       if (isInitialLoad) {
         setIsInitialLoad(false);
       }
@@ -132,7 +137,6 @@ const CachedWMSLayer = ({
     // Cleanup function
     return () => {
       isMounted = false;
-      // Only remove layers if component is being fully unmounted
       if (!isInitialLoad) {
         if (currentLayerRef.current) {
           map.removeLayer(currentLayerRef.current);

@@ -13,7 +13,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log('API Route - Received payload:', JSON.stringify(payload, null, 2));
 
     // Endpoint URL as specified
-    const API_URL = 'https://api.ideas.adamplatform.eu/areas';
+    const API_URL = 'https://api.ideas.adamplatform.eu/';
 
     // Send request to the external API without authorization
     const response = await fetch(API_URL, {

@@ -38,8 +38,8 @@ interface AreaRequestPayload {
 const Map = () => {
   const center: LatLngExpression = [48.1074, 13.2275];
   const bounds: LatLngBounds = new LatLngBounds(
-    [-85.05112878, -180.0], // Southwest coordinates
-    [85.05112878, 180.0] // Northeast coordinates
+    [-85.05112878, -180.0],
+    [85.05112878, 180.0]
   );
   const [useDefaultLayer, setUseDefaultLayer] = useState(true);
   const [showOverlayLayer, setShowOverlayLayer] = useState(false);
@@ -57,42 +57,35 @@ const Map = () => {
 
   const formatCoordinates = (leafletLatLngs: L.LatLng[][]): number[][][] => {
     return leafletLatLngs.map((ring) => {
+      // Ensure correct [lng, lat] format
       let coordinates = ring.map((coord) => [coord.lng, coord.lat]);
-
-      // Calculate signed area using shoelace formula
-      let area = 0;
-      for (let i = 0; i < coordinates.length - 1; i++) {
-        area +=
-          (coordinates[i + 1][0] - coordinates[i][0]) *
-          (coordinates[i + 1][1] + coordinates[i][1]);
-      }
-
-      // If area is negative, it's already counter-clockwise
-      // If area is positive, it's clockwise and needs to be reversed
-      if (area > 0) {
-        coordinates = coordinates.reverse();
-      }
-
-      // Ensure the polygon is closed
-      if (
-        coordinates.length > 0 &&
-        (coordinates[0][0] !== coordinates[coordinates.length - 1][0] ||
-          coordinates[0][1] !== coordinates[coordinates.length - 1][1])
-      ) {
-        coordinates.push([...coordinates[0]]);
-      }
-
-      // Add debug logging
-      console.log("Area calculated:", area);
-      console.log(
-        "Coordinates orientation:",
-        area > 0 ? "clockwise" : "counter-clockwise"
-      );
-
-      return coordinates;
+  
+      console.log("Initial coordinates (lng, lat):", JSON.stringify(coordinates));
+  
+      // Find min/max bounds
+      const minLng = Math.min(...coordinates.map((point) => point[0])); // Min longitude
+      const maxLng = Math.max(...coordinates.map((point) => point[0])); // Max longitude
+      const minLat = Math.min(...coordinates.map((point) => point[1])); // Min latitude
+      const maxLat = Math.max(...coordinates.map((point) => point[1])); // Max latitude
+  
+      // Reorder points: Bottom-left → Bottom-right → Top-right → Top-left → Bottom-left
+      coordinates = [
+        [minLng, minLat], // Bottom-left
+        [maxLng, minLat], // Bottom-right
+        [maxLng, maxLat], // Top-right
+        [minLng, maxLat], // Top-left
+        [minLng, minLat], // Close the polygon (Bottom-left)
+      ];
+  
+      console.log("Reordered coordinates (rectangular format):", JSON.stringify(coordinates));
+  
+      return coordinates; // Return as a single array (number[][])
     });
   };
-
+  
+  
+  
+  
   const toggleLayer = () => {
     setUseDefaultLayer(!useDefaultLayer);
   };
@@ -113,7 +106,7 @@ const Map = () => {
       setShowOpenButton(false);
       setTimeout(() => {
         setShowOpenButton(true);
-      }, 200); // delay to show the open button after closing the drawer
+      }, 200);
     } else {
       setIsDrawerOpen(true);
     }
@@ -132,7 +125,7 @@ const Map = () => {
   }, [showOverlayLayer]);
 
   const toggleLegend = () => {
-    setShowLegend((prev) => !prev); // Toggle the visibility of the legend
+    setShowLegend((prev) => !prev);
   };
 
   const basePath = process.env.BASEPATH || "";
@@ -165,7 +158,6 @@ const Map = () => {
     setShowOverlayLayer(false);
   }, []);
 
-  // Memoize the params object for the CachedWMSLayer
   const wmsParams = useMemo(
     () => ({
       time: `${selectedYear}-12-31T00:00:00Z,${selectedYear}-12-31T23:59:59Z`,
@@ -191,18 +183,13 @@ const Map = () => {
     };
   };
 
-  const fetchAreaData = async (payload: AreaRequestPayload) => {
+  const fetchAreaData = async (formattedCoords: number[][][]) => {
     try {
+      const payload = createApiPayload(formattedCoords);
       setIsLoading(true);
       setApiError(null);
 
-      console.log("Sending API request with payload:", {
-        ...payload,
-        ssp: selectedSSP || "ssp126",
-        confidence: confidenceLevel.toLowerCase(),
-        storm_surge: formatStormSurge(stormSurge),
-        year: parseInt(selectedYear),
-      });
+      console.log("Final API payload:", payload);
 
       const response = await fetch("/api/area", {
         method: "POST",
@@ -231,24 +218,15 @@ const Map = () => {
   const handleDrawCreated = (e: any) => {
     const { layer } = e;
 
-    // Log raw coordinates from Leaflet
     console.log("Raw Leaflet coordinates:", layer.getLatLngs());
 
-    // Get coordinates from the drawn polygon
     const leafletCoords = layer.getLatLngs();
-
-    // Format coordinates for the API
     const formattedCoords = formatCoordinates(leafletCoords);
     console.log("Formatted coordinates:", formattedCoords);
 
-    // Create the API payload
-    const payload = createApiPayload(formattedCoords);
-    console.log("Final API payload:", payload);
-
-    // Make the API call
-    fetchAreaData(payload);
+    fetchAreaData(formattedCoords);
   };
-
+  
   return (
     <div className="relative flex-1">
       <style>{customDrawControlStyles}</style>
@@ -323,6 +301,7 @@ const Map = () => {
             transparent={false}
             version="1.3.0"
             opacity={0.5}
+            crs={L.CRS.EPSG4326}
             params={wmsParams}
             onLoading={() => setIsLoading(true)}
             onLoad={() => setIsLoading(false)}
