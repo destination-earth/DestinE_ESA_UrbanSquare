@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import DrawerSection from "./DrawerSection";
 import ToggleButton from "./ToggleButton";
 import StormSurgeSlider from "./StormSurgeSlider";
 import Image from "next/image";
+import Modal from "./Modal";
 
 interface DrawerProps {
   isDrawerOpen: boolean;
@@ -27,7 +28,7 @@ const Drawer: React.FC<DrawerProps> = ({
   handleYearChange,
   confidenceLevel,
   selectedSSP,
-  setSelectedSSP, // Use setter function
+  setSelectedSSP,
   selectedYear,
   stormSurge,
   isLoading,
@@ -44,6 +45,12 @@ const Drawer: React.FC<DrawerProps> = ({
     }
   }, [confidenceLevel, selectedSSP, setSelectedSSP]);
 
+  const [isInfoModalOpen, setInfoModalOpen] = useState(false);
+
+  const toggleInfoModal = () => {
+    setInfoModalOpen(!isInfoModalOpen);
+  };
+
   const basePath = process.env.BASEPATH || "";
 
   return (
@@ -55,15 +62,33 @@ const Drawer: React.FC<DrawerProps> = ({
         border: "1px solid black",
         borderRadius: "5px",
         backgroundColor: "#807E80",
-        height: "auto", // Set height to auto
+        height: "auto",
         maxHeight: "50vh", // Ensure it doesn't overflow the viewport height
       }}
     >
       <div className="relative flex flex-col h-full">
         <div className="relative flex flex-col">
-          <h2 className="text-xl font-bold mb-4 text-black pt-4 pl-4">
-            What-if Scenario Configuration
-          </h2>
+          {/* New wrapper div with flex-row */}
+          <div className="flex items-center pl-4 pt-4 pb-4">
+            <h2 className="text-xl font-bold text-black">
+              What-if Scenario Configuration
+            </h2>
+            <button
+              className="ml-2"
+              onClick={toggleInfoModal}
+              style={{
+                cursor: "pointer",
+              }}
+            >
+              <Image
+                src={`${basePath}/info.svg`}
+                alt="Info"
+                width="21"
+                height="21"
+              />
+            </button>
+          </div>
+          {/* </div> */}
           <hr className="border-black mb-4 w-full" />
 
           <div className="flex-grow overflow-y-auto p-2 flex flex-wrap">
@@ -237,34 +262,34 @@ const Drawer: React.FC<DrawerProps> = ({
                   value={stormSurge}
                   onChange={handleStormSurgeChange}
                 />
-              <button
-            onClick={toggleDrawer}
-            style={{
-              position: "absolute",
-              marginLeft: "96px",
-              marginTop: "50px",
-              right: "0px",
-              top: "120px",
-              borderTopLeftRadius: "5px",
-              borderBottomLeftRadius: "5px",
-              paddingTop: "20px",
-              paddingBottom: "20px",
-              paddingRight: "2px",
-              paddingLeft: "2px",
-              background: "darkgray",
-              borderLeft: "1px solid black",
-              borderTop: "1px solid black",
-              borderBottom: "1px solid black",
-              cursor: "pointer",
-            }}
-          >
-            <Image
-              src={basePath + "/drawerArrowBack.svg"}
-              alt="Open Drawer"
-              width="21"
-              height="21"
-            />
-          </button>
+                <button
+                  onClick={toggleDrawer}
+                  style={{
+                    position: "absolute",
+                    marginLeft: "96px",
+                    marginTop: "50px",
+                    right: "0px",
+                    top: "120px",
+                    borderTopLeftRadius: "5px",
+                    borderBottomLeftRadius: "5px",
+                    paddingTop: "20px",
+                    paddingBottom: "20px",
+                    paddingRight: "2px",
+                    paddingLeft: "2px",
+                    background: "darkgray",
+                    borderLeft: "1px solid black",
+                    borderTop: "1px solid black",
+                    borderBottom: "1px solid black",
+                    cursor: "pointer",
+                  }}
+                >
+                  <Image
+                    src={basePath + "/drawerArrowBack.svg"}
+                    alt="Open Drawer"
+                    width="21"
+                    height="21"
+                  />
+                </button>
               </div>
             </DrawerSection>
           </div>
@@ -275,6 +300,112 @@ const Drawer: React.FC<DrawerProps> = ({
           />
         </div>
       </div>
+      {isInfoModalOpen && (
+        <Modal onClose={toggleInfoModal}>
+          <div style={{ padding: "20px", backgroundColor: "black" }}>
+            <h2 className="text-lg font-bold mb-4">
+              EXPOSURE ASSESSMENT INFO BOX
+            </h2>
+            <br />
+            <p>
+              The exposure statistical assessment is generated after drawing an
+              area of interest on the map using rectangle/polygon buttons the
+              area of interest. The values for population and urban area
+              exposure are derived from the Copernicus Global Human Settlement
+              products for population and built-up surface areas. The values for
+              affected cultivated areas are derived from the WorldCereal product
+              from ESA, and they include second maize, spring cereal and winter
+              cereal.
+            </p>
+            <br />
+            <p>
+              <strong>Confidence Level</strong>
+              <br />
+              Medium: 50% chance
+              <br />
+              Low: 20% chance
+              <br />
+              The confidence levels in IPCC reports are used to convey the
+              degree of certainty in scientific findings and predictions,
+              determined through the consistency of evidence, the robustness of
+              methodologies, and the level of agreement among experts.
+            </p>
+            <p>
+              <br />
+              <strong>SSP</strong>
+              <br />A Shared Socioeconomic Pathway (SSP) is a future scenario
+              that considers climate change and socio-economic global changes
+              (natural resources, population growth). SSPs range from optimistic
+              to pessimistic scenarios: in SSP119, it is assumed that society
+              will be taking “the green road” towards a more sustainable planet;
+              while in SSP585 a complete fossil-fueled development is
+              considered. The definition of the five Shared Socioeconomic
+              Pathway (SSP) scenarios used to develop the IPCC AR 6 sea level
+              rise projections applied in this service are described below.
+              <br />
+              <ul>
+                <li>
+                  <strong>SSP119</strong>: holds warming to approximately 1.5°C
+                  above 1850-1900 in 2100 after slight overshoot (median) and
+                  implies net zero CO2 emissions around the middle of the
+                  century.
+                </li>
+                <br />
+                <li>
+                  <strong>SSP126</strong>: stays below 2.0°C warming relative to
+                  1850-1900 (median) with implied net zero emissions in the
+                  second half of the century.
+                </li>
+                <br />
+                <li>
+                  <strong>SSP245</strong>: is approximately in line with the
+                  upper end of aggregate Nationally Determined Contribution
+                  emission levels by 2030. SR1.5 assessed temperature
+                  projections for NDCs to be between 2.7 and 3.4°C by 2100,
+                  corresponding to the upper half of projected warming under
+                  SP245. New or updated NDCs by the end of 2020 did not
+                  significantly change the emissions projections up to 2030,
+                  although more countries adopted 2050 net zero targets in line
+                  with SSP119 or SSP126. The SSP245 scenario deviates mildly
+                  from a ‘no-additional- climate-policy’ reference scenario,
+                  resulting in a best-estimate warming around 2.7°C by the end
+                  of the 21st century relative to 1850-1900.
+                </li>
+                <br />
+                <li>
+                  <strong>SSP370</strong>: is a medium to high reference
+                  scenario resulting from no additional climate policy under the
+                  SSP3 socioeconomic development narrative. SSP370 has
+                  particularly high non-CO2 emissions, including high aerosols
+                  emissions.
+                </li>
+                <br />
+                <li>
+                  <strong>SSP585</strong>: is a high reference scenario with no
+                  additional climate policy. Emission levels as high as SSP585
+                  are not obtained by Integrated Assessment Models (IAMs) under
+                  any of the SSPs other than the fossil fueled SSP5
+                  socioeconomic development pathway.
+                </li>
+              </ul>
+            </p>
+            <br />
+            <p>
+              <strong>Year</strong>
+              <br />
+              Modelled year (2040-2150).
+            </p>
+            <br />
+            <p>
+              <strong>Storm Surge</strong>
+              <br />A storm surge is defined as the unusual rise in seawater
+              level during a storm measured as the height of the water above the
+              normal predicted astronomical tide. For this study we consider
+              storm surge heights between 0 (none) and 5 metres.
+            </p>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

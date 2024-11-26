@@ -57,7 +57,6 @@ const CachedWMSLayer = ({
   });
 
   useEffect(() => {
-    // Update layer options when props change
     layerOptionsRef.current = {
       layers,
       styles,
@@ -148,7 +147,7 @@ const CachedWMSLayer = ({
         }
       }
     };
-  }, [map, url, isInitialLoad]);
+  }, [map, url, isInitialLoad, onLoading, onLoad, opacity]);
 
   return null;
 };

@@ -54,20 +54,25 @@ const Map = () => {
   const [isDrawingMode, setIsDrawingMode] = useState(false);
   const [apiResponse, setApiResponse] = useState<any>(null);
   const [apiError, setApiError] = useState<string | null>(null);
+  const [isSideWindowOpen, setIsSideWindowOpen] = useState(false);
+  const [hasFetchedData, setHasFetchedData] = useState(false);
 
   const formatCoordinates = (leafletLatLngs: L.LatLng[][]): number[][][] => {
     return leafletLatLngs.map((ring) => {
       // Ensure correct [lng, lat] format
       let coordinates = ring.map((coord) => [coord.lng, coord.lat]);
-  
-      console.log("Initial coordinates (lng, lat):", JSON.stringify(coordinates));
-  
+
+      console.log(
+        "Initial coordinates (lng, lat):",
+        JSON.stringify(coordinates)
+      );
+
       // Find min/max bounds
       const minLng = Math.min(...coordinates.map((point) => point[0])); // Min longitude
       const maxLng = Math.max(...coordinates.map((point) => point[0])); // Max longitude
       const minLat = Math.min(...coordinates.map((point) => point[1])); // Min latitude
       const maxLat = Math.max(...coordinates.map((point) => point[1])); // Max latitude
-  
+
       // Reorder points: Bottom-left → Bottom-right → Top-right → Top-left → Bottom-left
       coordinates = [
         [minLng, minLat], // Bottom-left
@@ -76,16 +81,16 @@ const Map = () => {
         [minLng, maxLat], // Top-left
         [minLng, minLat], // Close the polygon (Bottom-left)
       ];
-  
-      console.log("Reordered coordinates (rectangular format):", JSON.stringify(coordinates));
-  
+
+      console.log(
+        "Reordered coordinates (rectangular format):",
+        JSON.stringify(coordinates)
+      );
+
       return coordinates; // Return as a single array (number[][])
     });
   };
-  
-  
-  
-  
+
   const toggleLayer = () => {
     setUseDefaultLayer(!useDefaultLayer);
   };
@@ -130,45 +135,45 @@ const Map = () => {
 
   const basePath = process.env.BASEPATH || "";
 
-  const memoizedToggleDrawer = useCallback(() => {
-    if (isDrawerOpen) {
-      setIsDrawerOpen(false);
-      setShowOpenButton(false);
-      setTimeout(() => {
-        setShowOpenButton(true);
-      }, 200);
-    } else {
-      setIsDrawerOpen(true);
-    }
-  }, [isDrawerOpen]);
+  // const memoizedToggleDrawer = useCallback(() => {
+  //   if (isDrawerOpen) {
+  //     setIsDrawerOpen(false);
+  //     setShowOpenButton(false);
+  //     setTimeout(() => {
+  //       setShowOpenButton(true);
+  //     }, 200);
+  //   } else {
+  //     setIsDrawerOpen(true);
+  //   }
+  // }, [isDrawerOpen]);
 
-  const memoizedHandleConfidenceChange = useCallback((level: string) => {
-    setConfidenceLevel(level);
-    setSelectedSSP("");
-    setShowOverlayLayer(false);
-  }, []);
+  // const memoizedHandleConfidenceChange = useCallback((level: string) => {
+  //   setConfidenceLevel(level);
+  //   setSelectedSSP("");
+  //   setShowOverlayLayer(false);
+  // }, []);
 
-  const memoizedHandleStormSurgeChange = useCallback((value: number) => {
-    setStormSurge(value);
-    setShowOverlayLayer(false);
-  }, []);
+  // const memoizedHandleStormSurgeChange = useCallback((value: number) => {
+  //   setStormSurge(value);
+  //   setShowOverlayLayer(false);
+  // }, []);
 
-  const memoizedHandleYearChange = useCallback((year: string) => {
-    setSelectedYear(year);
-    setShowOverlayLayer(false);
-  }, []);
+  // const memoizedHandleYearChange = useCallback((year: string) => {
+  //   setSelectedYear(year);
+  //   setShowOverlayLayer(false);
+  // }, []);
 
-  const wmsParams = useMemo(
-    () => ({
-      time: `${selectedYear}-12-31T00:00:00Z,${selectedYear}-12-31T23:59:59Z`,
-      bbox: "44.20,11.73,45.94,14.18",
-      token: "bf12d6193efa667283ee9643951acfaa",
-      ssp: selectedSSP,
-      confidence: confidenceLevel.toLowerCase(),
-      stormSurge: formatStormSurge(stormSurge),
-    }),
-    [selectedYear, selectedSSP, confidenceLevel, stormSurge]
-  );
+  // const wmsParams = useMemo(
+  //   () => ({
+  //     time: `${selectedYear}-12-31T00:00:00Z,${selectedYear}-12-31T23:59:59Z`,
+  //     bbox: "44.20,11.73,45.94,14.18",
+  //     token: "bf12d6193efa667283ee9643951acfaa",
+  //     ssp: selectedSSP,
+  //     confidence: confidenceLevel.toLowerCase(),
+  //     stormSurge: formatStormSurge(stormSurge),
+  //   }),
+  //   [selectedYear, selectedSSP, confidenceLevel, stormSurge]
+  // );
 
   const createApiPayload = (coordinates: number[][][]): AreaRequestPayload => {
     return {
@@ -208,6 +213,8 @@ const Map = () => {
 
       const data = await response.json();
       setApiResponse(data);
+      setHasFetchedData(true);
+      setIsSideWindowOpen(true);
     } catch (error) {
       setApiError(error instanceof Error ? error.message : "An error occurred");
     } finally {
@@ -226,17 +233,27 @@ const Map = () => {
 
     fetchAreaData(formattedCoords);
   };
-  
+
+  const toggleSideWindow = () => {
+    if (hasFetchedData) {
+      setIsSideWindowOpen((prev) => !prev); // Toggle visibility only if data has been fetched
+    }
+  };
+
+  const closeSideWindow = () => {
+    setIsSideWindowOpen(false);
+  };
+
   return (
     <div className="relative flex-1">
       <style>{customDrawControlStyles}</style>
       <LoadingIndicator isLoading={isLoading} />
       <Drawer
         isDrawerOpen={isDrawerOpen}
-        toggleDrawer={memoizedToggleDrawer}
-        handleConfidenceChange={memoizedHandleConfidenceChange}
-        handleStormSurgeChange={memoizedHandleStormSurgeChange}
-        handleYearChange={memoizedHandleYearChange}
+        toggleDrawer={toggleDrawer}
+        handleConfidenceChange={(level: string) => setConfidenceLevel(level)}
+        handleStormSurgeChange={(value: number) => setStormSurge(value)}
+        handleYearChange={(year: string) => setSelectedYear(year)}
         confidenceLevel={confidenceLevel}
         selectedSSP={selectedSSP}
         setSelectedSSP={setSelectedSSP}
@@ -245,34 +262,33 @@ const Map = () => {
         isLoading={isLoading}
         toggleOverlayLayer={toggleOverlayLayer}
       />
-      <div>
-        {showOpenButton && (
-          <button
-            onClick={toggleDrawer}
-            style={{
-              position: "absolute",
-              left: isDrawerOpen ? "254.5px" : "0",
-              visibility: isDrawerOpen ? "hidden" : "visible",
-              top: "75%",
-              transform: "translateY(-50%)",
-              zIndex: 99999,
-              background: "gray",
-              border: "1px solid black",
-              borderRadius: "0 5px 5px 0",
-              paddingTop: "20px",
-              paddingBottom: "20px",
-              cursor: "pointer",
-            }}
-          >
-            <Image
-              src={basePath + "/drawerArrow.svg"}
-              alt="Open Drawer"
-              width="21"
-              height="21"
-            />
-          </button>
-        )}
-      </div>
+
+      {showOpenButton && (
+        <button
+          onClick={toggleDrawer}
+          style={{
+            position: "absolute",
+            left: isDrawerOpen ? "254.5px" : "0",
+            visibility: isDrawerOpen ? "hidden" : "visible",
+            top: "75%",
+            transform: "translateY(-50%)",
+            zIndex: 99999,
+            background: "gray",
+            border: "1px solid black",
+            borderRadius: "0 5px 5px 0",
+            paddingTop: "20px",
+            paddingBottom: "20px",
+            cursor: "pointer",
+          }}
+        >
+          <Image
+            src={`${basePath}/drawerArrow.svg`}
+            alt="Open Drawer"
+            width="21"
+            height="21"
+          />
+        </button>
+      )}
       <MapContainer
         center={center}
         zoom={5.2795}
@@ -281,7 +297,6 @@ const Map = () => {
         attributionControl={false}
         style={{ height: "100%", width: "100%" }}
         maxBounds={bounds}
-        maxBoundsViscosity={1.0}
         preferCanvas={true}
       >
         {useDefaultLayer ? (
@@ -302,7 +317,14 @@ const Map = () => {
             version="1.3.0"
             opacity={0.5}
             crs={L.CRS.EPSG4326}
-            params={wmsParams}
+            params={{
+              time: `${selectedYear}-12-31T00:00:00Z,${selectedYear}-12-31T23:59:59Z`,
+              bbox: "44.20,11.73,45.94,14.18",
+              token: "bf12d6193efa667283ee9643951acfaa",
+              ssp: selectedSSP,
+              confidence: confidenceLevel.toLowerCase(),
+              stormSurge: formatStormSurge(stormSurge),
+            }}
             onLoading={() => setIsLoading(true)}
             onLoad={() => setIsLoading(false)}
           />
@@ -313,7 +335,7 @@ const Map = () => {
               position="topright"
               onCreated={handleDrawCreated}
               draw={{
-                rectangle: false,
+                // rectangle: false,
                 circle: false,
                 circlemarker: false,
                 marker: false,
@@ -328,21 +350,6 @@ const Map = () => {
                     color: "#97009c",
                     fillOpacity: 0.2,
                     weight: 2,
-                  },
-                  icon: new L.DivIcon({
-                    iconSize: new L.Point(8, 8),
-                    className: "leaflet-div-icon leaflet-editing-icon",
-                  }),
-                  guidelineDistance: 10,
-                  showLength: true,
-                  metric: true,
-                  feet: false,
-                  vertices: {
-                    radius: 3,
-                    weight: 1,
-                    color: "#97009c",
-                    fillColor: "#ffffff",
-                    fillOpacity: 1,
                   },
                 },
               }}
@@ -359,22 +366,20 @@ const Map = () => {
           border: "1px solid black",
           borderRadius: "5px",
           padding: "5px",
-          textAlign: "center",
           cursor: "pointer",
           marginTop: "5px",
-          right: "10px",
           position: "absolute",
-          top: "80px", // Position this button 10px from the top
+          top: "80px",
+          right: "10px",
         }}
       >
         <Image
-          src={basePath + "/layerIcon.svg"}
+          src={`${basePath}/layerIcon.svg`}
           alt="Toggle Layer"
           width="21"
           height="21"
         />
       </button>
-
       <button
         className="leaflet-control-custom"
         onClick={() => setIsDrawingMode(!isDrawingMode)}
@@ -384,62 +389,52 @@ const Map = () => {
           border: "1px solid black",
           borderRadius: "5px",
           padding: "5px",
-          textAlign: "center",
           cursor: "pointer",
           marginTop: "125px",
-          right: "10px",
           position: "absolute",
           top: "0px",
+          right: "10px",
         }}
       >
         <Image
-          src={basePath + "/polygon.svg"}
+          src={`${basePath}/polygon.svg`}
           alt="Draw Polygon"
           width="21"
           height="21"
         />
       </button>
-
-      {/* Additional Button Below */}
       <button
         className="leaflet-control-custom"
-        onClick={toggleLegend} // Change the handler if needed
+        onClick={toggleLegend}
         style={{
           background: "white",
           color: "black",
           border: "1px solid black",
           borderRadius: "5px",
           padding: "5px",
-          textAlign: "center",
           cursor: "pointer",
           marginTop: "5px",
-          right: "10px",
           position: "absolute",
           top: "160px",
+          right: "10px",
         }}
       >
-        <Image src={basePath + "/info.svg"} alt="Info" width="21" height="21" />
+        <Image src={`${basePath}/info.svg`} alt="Info" width="21" height="21" />
       </button>
-      {/* Legend window */}
       {showLegend && (
         <div
           style={{
             position: "absolute",
-            top: "125px", // Same top as the button
-            right: "45px", // Positioned to the left of the button
+            top: "125px",
+            right: "45px",
             background: "white",
             border: "1px solid black",
             borderRadius: "5px",
             padding: "10px",
-            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-            zIndex: 9999, // Ensure it appears above other elements
-            width: "200px", // Adjust size as needed
-            fontSize: "14px",
+            zIndex: 9999,
             color: "black",
-            opacity: "70%",
           }}
         >
-          {/* Legend content */}
           <div
             style={{
               display: "flex",
@@ -451,27 +446,148 @@ const Map = () => {
               style={{
                 width: "20px",
                 height: "20px",
-                backgroundColor: "#78F773", // Green square
+                backgroundColor: "#78F773",
                 marginRight: "10px",
               }}
             ></div>
-            <span>
-              Protected areas <br></br>(2020 baseline)
-            </span>
+            <span>Protected areas (2020 baseline)</span>
           </div>
-
           <div style={{ display: "flex", alignItems: "center" }}>
             <div
               style={{
                 width: "20px",
                 height: "20px",
-                backgroundColor: "#F67769", // Red square
+                backgroundColor: "#F67769",
                 marginRight: "10px",
               }}
             ></div>
             <span>Areas at risk of flood</span>
           </div>
         </div>
+      )}
+      {isSideWindowOpen ? (
+        <div
+          style={{
+            position: "fixed",
+            top: "60px",
+            bottom: "36.1667px",
+            right: 0,
+            width: "25%",
+            backgroundColor: "#0D1527",
+            boxShadow: "-2px 0 5px rgba(0, 0, 0, 0.3)",
+            zIndex: 1000,
+            padding: "20px",
+            overflowY: "auto",
+            color: "white",
+            borderLeft: "3px solid transparent", // Reserve space for gradient border
+            borderImage: "linear-gradient(to bottom, #F76501, yellow) 1", // Gradient border
+            fontSize: "14px",
+          }}
+        >
+          <button
+            style={{
+              position: "absolute",
+              top: "10px",
+              right: "10px",
+              // background: "gray",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              padding: "5px",
+              cursor: "pointer",
+            }}
+            onClick={toggleSideWindow}
+          >
+            ✖
+          </button>
+          <h3
+            style={{
+              textAlign: "center", // Center the text horizontally
+              margin: "0 0 20px 0", // Adjust margin to space it nicely below the top
+              padding: "0", // Remove any extra padding
+              fontSize: "18px", // Set a consistent font size
+              fontWeight: "bold", // Use a bold font weight
+            }}
+          >
+            Exposure Assessment
+          </h3>
+
+          {apiResponse ? (
+            <div className="mt-6">
+              {Object.entries(apiResponse).map(([key, value]) => {
+                // Define the mapping for human-readable names, units, and icon paths
+                const readableLabels: Record<string, string> = {
+                  GHS_POP_E2020_GLOBE: "Population",
+                  GHS_BUILT_S_E2020_GLOBE: "Urban Area Extent",
+                  cereals: "Cultivated Area Extent",
+                };
+
+                const units: Record<string, string> = {
+                  GHS_POP_E2020_GLOBE: "", // No unit for population
+                  GHS_BUILT_S_E2020_GLOBE: "m²",
+                  cereals: "m²",
+                };
+
+                const icons: Record<string, string> = {
+                  GHS_POP_E2020_GLOBE: `${basePath}/people.svg`,
+                  GHS_BUILT_S_E2020_GLOBE: `${basePath}/building.svg`,
+                  cereals: `${basePath}/wheat2.svg`,
+                };
+
+                const label = readableLabels[key] || key; // Default to the key if no mapping exists
+                const unit = units[key] || "";
+                const iconPath = icons[key];
+
+                return (
+                  <div
+                    key={key}
+                    style={{
+                      marginBottom: "10px",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    {iconPath && (
+                      <Image
+                        src={`${basePath}/info.svg`}
+                        alt={`${label} icon`}
+                        style={{
+                          marginRight: "10px",
+                          width: "24px", // Set a consistent width
+                          height: "24px", // Set a consistent height
+                        }}
+                      />
+                    )}
+                    <strong>{label}</strong>: {` ${String(value)}`} {unit}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p>Loading...</p>
+          )}
+        </div>
+      ) : (
+        apiResponse && (
+          <button
+            style={{
+              position: "fixed",
+              top: "270px",
+              right: "10px",
+              background: "gray",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              padding: "10px 15px",
+              boxShadow: "0 2px 5px rgba(0, 0, 0, 0.3)",
+              cursor: "pointer",
+              zIndex: 1000,
+            }}
+            onClick={toggleSideWindow}
+          >
+            Open
+          </button>
+        )
       )}
     </div>
   );
