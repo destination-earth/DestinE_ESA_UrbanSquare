@@ -744,7 +744,6 @@ function initFloodSimulation(){
 			showSpinner();
 			fetch(FLOOD_URL, {
 	
-			//fetch('http://192.168.0.249:8080/xYz123/%23$%25%5E&*()_+=-~%5EA9!@%23&*ZXrQ', {
 				method: 'POST', // Specify the HTTP method
 				headers: {
 					'Content-Type': 'application/json' // Specify the content type
