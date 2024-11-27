@@ -39,6 +39,7 @@ const Modal: React.FC<{ onClose: () => void; children: React.ReactNode }> = ({
           border: "none",
           fontSize: "36px",
           cursor: "pointer",
+          color: "white",
         }}
       >
         ×

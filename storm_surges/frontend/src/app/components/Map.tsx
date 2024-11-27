@@ -549,14 +549,14 @@ const Map = () => {
                   >
                     {iconPath && (
                       <Image
-                        src={`${basePath}/info.svg`}
-                        alt={`${label} icon`}
-                        style={{
-                          marginRight: "10px",
-                          width: "24px", // Set a consistent width
-                          height: "24px", // Set a consistent height
-                        }}
-                      />
+                      src={iconPath}
+                      alt={`${label} icon`}
+                      width={24}
+                      height={24}
+                      style={{
+                        marginRight: "10px",
+                      }}
+                    />
                     )}
                     <strong>{label}</strong>: {` ${String(value)}`} {unit}
                   </div>

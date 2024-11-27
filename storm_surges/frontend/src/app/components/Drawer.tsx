@@ -302,7 +302,7 @@ const Drawer: React.FC<DrawerProps> = ({
       </div>
       {isInfoModalOpen && (
         <Modal onClose={toggleInfoModal}>
-          <div style={{ padding: "20px", backgroundColor: "black" }}>
+          <div style={{ padding: "20px", backgroundColor: "black", color: "white"}}>
             <h2 className="text-lg font-bold mb-4">
               EXPOSURE ASSESSMENT INFO BOX
             </h2>
