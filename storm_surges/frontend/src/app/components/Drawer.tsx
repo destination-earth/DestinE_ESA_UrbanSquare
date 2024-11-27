@@ -303,21 +303,6 @@ const Drawer: React.FC<DrawerProps> = ({
       {isInfoModalOpen && (
         <Modal onClose={toggleInfoModal}>
           <div style={{ padding: "20px", backgroundColor: "black", color: "white"}}>
-            <h2 className="text-lg font-bold mb-4">
-              EXPOSURE ASSESSMENT INFO BOX
-            </h2>
-            <br />
-            <p>
-              The exposure statistical assessment is generated after drawing an
-              area of interest on the map using rectangle/polygon buttons the
-              area of interest. The values for population and urban area
-              exposure are derived from the Copernicus Global Human Settlement
-              products for population and built-up surface areas. The values for
-              affected cultivated areas are derived from the WorldCereal product
-              from ESA, and they include second maize, spring cereal and winter
-              cereal.
-            </p>
-            <br />
             <p>
               <strong>Confidence Level</strong>
               <br />

@@ -335,7 +335,6 @@ const Map = () => {
               position="topright"
               onCreated={handleDrawCreated}
               draw={{
-                // rectangle: false,
                 circle: false,
                 circlemarker: false,
                 marker: false,
