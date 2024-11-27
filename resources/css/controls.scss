@@ -1,0 +1,106 @@
+/*
+/**
+ * Copyright (c) 2024 Mozaika, Ltd.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+Variations
+
+Except as contained in this notice, the name of Mozaika, Ltd. shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Software without prior written authorization from Mozaika, Ltd.
+ */
+$layer-button-top:8px;
+$layer-button-left:38px;
+$button-offset:30px;
+
+$draw-button-top:38px;
+$draw-button-left:$layer-button-left;
+
+.home{
+  top: 65px;
+  left:8px;
+}
+
+.list{
+  top: $layer-button-top; 
+  left:$layer-button-left;
+}
+
+.layers{
+    top: $layer-button-top; 
+    left:$layer-button-left + ($button-offset*1);
+}
+
+.basemap{
+    top: $layer-button-top; 
+    left:$layer-button-left + ($button-offset*2);
+}
+
+.flood-simulation{
+  top: $layer-button-top; 
+  left:$layer-button-left + ($button-offset*3);
+}
+
+.check-alert{
+  top: $layer-button-top; 
+  left:$layer-button-left + ($button-offset*4);
+}
+
+.time-slider{
+  top: $layer-button-top; 
+  left:$layer-button-left + ($button-offset*5);
+}
+
+
+/******************/
+
+.download-png{
+  top: $draw-button-top; 
+  left:$draw-button-left + ($button-offset*3);
+}
+
+.cursor{
+    top: $draw-button-top;
+    left:$draw-button-left;
+  }
+  
+  .point{
+    top: $draw-button-top;
+    left:$draw-button-left + ($button-offset*1);
+  }
+  
+  .box{
+    top: $draw-button-top;
+    left:$draw-button-left + ($button-offset*2);
+  }
+
+  .trash{
+    top: $draw-button-top;
+    left:$draw-button-left + ($button-offset*4);
+  }
+
+
+// .cursor{
+//   top: 47px;
+//   right:100px;
+// }
+
+// .point{
+//   top: 47px;
+//   right:70px;
+// }
+
+// .box{
+//   top: 47px;
+//   right:40px;
+// }
+
+
+
+.ol-control button,.ol-control a {
+	background-color: rgba(45,149,160,.8) !important;
+  color: white !important;
+  cursor: pointer;
+}

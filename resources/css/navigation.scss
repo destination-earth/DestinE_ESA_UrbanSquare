@@ -1,0 +1,97 @@
+/*
+/**
+ * Copyright (c) 2024 Mozaika, Ltd.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+Variations
+
+Except as contained in this notice, the name of Mozaika, Ltd. shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Software without prior written authorization from Mozaika, Ltd.
+ */
+.sidenav {
+    height: 100%;
+    width: 0;
+    position:absolute;
+    z-index: 1;
+    top: 0;
+    right: 0;
+    /*background-color:white;*/
+    background-color: rgba(255,255,255,.3);
+    overflow-x: hidden;
+    transition: 0.5s;
+  }
+  
+  // .sidenav li{
+  //   margin-left: 20px;
+  // }
+
+ .sidenav-content-padding{
+  padding-left:10px;
+ }
+
+  .sidenav .title a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #f1f1f1;
+    display: block;
+    transition: 0.3s;
+  }
+  
+  .sidenav .title a:hover {
+
+    color: #818181;
+  }
+
+  @media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+  }
+
+
+
+  .title {
+    display: flex;
+    justify-content: space-between;
+    /*background-color: #2d95a0;*/
+    background-color: rgba(45,149,169,0.3);
+    width:100%;
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+
+  .title span{
+    margin-left: 20px;
+    color:white;
+    padding-top: 8px;
+  }
+
+
+ul, li {
+    list-style-type:none;
+}
+
+
+div.legend-item-title{
+  border-bottom:1px solid gray;
+}
+
+div.legend-item-title label{
+  font-size:18px;
+}
+
+div.legend-item-row-info-color{
+  height: 20px; width: 20px; 
+  display:inline-block;
+  border:1px solid black;
+}
+
+
+span.legend-item-row-info{
+  display:inline-block; 
+  vertical-align: top;
+  margin-left: 5px;
+}
