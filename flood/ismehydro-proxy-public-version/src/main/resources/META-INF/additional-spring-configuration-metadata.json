@@ -1,0 +1,72 @@
+{"properties": [
+  {
+    "name": "spring.security.oauth2.resourceserver.jwt.issuer-uri",
+    "type": "java.lang.String",
+    "description": "The issuer URI is used by Spring Security to locate the Json Web Key Set (JWKS) endpoint of the Curity Identity Server"
+  },
+  {
+    "name": "spring.security.oauth2.resourceserver.jwt.jwt-set-uri",
+    "type": "java.lang.String",
+    "description": "The URI for the JSON Web Key Set, used for signing tokens"
+  },
+  {
+    "name": "flood.simulation.url.param",
+    "type": "java.lang.String",
+    "description": "Flood simulation URL"
+  },
+  {
+    "name": "mailsender.api.param",
+    "type": "java.lang.String",
+    "description": "Send Mail URL"
+  },
+  {
+    "name": "token-mozaika-destinyearth-flood-api-url",
+    "type": "java.lang.String",
+    "description": "Flood API Token"
+  },
+  {
+    "name": "token-mozaika-destinyearth-send-mail",
+    "type": "java.lang.String",
+    "description": "Send Mail API Token"
+  },
+  {
+    "name": "token-mozaika-destinyearth-alerts-get",
+    "type": "java.lang.String",
+    "description": "Get Alert Service Token"
+  },
+  {
+    "name": "token-mozaika-destinyearth-alerts-add",
+    "type": "java.lang.String",
+    "description": "Add Alert Service Token"
+  },
+  {
+    "name": "token-mozaika-destinyearth-ismosede-get",
+    "type": "java.lang.String",
+    "description": "ISMOSEDE Service Token"
+  },
+  {
+    "name": "token-mozaika-destinyearth-ismehydro-get",
+    "type": "java.lang.String",
+    "description": "ISMEHYDRO Service Token"
+  },
+  {
+    "name": "alert.api.url.param",
+    "type": "java.lang.String",
+    "description": "Alert API URL'"
+  },
+  {
+    "name": "ismosede.api.url.param",
+    "type": "java.lang.String",
+    "description": "ISMOSEDE API URL"
+  },
+  {
+    "name": "ismehydro.api.url.param",
+    "type": "java.lang.String",
+    "description": "ISMEHYDRO API URL"
+  },
+  {
+    "name": "JASYPT_ENCRYPTOR_PASSWORD",
+    "type": "java.lang.String",
+    "description": "JASYPT DECRYPTOR PASSWORD"
+  }
+]}

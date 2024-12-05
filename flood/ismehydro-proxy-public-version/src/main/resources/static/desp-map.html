@@ -1,0 +1,320 @@
+<!--
+Copyright (c) 2024 Mozaika, Ltd.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+Variations
+
+Except as contained in this notice, the name of Mozaika, Ltd. shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Software without prior written authorization from Mozaika, Ltd.
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>ISMOSEDE</title>
+    <!----------------EXCLUDE---------------->
+    <link rel="stylesheet" href="css/dev.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <!--^^^^^^^^^^^^^^EXCLUDE^^^^^^^^^^^^^^-->
+    
+    <!-- <link rel="stylesheet" href="css/toastr.min.css"> -->
+    <link rel="stylesheet" href="dist/ol.css">
+    <link rel="stylesheet" href="coreui-icons/css/all.min.css">
+    <link rel="stylesheet" href="css/slider.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/controls.css">
+    <link rel="stylesheet" href="css/navigation.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<style>
+    .item {
+  display: flex; /* Make the buttons align horizontally */
+  gap: 10px; /* Add space between buttons */
+}
+
+.test {
+  background-color: #007BFF; /* Blue background */
+  color: white; /* Icon color */
+  font-size: 24px; /* Larger font size */
+  border: none; /* Remove borders */
+  border-radius: 8px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  display: flex; /* To center the icon */
+  align-items: center;
+  justify-content: center;
+  /* width: 60px; 
+  height: 60px; */
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+.test:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+.test i {
+  font-size: 28px; /* Adjust icon size */
+}
+</style>
+
+	<style>
+		.bottom-right-image {
+		position: absolute;
+		bottom: 10px; /* 10px padding from the bottom */
+		right: 10px;  /* 10px padding from the right */
+		z-index: 99999;
+	}
+
+	/* .slider {
+            width: 80%;
+        } */
+        .item {
+            margin-bottom: 1rem;
+        }
+        .item label {
+			color:white;
+            display: block;
+            margin-bottom: 0.5rem; /* Adjust this value to control the gap */
+        }
+        /* .date-picker {
+            width: 100%;
+        } */
+
+		.slider-menu {
+  display: block !important;
+  width: 80% !important;
+  height: 25px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider-menu:hover {
+  opacity: 1;
+}
+
+.slider-menu::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  background: #1504aa;
+  cursor: pointer;
+}
+
+.slider-menu::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  background: #1504aa;
+  cursor: pointer;
+}
+.date-picker{
+	width: 70%;
+}
+
+.slider-container {
+        display: inline-flex;
+        align-items: center;
+		/* width: 100%; */
+		width: 75%;
+    }
+
+	.slider-container span,
+	.item span{
+		color:white;
+	}
+
+    .slider-container input[type="range"] {
+        margin-right: 10px; /* Space between slider and the label */
+    }
+
+    .value-label {
+        white-space: nowrap; /* Prevent wrapping to the next line */
+    }
+	</style>
+	
+
+  </head>
+  <body>
+	<div style="position: relative; width: 0; height: 0">
+		<div id="slider-panel" style="display: none;"  class="slider">
+			<p id="rangeStart"></p>
+				<input type="range" min="0" max="100" value="0" id="time-slider" oninput="setSliderValue()">
+			<p id="rangeEnd"></p> 
+			<button onclick="toggleStartStop()"  id="play-pause"><i class="cil-media-play"></i></button>
+    	</div>
+	</div>
+	
+    <div id="wrapper">
+		<div id="spinner" ></div>
+		<!-- <div class="loader">Loading...</div> -->
+		<!-- Modal -->
+		<div class="modal fade" id="featuresModel" role="dialog"data-keyboard="false" data-backdrop="static" style="position:absolute;top:5%;left:5%;">
+			<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="dismiss();">
+						<span aria-hidden="true">×</span>
+					</button>
+				<h4 class="modal-title">Features</h4>
+				</div>
+				<div class="modal-body">
+					<ul id="MMAPFeatures" style="height: 200px; overflow: auto" onclick="setOkState();">
+						<label class="modal-separator">Fairway processing</label>
+						<li> <input type="checkbox" class="selectall" id="SSign" value="Sign" > <label for="SSign"> Sign</label>   </li>  
+						<li> <input type="checkbox" class="selectall" id="DDepth" value="Depth" > <label for="DDepth"> Depth</label>   </li>  
+						<li> <input type="checkbox" class="selectall" id="FFairway" value="Fairway" > <label for="FFairway"> Fairway</label>   </li>  
+						<li> <input type="checkbox" class="selectall" id="RRiverArea" value="RiverArea" > <label for="RRiverArea"> RiverArea</label>   </li>  
+						<li> <input type="checkbox" class="selectall" id="WWaterLevel" value="WaterLevel" > <label for="WWaterLevel"> WaterLevel</label>   </li>  
+						<li> <input type="checkbox" class="selectall" id="OObservationPost" value="ObservationPost" > <label for="OObservationPost"> ObservationPost</label>   </li>  
+						<li> <input type="checkbox" class="selectall" id="DDepthAtSign" value="DepthAtSign" > <label for="DDepthAtSign"> DepthAtSign</label>   </li>  
+						<li> <input type="checkbox" class="selectall" id="RRiverAreaLocation" value="RiverAreaLocation" > <label for="RRiverAreaLocation"> RiverAreaLocation</label>   </li> 
+						<li> <input type="checkbox" class="selectall" id="DDistanceCoast" value="DistanceCoast" > <label for="DDistanceCoast"> DistanceCoast</label>   </li>   
+						<label class="modal-separator">Satellites</label>
+						<li> <input type="checkbox" class="selectall" id="RReflectance" value="Reflectance" > <label for="RReflectance"> Reflectance</label>   </li>  	
+						<li> <input type="checkbox" class="selectall" id="SSoilMoisture" value="SoilMoisture" > <label for="SSoilMoisture"> SoilMoisture</label>   </li>  			
+						<li> <input type="checkbox" class="selectall" id="SSolarIrradiance" value="SolarIrradiance" > <label for="SSolarIrradiance"> SolarIrradiance</label>   </li>  
+						<li> <input type="checkbox" class="selectall" id="AAirTemperature" value="AirTemperature" > <label for="AAirTemperature"> AirTemperature</label>   </li>  
+						<li> <input type="checkbox" class="selectall" id="VVegetationIndex" value="VegetationIndex" > <label for="VVegetationIndex"> VegetationIndex</label>   </li>  	
+						<li> <input type="checkbox" class="selectall" id="SSkinTemperature" value="SkinTemperature" > <label for="SSkinTemperature"> SkinTemperature</label>   </li>  			
+						<li> <input type="checkbox" class="selectall" id="SSolidPrecipitation" value="SolidPrecipitation" > <label for="SSolidPrecipitation"> SolidPrecipitation</label>   </li>  
+						<li> <input type="checkbox" class="selectall" id="LLiquidPrecipitation" value="LiquidPrecipitation" > <label for="LLiquidPrecipitation"> LiquidPrecipitation</label>   </li> 	
+						
+						<label class="modal-separator">Objects</label>
+						<li> <input type="checkbox" class="selectall" id="Building" value="Building" > <label for="Building"> Building</label>   </li>  			
+						<li> <input type="checkbox" class="selectall" id="Road" value="Road" > <label for="Road"> Road</label>   </li>  
+						<li> <input type="checkbox" class="selectall" id="Forest" value="Forest" > <label for="Forest"> Forest</label>   </li> 	
+					</ul>
+					
+				</div>
+				<div class="modal-footer">
+				<button type="button" id="buttonWriteFeatures" class="btn btn-default" onclick="writeFeatures()" >OK</button>
+				</div>
+			</div>
+			
+			</div>
+		</div>
+	
+        <div id="map"> </div>
+		<!-- <a id="image-download" download="map.png"></a> -->
+		<div id="popup" class="ol-popup">
+			<div id="popup-content"></div>
+		  </div>
+		<!-- <div rel="tooltip" title="Your Title" data-placement=" " id="info"></div> -->
+          <div id="mySidenav" class="sidenav">
+              <h2 class="title">
+                <span id="navTitle"> </span>
+                <a href="javascript:void(0)" onclick="closeNav()">&times;</a>
+              </h2>
+			  <div class="sidenav-content-padding">
+				<div id="legend"></div>
+				<div id="layers"></div>
+				<div id="basemaps">
+					<ul id="basemapList">
+						<li  class="selected_basemap"><img  onclick="selectBasemap(this);" src="images/imagery.jpeg"><label>Imagery</label></li>
+						<li><img onclick="selectBasemap(this);" src="images/osm.jpeg"> <label>OpenStreetMap</label> </li>
+					</ul>
+				</div>
+
+				<div id="flood">
+
+					<div class="item">
+						<label style="padding-right: 12px;" for="water_level">Water level</label>
+						<div class="slider-container">
+							<input type="range" id="water_level" class="slider-menu" min="0" max="100000" step="500" value="500" oninput="updateLabel(this.value)">
+							<!-- <input type="range" id="water_level" class="slider-menu" min="0" max="100" value="50" oninput="updateLabel(this.value)"> -->
+							<span id="water_level_value">500 cm</span>
+						</div>
+					</div>
+
+					<!-- <div class="item">
+						<label for="precipitation">Precipitation</label>
+						<div class="slider-container">
+							<input type="range" id="precipitation" class="slider-menu" min="0" max="100" value="50" oninput="updateLabel2(this.value)">
+							<span id="precipitation_value">50 mm</span>
+						</div>
+					</div> -->
+
+					<div class="item">
+						<label for="datepicker">Select a Date</label>
+						<input type="text" id="datepicker" class="date-picker">
+					</div>
+
+					    <!-- Custom Button for Drawing a Rectangle -->
+					<div class="item">
+						<!-- <button class="test" id="drawRectangleButton"><i class="cil-media-stop"></i></button> -->
+						<button class="test" id="drawPointButton"><i class="cil-media-record"></i></button>
+						<span id="rectangle-coordinates"></span>
+					</div>
+
+					<div class="item">
+						<span id="point-coordinates"></span>
+						<span style="color:white;" id="building"></span>
+						<span style="color:white;" id="road"></span>
+						<span style="color:white;" id="forest"></span>
+					</div>
+					<button class="test" style="width: 200px;" id="simulation">Run simulation</button>
+				</div>
+			  </div>
+          </div>
+		 
+    </div>
+	<img id="alert" src="images/alert.png" title="Rositsa, 2023-09-04, flood
+Extent amount : 926 cm
+Deviation Amount : 74 cm">
+	<img src="images/logo.png" alt="Bottom Right Image" class="bottom-right-image">
+    <!----------------EXCLUDE---------------->
+    <!-- <script src="js/jquery-3.6.0.min.js"></script> -->
+
+	<!-- Include Flatpickr JS -->
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+	<script>
+		// Initialize the date picker
+		flatpickr("#datepicker", {
+		dateFormat: "Y-m-d",
+		});
+		function setDefaultDate() {
+            const formattedDate = new Date().toISOString().split('T')[0]; // Format to YYYY-MM-DD
+            document.getElementById('datepicker').value = formattedDate;
+        }
+
+        // Set the default date when the page loads
+        window.onload = setDefaultDate;
+
+		function updateLabel(value) {
+        	document.getElementById("water_level_value").textContent = value + " cm";
+    	}
+		function updateLabel2(value) {
+        	document.getElementById("precipitation_value").textContent = value + " mm";
+    	}
+	</script>
+
+    <script src="js/jquery.min.js"></script>
+	
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <!--^^^^^^^^^^^^^^EXCLUDE^^^^^^^^^^^^^^-->
+    <!-- <script src="js/toastr.min.js"></script> -->
+    <script src="dist/ol.js"></script>
+    <script src="js/constants.js"></script>
+    <script src="js/globals.js"></script>
+	<script src="js/custom_features.js"></script>
+	<script src="js/slider.js"></script>
+    <script src="js/shared.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/control-utils.js"></script>
+    <script src="js/control.js"></script>
+    <script src="js/map-utils.js"></script>
+    <script src="js/map.js"></script>
+    
+  </body>
+</html>
+
+<!--
+  https://uxplanet.org/how-to-create-a-range-slider-using-html-css-6112fe9346e4
+-->
