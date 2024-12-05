@@ -135,46 +135,6 @@ const Map = () => {
 
   const basePath = process.env.BASEPATH || "";
 
-  // const memoizedToggleDrawer = useCallback(() => {
-  //   if (isDrawerOpen) {
-  //     setIsDrawerOpen(false);
-  //     setShowOpenButton(false);
-  //     setTimeout(() => {
-  //       setShowOpenButton(true);
-  //     }, 200);
-  //   } else {
-  //     setIsDrawerOpen(true);
-  //   }
-  // }, [isDrawerOpen]);
-
-  // const memoizedHandleConfidenceChange = useCallback((level: string) => {
-  //   setConfidenceLevel(level);
-  //   setSelectedSSP("");
-  //   setShowOverlayLayer(false);
-  // }, []);
-
-  // const memoizedHandleStormSurgeChange = useCallback((value: number) => {
-  //   setStormSurge(value);
-  //   setShowOverlayLayer(false);
-  // }, []);
-
-  // const memoizedHandleYearChange = useCallback((year: string) => {
-  //   setSelectedYear(year);
-  //   setShowOverlayLayer(false);
-  // }, []);
-
-  // const wmsParams = useMemo(
-  //   () => ({
-  //     time: `${selectedYear}-12-31T00:00:00Z,${selectedYear}-12-31T23:59:59Z`,
-  //     bbox: "44.20,11.73,45.94,14.18",
-  //     token: "bf12d6193efa667283ee9643951acfaa",
-  //     ssp: selectedSSP,
-  //     confidence: confidenceLevel.toLowerCase(),
-  //     stormSurge: formatStormSurge(stormSurge),
-  //   }),
-  //   [selectedYear, selectedSSP, confidenceLevel, stormSurge]
-  // );
-
   const createApiPayload = (coordinates: number[][][]): AreaRequestPayload => {
     return {
       geometry: {
@@ -525,7 +485,7 @@ const Map = () => {
                 const units: Record<string, string> = {
                   GHS_POP_E2020_GLOBE: "", // No unit for population
                   GHS_BUILT_S_E2020_GLOBE: "m²",
-                  cereals: "m²",
+                  cereals: "ha",
                 };
 
                 const icons: Record<string, string> = {
