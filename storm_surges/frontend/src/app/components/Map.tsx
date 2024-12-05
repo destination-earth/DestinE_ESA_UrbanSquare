@@ -510,6 +510,7 @@ const Map = () => {
           >
             Exposure Assessment
           </h3>
+          {/* <Image src={`${basePath}/info.svg`} alt="ADAM Logo" width="24" height="24" /> */}
 
           {apiResponse ? (
             <div className="mt-6">

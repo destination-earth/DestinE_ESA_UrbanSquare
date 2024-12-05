@@ -147,7 +147,7 @@ const CachedWMSLayer = ({
         }
       }
     };
-  }, [map, url, isInitialLoad, onLoading, onLoad, opacity]);
+  }, [map, url, isInitialLoad]);
 
   return null;
 };
