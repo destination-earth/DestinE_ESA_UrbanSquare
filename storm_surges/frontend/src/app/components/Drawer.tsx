@@ -254,7 +254,7 @@ const Drawer: React.FC<DrawerProps> = ({
 
             {/* Column 3 */}
             <DrawerSection
-              title="Storm Surge"
+              title="Storm Surge (m)"
               style={{ flex: "1", minWidth: "200px", paddingLeft: "1rem" }}
             >
               <div className="flex  items-start ml-7">

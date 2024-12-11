@@ -854,16 +854,17 @@ const Map = () => {
                     justifyContent: "space-between",
                     alignItems: "center",
                     marginBottom: "10px",
+                    gap: "10px",
                   }}
                 >
-                  <div
+                  {/* <div
                     style={{
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-evenly",
                       width: "100%",
                     }}
-                  >
+                  > */}
                     <div
                       style={{
                         flex: 1,
@@ -901,6 +902,7 @@ const Map = () => {
                         style={{
                           color: "white",
                           cursor: isChartLoading ? "not-allowed" : "pointer",
+                          whiteSpace: "nowrap",
                         }}
                       >
                         <input
@@ -912,7 +914,7 @@ const Map = () => {
                           onChange={(e) => setSelectedOption(e.target.value)}
                           disabled={isChartLoading}
                         />
-                        Storm Surge
+                        Storm Surge (m)
                       </label>
                     </div>
 
@@ -941,7 +943,7 @@ const Map = () => {
                         Year
                       </label>
                     </div>
-                  </div>
+                  {/* </div> */}
                   {/* This is the Generate button inside the panel, unchanged */}
                   <CoolButton
                     isChartLoading={isChartLoading}
@@ -989,19 +991,22 @@ const Map = () => {
 
                     chartData.forEach((item: any) => {
                       let labelValue = "";
+                    
                       if (displayedOption === "ssp") {
                         labelValue = item.ssp;
                       } else if (displayedOption === "storm") {
-                        labelValue = item.storm_surge;
+                        // Convert "0_0", "0_5", etc., to "0", "0.5", etc.
+                        labelValue = item.storm_surge.replace("_", ".").replace(/\.0$/, ""); // Removes ".0" for integers like "1.0"
                       } else if (displayedOption === "years") {
                         labelValue = String(item.year);
                       }
-
+                    
                       labels.push(labelValue);
                       popValues.push(item.result.GHS_POP_E2020_GLOBE);
                       urbanValues.push(item.result.GHS_BUILT_S_E2020_GLOBE);
                       cerealsValues.push(item.result.cereals);
                     });
+                    
 
                     const baseChartOptions = {
                       responsive: true,
