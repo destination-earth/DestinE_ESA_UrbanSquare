@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useRef } from "react";
 import { FeatureGroup, MapContainer, TileLayer } from "react-leaflet";
 import L, { LatLngExpression, LatLngBounds } from "leaflet";
 import Drawer from "./Drawer";
@@ -10,6 +10,26 @@ import CachedWMSLayer from "./CachedWMSLayer";
 import { EditControl } from "react-leaflet-draw";
 import "leaflet-draw/dist/leaflet.draw.css";
 import "leaflet/dist/leaflet.css";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import Modal from "./Modal";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const customDrawControlStyles = `
   .leaflet-draw-toolbar {
@@ -32,7 +52,72 @@ interface AreaRequestPayload {
   ssp: string;
   confidence: string;
   storm_surge: string;
-  year: number;
+  year: number | string;
+}
+
+function CoolButton({
+  isChartLoading,
+  onClick,
+}: {
+  isChartLoading: boolean;
+  onClick: () => void;
+}) {
+  const [isHovered, setIsHovered] = useState(false);
+  const [isActive, setIsActive] = useState(false);
+
+  const baseStyle: React.CSSProperties = {
+    backgroundColor: isChartLoading ? "#999" : "#F76501",
+    color: "white",
+    border: "none",
+    borderRadius: "4px",
+    padding: "7px 13px",
+    cursor: isChartLoading ? "not-allowed" : "pointer",
+    fontSize: "13px",
+    fontWeight: "bold",
+    transition: "all 0.2s ease",
+  };
+
+  const hoverStyle: React.CSSProperties =
+    isHovered && !isChartLoading
+      ? {
+          transform: "scale(1.05)",
+          boxShadow: "0 4px 10px rgba(247,101,1,0.4)",
+        }
+      : {};
+
+  const activeStyle: React.CSSProperties =
+    isActive && !isChartLoading
+      ? {
+          transform: "scale(0.95)",
+          boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
+        }
+      : {};
+
+  const combinedStyle = {
+    ...baseStyle,
+    ...hoverStyle,
+    ...activeStyle,
+  };
+
+  const handleClick = () => {
+    if (!isChartLoading) {
+      setIsActive(true);
+      setTimeout(() => setIsActive(false), 100);
+      onClick();
+    }
+  };
+
+  return (
+    <button
+      style={combinedStyle}
+      onClick={handleClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      disabled={isChartLoading}
+    >
+      Generate
+    </button>
+  );
 }
 
 const Map = () => {
@@ -50,6 +135,7 @@ const Map = () => {
   const [selectedYear, setSelectedYear] = useState("2150");
   const [stormSurge, setStormSurge] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [isAnalysisLoading, setIsAnalysisLoading] = useState(false);
   const [showLegend, setShowLegend] = useState(false);
   const [isDrawingMode, setIsDrawingMode] = useState(false);
   const [apiResponse, setApiResponse] = useState<any>(null);
@@ -57,50 +143,52 @@ const Map = () => {
   const [isSideWindowOpen, setIsSideWindowOpen] = useState(false);
   const [hasFetchedData, setHasFetchedData] = useState(false);
 
+  // Track if the analysis is complete
+  const [analysisComplete, setAnalysisComplete] = useState(false);
+
+  // Chart related states
+  const [selectedOption, setSelectedOption] = useState("ssp");
+  const [displayedOption, setDisplayedOption] =
+    useState<string>(selectedOption);
+
+  const [drawnPolygons, setDrawnPolygons] = useState<number[][][][]>([]);
+  const [chartData, setChartData] = useState<any>(null);
+  const [isChartLoading, setIsChartLoading] = useState(false);
+
+  // Modal states for info icons
+  const [isExposureModalOpen, setIsExposureModalOpen] = useState(false);
+  const [isStatModalOpen, setIsStatModalOpen] = useState(false);
+
+  // Refs for charts to enable downloading
+  const populationRef = useRef<any>(null);
+  const urbanRef = useRef<any>(null);
+  const cerealsRef = useRef<any>(null);
+
   const formatCoordinates = (leafletLatLngs: L.LatLng[][]): number[][][] => {
     return leafletLatLngs.map((ring) => {
-      // Ensure correct [lng, lat] format
       let coordinates = ring.map((coord) => [coord.lng, coord.lat]);
+      const minLng = Math.min(...coordinates.map((point) => point[0]));
+      const maxLng = Math.max(...coordinates.map((point) => point[0]));
+      const minLat = Math.min(...coordinates.map((point) => point[1]));
+      const maxLat = Math.max(...coordinates.map((point) => point[1]));
 
-      console.log(
-        "Initial coordinates (lng, lat):",
-        JSON.stringify(coordinates)
-      );
-
-      // Find min/max bounds
-      const minLng = Math.min(...coordinates.map((point) => point[0])); // Min longitude
-      const maxLng = Math.max(...coordinates.map((point) => point[0])); // Max longitude
-      const minLat = Math.min(...coordinates.map((point) => point[1])); // Min latitude
-      const maxLat = Math.max(...coordinates.map((point) => point[1])); // Max latitude
-
-      // Reorder points: Bottom-left → Bottom-right → Top-right → Top-left → Bottom-left
       coordinates = [
-        [minLng, minLat], // Bottom-left
-        [maxLng, minLat], // Bottom-right
-        [maxLng, maxLat], // Top-right
-        [minLng, maxLat], // Top-left
-        [minLng, minLat], // Close the polygon (Bottom-left)
+        [minLng, minLat],
+        [maxLng, minLat],
+        [maxLng, maxLat],
+        [minLng, maxLat],
+        [minLng, minLat],
       ];
-
-      console.log(
-        "Reordered coordinates (rectangular format):",
-        JSON.stringify(coordinates)
-      );
-
-      return coordinates; // Return as a single array (number[][])
+      return coordinates;
     });
   };
 
-  const toggleLayer = () => {
-    setUseDefaultLayer(!useDefaultLayer);
-  };
+  const toggleLayer = () => setUseDefaultLayer(!useDefaultLayer);
 
   const toggleOverlayLayer = () => {
     setIsLoading(true);
     setShowOverlayLayer((prev) => {
-      if (!prev) {
-        setIsLoading(true);
-      }
+      if (!prev) setIsLoading(true);
       return !prev;
     });
   };
@@ -129,9 +217,12 @@ const Map = () => {
     }
   }, [showOverlayLayer]);
 
-  const toggleLegend = () => {
-    setShowLegend((prev) => !prev);
-  };
+  // Reset analysisComplete when parameters change or polygon changes
+  useEffect(() => {
+    setAnalysisComplete(false);
+  }, [selectedSSP, confidenceLevel, stormSurge, selectedYear, drawnPolygons]);
+
+  const toggleLegend = () => setShowLegend((prev) => !prev);
 
   const basePath = process.env.BASEPATH || "";
 
@@ -150,13 +241,12 @@ const Map = () => {
 
   const fetchAreaData = async (formattedCoords: number[][][]) => {
     try {
+      const apiUrl = `${basePath}/api/area`;
       const payload = createApiPayload(formattedCoords);
-      setIsLoading(true);
+      setIsAnalysisLoading(true);
       setApiError(null);
 
-      console.log("Final API payload:", payload);
-
-      const response = await fetch("/api/area", {
+      const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -174,35 +264,122 @@ const Map = () => {
       const data = await response.json();
       setApiResponse(data);
       setHasFetchedData(true);
+      setAnalysisComplete(true); // Analysis is now complete
       setIsSideWindowOpen(true);
     } catch (error) {
       setApiError(error instanceof Error ? error.message : "An error occurred");
     } finally {
-      setIsLoading(false);
+      setIsAnalysisLoading(false);
     }
   };
 
   const handleDrawCreated = (e: any) => {
     const { layer } = e;
-
-    console.log("Raw Leaflet coordinates:", layer.getLatLngs());
-
     const leafletCoords = layer.getLatLngs();
     const formattedCoords = formatCoordinates(leafletCoords);
-    console.log("Formatted coordinates:", formattedCoords);
-
-    fetchAreaData(formattedCoords);
+    // Store polygon, reset analysisComplete
+    setDrawnPolygons([formattedCoords]);
+    setAnalysisComplete(false);
   };
 
-  const toggleSideWindow = () => {
-    if (hasFetchedData) {
-      setIsSideWindowOpen((prev) => !prev); // Toggle visibility only if data has been fetched
+  // This is the "Run Analysis" or "Open" button logic
+  const handleWindowButtonClick = async () => {
+    if (!analysisComplete) {
+      // If analysis is not complete, we treat this button as "Run Analysis"
+      if (drawnPolygons.length === 0) {
+        alert("Please draw a polygon first before running the analysis.");
+        return;
+      }
+      if (drawnPolygons.length > 1) {
+        alert("Please only draw one polygon at a time for the analysis.");
+        return;
+      }
+
+      // If exactly one polygon is drawn, fetch area data
+      const formattedCoords = drawnPolygons[0];
+      await fetchAreaData(formattedCoords);
+    } else {
+      // If analysis is complete, the button acts as "Open" to reopen the side panel
+      if (!apiResponse) {
+        alert("No data available. Please run the analysis first.");
+        return;
+      }
+      setIsSideWindowOpen(true);
     }
   };
 
-  const closeSideWindow = () => {
-    setIsSideWindowOpen(false);
+  const handleGenerate = async () => {
+    if (!hasFetchedData) {
+      alert("Please run the analysis first before generating charts.");
+      return;
+    }
+
+    let sspToSend = selectedSSP || "ssp126";
+    let stormToSend = formatStormSurge(stormSurge);
+    let yearToSend: number | string = parseInt(selectedYear);
+
+    if (selectedOption === "ssp") {
+      sspToSend = "all";
+    } else if (selectedOption === "storm") {
+      stormToSend = "all";
+    } else if (selectedOption === "years") {
+      yearToSend = "all";
+    }
+
+    try {
+      setIsChartLoading(true);
+      const apiUrl = `${basePath}/api/chartApi`;
+      const payload = {
+        geometry: {
+          type: "Polygon",
+          coordinates: drawnPolygons[0], // the single polygon
+        },
+        ssp: sspToSend,
+        confidence: confidenceLevel.toLowerCase(),
+        storm_surge: stormToSend,
+        year: yearToSend,
+      };
+
+      const res = await fetch(apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        throw new Error(`Request failed with status ${res.status}`);
+      }
+
+      const data = await res.json();
+      console.log("Response from /chartApi:", data);
+      setChartData(data);
+      setDisplayedOption(selectedOption);
+    } catch (err) {
+      console.error("Error calling /chartApi:", err);
+    } finally {
+      setIsChartLoading(false);
+    }
   };
+
+  const openExposureModal = () => setIsExposureModalOpen(true);
+  const closeExposureModal = () => setIsExposureModalOpen(false);
+
+  const openStatModal = () => setIsStatModalOpen(true);
+  const closeStatModal = () => setIsStatModalOpen(false);
+
+  const downloadChart = (chartRef: React.RefObject<any>, filename: string) => {
+    if (!chartRef.current) return;
+    const url = chartRef.current.toBase64Image();
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.click();
+  };
+
+  const [isHovered, setIsHovered] = useState(false);
+
+  // Decide what the main button text should be: "Run Analysis" if no analysis complete, otherwise "Open"
+  const windowButtonText = analysisComplete ? "Open" : "Run Analysis";
 
   return (
     <div className="relative flex-1">
@@ -222,7 +399,6 @@ const Map = () => {
         isLoading={isLoading}
         toggleOverlayLayer={toggleOverlayLayer}
       />
-
       {showOpenButton && (
         <button
           onClick={toggleDrawer}
@@ -249,6 +425,7 @@ const Map = () => {
           />
         </button>
       )}
+
       <MapContainer
         center={center}
         zoom={5.2795}
@@ -316,6 +493,8 @@ const Map = () => {
           )}
         </FeatureGroup>
       </MapContainer>
+
+      {/* Toggle layer, polygon drawing, and legend buttons unchanged */}
       <button
         className="leaflet-control-custom"
         onClick={toggleLayer}
@@ -380,6 +559,74 @@ const Map = () => {
       >
         <Image src={`${basePath}/info.svg`} alt="Info" width="21" height="21" />
       </button>
+
+      {/* This button now toggles between "Run Analysis" and "Open" */}
+      <button
+        onClick={handleWindowButtonClick}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className="leaflet-control-custom"
+        style={{
+          position: "fixed",
+          top: "270px",
+          right: "10px",
+          background: "white",
+          color: "black",
+          border: "1px solid black",
+          borderRadius: "5px",
+          padding: "5px",
+          cursor: isAnalysisLoading ? "wait" : "pointer", // Cursor indicates loading
+          zIndex: 1000,
+          display: "flex",
+          alignItems: "center",
+          transition: "width 0.3s ease, padding 0.3s ease",
+          overflow: "hidden",
+          whiteSpace: "nowrap",
+          width: isHovered ? "120px" : "40px",
+          justifyContent: isHovered ? "flex-start" : "center",
+        }}
+      >
+        <Image
+          src={`${basePath}/chartWindow.svg`}
+          alt="Chart Window"
+          width="21"
+          height="21"
+        />
+        {/* If hovered, show text */}
+        {isHovered && (
+          <span
+            style={{ marginLeft: "5px", fontSize: "13px", fontWeight: "bold" }}
+          >
+            {windowButtonText}
+          </span>
+        )}
+        {/* If analysis is not complete and loading is true, show a small spinner */}
+        {!analysisComplete && isAnalysisLoading && (
+          <div
+            style={{
+              marginLeft: "5px",
+              width: "16px",
+              height: "16px",
+              border: "2px solid #ff8400",
+              borderTop: "2px solid #FDD900",
+              borderRadius: "50%",
+              animation: "spin 1s linear infinite",
+            }}
+          ></div>
+        )}
+
+        <style jsx>{`
+          @keyframes spin {
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg);
+            }
+          }
+        `}</style>
+      </button>
+
       {showLegend && (
         <div
           style={{
@@ -424,58 +671,90 @@ const Map = () => {
           </div>
         </div>
       )}
+
       {isSideWindowOpen ? (
-        <div
-          style={{
-            position: "fixed",
-            top: "60px",
-            bottom: "36.1667px",
-            right: 0,
-            width: "25%",
-            backgroundColor: "#0D1527",
-            boxShadow: "-2px 0 5px rgba(0, 0, 0, 0.3)",
-            zIndex: 1000,
-            padding: "20px",
-            overflowY: "auto",
-            color: "white",
-            borderLeft: "3px solid transparent", // Reserve space for gradient border
-            borderImage: "linear-gradient(to bottom, #F76501, yellow) 1", // Gradient border
-            fontSize: "14px",
-          }}
-        >
+        <div className="responsive-sidebar">
+          <style jsx>{`
+            .responsive-sidebar {
+              position: fixed;
+              top: 60px;
+              bottom: 36.1667px;
+              right: 0;
+              width: 25vw;
+              background-color: #0d1527;
+              box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
+              z-index: 1000;
+              padding: 20px;
+              overflow-y: auto;
+              color: white;
+              border-left: 3px solid transparent;
+              border-image: linear-gradient(to bottom, #f76501, yellow) 1;
+              font-size: 14px;
+            }
+
+            @media (max-width: 600px) {
+              .responsive-sidebar {
+                width: 100vw;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                top: auto;
+                height: 40vh;
+                border-left: none;
+                border-top: 3px solid transparent;
+                border-image: linear-gradient(to right, #f76501, yellow) 1;
+              }
+            }
+          `}</style>
           <button
             style={{
               position: "absolute",
               top: "10px",
               right: "10px",
-              // background: "gray",
               color: "white",
               border: "none",
               borderRadius: "5px",
               padding: "5px",
               cursor: "pointer",
             }}
-            onClick={toggleSideWindow}
+            onClick={() => setIsSideWindowOpen(false)}
           >
             ✖
           </button>
-          <h3
+
+          <div
             style={{
-              textAlign: "center", // Center the text horizontally
-              margin: "0 0 20px 0", // Adjust margin to space it nicely below the top
-              padding: "0", // Remove any extra padding
-              fontSize: "18px", // Set a consistent font size
-              fontWeight: "bold", // Use a bold font weight
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: "20px",
             }}
           >
-            Exposure Assessment
-          </h3>
-          {/* <Image src={`${basePath}/info.svg`} alt="ADAM Logo" width="24" height="24" /> */}
+            <h3
+              style={{
+                textAlign: "center",
+                margin: "0",
+                padding: "0",
+                fontSize: "18px",
+                fontWeight: "bold",
+                marginRight: "5px",
+              }}
+            >
+              Exposure Assessment
+            </h3>
+            <Image
+              src={`${basePath}/infoWhite.svg`}
+              alt="Info"
+              width="16"
+              height="16"
+              style={{ cursor: "pointer" }}
+              onClick={openExposureModal}
+            />
+          </div>
 
           {apiResponse ? (
             <div className="mt-6">
               {Object.entries(apiResponse).map(([key, value]) => {
-                // Define the mapping for human-readable names, units, and icon paths
                 const readableLabels: Record<string, string> = {
                   GHS_POP_E2020_GLOBE: "Population",
                   GHS_BUILT_S_E2020_GLOBE: "Urban Area Extent",
@@ -483,7 +762,7 @@ const Map = () => {
                 };
 
                 const units: Record<string, string> = {
-                  GHS_POP_E2020_GLOBE: "", // No unit for population
+                  GHS_POP_E2020_GLOBE: "",
                   GHS_BUILT_S_E2020_GLOBE: "m²",
                   cereals: "ha",
                 };
@@ -494,7 +773,7 @@ const Map = () => {
                   cereals: `${basePath}/wheat2.svg`,
                 };
 
-                const label = readableLabels[key] || key; // Default to the key if no mapping exists
+                const label = readableLabels[key] || key;
                 const unit = units[key] || "";
                 const iconPath = icons[key];
 
@@ -509,45 +788,403 @@ const Map = () => {
                   >
                     {iconPath && (
                       <Image
-                      src={iconPath}
-                      alt={`${label} icon`}
-                      width={24}
-                      height={24}
-                      style={{
-                        marginRight: "10px",
-                      }}
-                    />
+                        src={iconPath}
+                        alt={`${label} icon`}
+                        width={24}
+                        height={24}
+                        style={{ marginRight: "10px" }}
+                      />
                     )}
                     <strong>{label}</strong>: {` ${String(value)}`} {unit}
                   </div>
                 );
               })}
+              <div
+                style={{
+                  marginBottom: "20px",
+                  backgroundColor: "#1A2238",
+                  borderRadius: "5px",
+                  padding: "10px",
+                  textAlign: "center",
+                  position: "relative",
+                  minHeight: "50px",
+                  paddingBottom: "30px",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginBottom: "10px",
+                  }}
+                >
+                  <h4
+                    style={{
+                      color: "white",
+                      margin: "0",
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      marginRight: "5px",
+                    }}
+                  >
+                    Statistical Analysis
+                  </h4>
+                  <Image
+                    src={`${basePath}/infoWhite.svg`}
+                    alt="Info"
+                    width="16"
+                    height="16"
+                    style={{ cursor: "pointer" }}
+                    onClick={openStatModal}
+                  />
+                </div>
+                <p
+                  style={{
+                    color: "#ccc",
+                    fontSize: "12px",
+                    marginBottom: "10px",
+                  }}
+                >
+                  Select variable of interest
+                </p>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "10px",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-evenly",
+                      width: "100%",
+                    }}
+                  >
+                    <div
+                      style={{
+                        flex: 1,
+                        display: "flex",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <label
+                        style={{
+                          color: "white",
+                          cursor: isChartLoading ? "not-allowed" : "pointer",
+                        }}
+                      >
+                        <input
+                          type="radio"
+                          name="chartOption"
+                          value="ssp"
+                          style={{ marginRight: "5px" }}
+                          checked={selectedOption === "ssp"}
+                          onChange={(e) => setSelectedOption(e.target.value)}
+                          disabled={isChartLoading}
+                        />
+                        SSP
+                      </label>
+                    </div>
+
+                    <div
+                      style={{
+                        flex: 1,
+                        display: "flex",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <label
+                        style={{
+                          color: "white",
+                          cursor: isChartLoading ? "not-allowed" : "pointer",
+                        }}
+                      >
+                        <input
+                          type="radio"
+                          name="chartOption"
+                          value="storm"
+                          style={{ marginRight: "5px" }}
+                          checked={selectedOption === "storm"}
+                          onChange={(e) => setSelectedOption(e.target.value)}
+                          disabled={isChartLoading}
+                        />
+                        Storm Surge
+                      </label>
+                    </div>
+
+                    <div
+                      style={{
+                        flex: 1,
+                        display: "flex",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <label
+                        style={{
+                          color: "white",
+                          cursor: isChartLoading ? "not-allowed" : "pointer",
+                        }}
+                      >
+                        <input
+                          type="radio"
+                          name="chartOption"
+                          value="years"
+                          style={{ marginRight: "5px" }}
+                          checked={selectedOption === "years"}
+                          onChange={(e) => setSelectedOption(e.target.value)}
+                          disabled={isChartLoading}
+                        />
+                        Year
+                      </label>
+                    </div>
+                  </div>
+                  {/* This is the Generate button inside the panel, unchanged */}
+                  <CoolButton
+                    isChartLoading={isChartLoading}
+                    onClick={handleGenerate}
+                  />
+                </div>
+
+                {isChartLoading ? (
+                  <div
+                    style={{
+                      textAlign: "center",
+                      color: "white",
+                      margin: "20px 0",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "inline-block",
+                        width: "40px",
+                        height: "40px",
+                        border: "4px solid #f3f3f3",
+                        borderTop: "4px solid #F76501",
+                        borderRadius: "50%",
+                        animation: "spin 1s linear infinite",
+                      }}
+                    ></div>
+                    <style>{`
+                      @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                      }
+                    `}</style>
+                    <p style={{ marginTop: "10px", fontSize: "14px" }}>
+                      Loading charts...
+                    </p>
+                  </div>
+                ) : (
+                  chartData &&
+                  chartData.length > 0 &&
+                  (() => {
+                    let labels: string[] = [];
+                    let popValues: number[] = [];
+                    let urbanValues: number[] = [];
+                    let cerealsValues: number[] = [];
+
+                    chartData.forEach((item: any) => {
+                      let labelValue = "";
+                      if (displayedOption === "ssp") {
+                        labelValue = item.ssp;
+                      } else if (displayedOption === "storm") {
+                        labelValue = item.storm_surge;
+                      } else if (displayedOption === "years") {
+                        labelValue = String(item.year);
+                      }
+
+                      labels.push(labelValue);
+                      popValues.push(item.result.GHS_POP_E2020_GLOBE);
+                      urbanValues.push(item.result.GHS_BUILT_S_E2020_GLOBE);
+                      cerealsValues.push(item.result.cereals);
+                    });
+
+                    const baseChartOptions = {
+                      responsive: true,
+                      plugins: {
+                        legend: { labels: { color: "white" } },
+                        title: { display: false, color: "white" },
+                      },
+                      scales: {
+                        x: {
+                          ticks: { color: "white" },
+                          grid: { color: "#555" },
+                        },
+                        y: {
+                          ticks: { color: "white" },
+                          grid: { color: "#555" },
+                        },
+                      },
+                    };
+
+                    const populationData = {
+                      labels,
+                      datasets: [
+                        {
+                          label: "Population affected",
+                          data: popValues,
+                          backgroundColor: "#ED7D31",
+                        },
+                      ],
+                    };
+
+                    const urbanData = {
+                      labels,
+                      datasets: [
+                        {
+                          label: "Urban area affected (m²)",
+                          data: urbanValues,
+                          backgroundColor: "#4472C4",
+                        },
+                      ],
+                    };
+
+                    const cerealsData = {
+                      labels,
+                      datasets: [
+                        {
+                          label: "Agricultural area affected (ha)",
+                          data: cerealsValues,
+                          backgroundColor: "#70AD47",
+                        },
+                      ],
+                    };
+
+                    return (
+                      <div style={{ marginBottom: "20px" }}>
+                        <div style={{ marginBottom: "30px" }}>
+                          <Bar
+                            ref={populationRef}
+                            data={populationData}
+                            options={baseChartOptions}
+                          />
+                          <button
+                            style={{
+                              marginTop: "5px",
+                              backgroundColor: "#333",
+                              color: "white",
+                              border: "none",
+                              borderRadius: "4px",
+                              padding: "5px 10px",
+                              cursor: "pointer",
+                              fontSize: "12px",
+                            }}
+                            onClick={() =>
+                              downloadChart(
+                                populationRef,
+                                "population_chart.png"
+                              )
+                            }
+                          >
+                            Download Population Chart
+                          </button>
+                        </div>
+
+                        <div style={{ marginBottom: "30px" }}>
+                          <Bar
+                            ref={urbanRef}
+                            data={urbanData}
+                            options={baseChartOptions}
+                          />
+                          <button
+                            style={{
+                              marginTop: "5px",
+                              backgroundColor: "#333",
+                              color: "white",
+                              border: "none",
+                              borderRadius: "4px",
+                              padding: "5px 10px",
+                              cursor: "pointer",
+                              fontSize: "12px",
+                            }}
+                            onClick={() =>
+                              downloadChart(urbanRef, "urban_chart.png")
+                            }
+                          >
+                            Download Urban Chart
+                          </button>
+                        </div>
+
+                        <div>
+                          <Bar
+                            ref={cerealsRef}
+                            data={cerealsData}
+                            options={baseChartOptions}
+                          />
+                          <button
+                            style={{
+                              marginTop: "5px",
+                              backgroundColor: "#333",
+                              color: "white",
+                              border: "none",
+                              borderRadius: "4px",
+                              padding: "5px 10px",
+                              cursor: "pointer",
+                              fontSize: "12px",
+                            }}
+                            onClick={() =>
+                              downloadChart(cerealsRef, "cereals_chart.png")
+                            }
+                          >
+                            Download Agricultural Chart
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })()
+                )}
+              </div>
             </div>
           ) : (
             <p>Loading...</p>
           )}
         </div>
-      ) : (
-        apiResponse && (
-          <button
+      ) : null}
+
+      {isExposureModalOpen && (
+        <Modal onClose={closeExposureModal}>
+          <div
             style={{
-              position: "fixed",
-              top: "270px",
-              right: "10px",
-              background: "gray",
+              padding: "20px",
+              backgroundColor: "black",
               color: "white",
-              border: "none",
-              borderRadius: "5px",
-              padding: "10px 15px",
-              boxShadow: "0 2px 5px rgba(0, 0, 0, 0.3)",
-              cursor: "pointer",
-              zIndex: 1000,
             }}
-            onClick={toggleSideWindow}
           >
-            Open
-          </button>
-        )
+            <h3 style={{ marginTop: 0, fontWeight: "bold" }}>
+              Exposure Assessment
+            </h3>
+            <br />
+            <p>
+              The exposure assessment is generated after you draw a polygon and
+              run the analysis.
+            </p>
+          </div>
+        </Modal>
+      )}
+
+      {isStatModalOpen && (
+        <Modal onClose={closeStatModal}>
+          <div
+            style={{
+              padding: "20px",
+              backgroundColor: "black",
+              color: "white",
+            }}
+          >
+            <h3 style={{ marginTop: 0, fontWeight: "bold" }}>
+              Statistical Analysis
+            </h3>
+            <br />
+            <p>
+              The statistical analysis allows you to generate charts after
+              running the analysis.
+            </p>
+          </div>
+        </Modal>
       )}
     </div>
   );

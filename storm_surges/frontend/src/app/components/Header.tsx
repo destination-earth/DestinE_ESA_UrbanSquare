@@ -25,7 +25,7 @@ const Header = () => {
           style={{ marginRight: "1rem" }}
         />
         <h1 style={{ margin: 0 }}>
-          Destination Earth Urban Square - Global Inundation Risk Service
+          Destination Earth UrbanSquare - Global Inundation Risk Service
         </h1>
       </div>
       <div

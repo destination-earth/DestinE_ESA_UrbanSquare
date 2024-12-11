@@ -14,11 +14,13 @@
     "@emotion/styled": "^11.13.0",
     "@mui/material": "^5.16.5",
     "@types/leaflet-draw": "^1.0.11",
+    "chart.js": "^4.4.7",
     "leaflet": "^1.9.4",
     "leaflet-draw": "^1.0.4",
     "micromatch": "^4.0.8",
     "next": "14.2.5",
     "react": "^18",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18",
     "react-leaflet": "^4.2.1",
     "react-leaflet-draw": "^0.20.4"
