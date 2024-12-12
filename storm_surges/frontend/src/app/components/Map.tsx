@@ -158,6 +158,8 @@ const Map = () => {
   // Modal states for info icons
   const [isExposureModalOpen, setIsExposureModalOpen] = useState(false);
   const [isStatModalOpen, setIsStatModalOpen] = useState(false);
+  const [abortController, setAbortController] =
+    useState<AbortController | null>(null);
 
   // Refs for charts to enable downloading
   const populationRef = useRef<any>(null);
@@ -239,7 +241,10 @@ const Map = () => {
     };
   };
 
-  const fetchAreaData = async (formattedCoords: number[][][]) => {
+  const fetchAreaData = async (
+    formattedCoords: number[][][],
+    controller: AbortController
+  ) => {
     try {
       const apiUrl = `${basePath}/api/area`;
       const payload = createApiPayload(formattedCoords);
@@ -252,6 +257,7 @@ const Map = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
+        signal: controller.signal,
       });
 
       if (!response.ok) {
@@ -264,10 +270,19 @@ const Map = () => {
       const data = await response.json();
       setApiResponse(data);
       setHasFetchedData(true);
-      setAnalysisComplete(true); // Analysis is now complete
+      setAnalysisComplete(true);
       setIsSideWindowOpen(true);
     } catch (error) {
-      setApiError(error instanceof Error ? error.message : "An error occurred");
+      if (error instanceof Error) {
+        if (error.name === "AbortError") {
+          console.log("Fetch request canceled");
+        } else {
+          setApiError(error.message);
+        }
+      } else {
+        console.error("An unknown error occurred:", error);
+        setApiError("An unknown error occurred.");
+      }
     } finally {
       setIsAnalysisLoading(false);
     }
@@ -284,8 +299,16 @@ const Map = () => {
 
   // This is the "Run Analysis" or "Open" button logic
   const handleWindowButtonClick = async () => {
+    if (isAnalysisLoading) {
+      // If the API is loading, cancel the request
+      abortController?.abort();
+      setIsAnalysisLoading(false);
+      setAbortController(null);
+      return;
+    }
+  
     if (!analysisComplete) {
-      // If analysis is not complete, we treat this button as "Run Analysis"
+      // If analysis is not complete, treat this as "Run Analysis"
       if (drawnPolygons.length === 0) {
         alert("Please draw a polygon first before running the analysis.");
         return;
@@ -294,12 +317,30 @@ const Map = () => {
         alert("Please only draw one polygon at a time for the analysis.");
         return;
       }
-
+  
       // If exactly one polygon is drawn, fetch area data
       const formattedCoords = drawnPolygons[0];
-      await fetchAreaData(formattedCoords);
+      const controller = new AbortController(); 
+      setAbortController(controller); 
+  
+      try {
+        await fetchAreaData(formattedCoords, controller);
+      } catch (error) {
+        if (error instanceof Error) {
+          if (error.name === "AbortError") {
+            console.log("Fetch request canceled");
+          } else {
+            console.error("An error occurred:", error.message);
+          }
+        } else {
+          console.error("An unknown error occurred:", error);
+        }
+      } finally {
+        setAbortController(null);
+        setIsAnalysisLoading(false); // Ensure loading stops even if canceled
+      }
     } else {
-      // If analysis is complete, the button acts as "Open" to reopen the side panel
+      // If analysis is complete, act as "Open"
       if (!apiResponse) {
         alert("No data available. Please run the analysis first.");
         return;
@@ -307,6 +348,7 @@ const Map = () => {
       setIsSideWindowOpen(true);
     }
   };
+  
 
   const handleGenerate = async () => {
     if (!hasFetchedData) {
@@ -378,8 +420,11 @@ const Map = () => {
 
   const [isHovered, setIsHovered] = useState(false);
 
-  // Decide what the main button text should be: "Run Analysis" if no analysis complete, otherwise "Open"
-  const windowButtonText = analysisComplete ? "Open" : "Run Analysis";
+  const windowButtonText = isAnalysisLoading
+    ? "Stop/Cancel"
+    : analysisComplete
+    ? "Open"
+    : "Run Analysis";
 
   return (
     <div className="relative flex-1">
@@ -425,7 +470,6 @@ const Map = () => {
           />
         </button>
       )}
-
       <MapContainer
         center={center}
         zoom={5.2795}
@@ -493,8 +537,7 @@ const Map = () => {
           )}
         </FeatureGroup>
       </MapContainer>
-
-      {/* Toggle layer, polygon drawing, and legend buttons unchanged */}
+      {/* Toggle layer, polygon drawing, and legend buttons */}
       <button
         className="leaflet-control-custom"
         onClick={toggleLayer}
@@ -559,8 +602,6 @@ const Map = () => {
       >
         <Image src={`${basePath}/info.svg`} alt="Info" width="21" height="21" />
       </button>
-
-      {/* This button now toggles between "Run Analysis" and "Open" */}
       <button
         onClick={handleWindowButtonClick}
         onMouseEnter={() => setIsHovered(true)}
@@ -570,12 +611,12 @@ const Map = () => {
           position: "fixed",
           top: "270px",
           right: "10px",
-          background: "white",
-          color: "black",
+          background: isAnalysisLoading ? "#f44336" : "white", // Red for cancel button
+          color: isAnalysisLoading ? "white" : "black",
           border: "1px solid black",
           borderRadius: "5px",
           padding: "5px",
-          cursor: isAnalysisLoading ? "wait" : "pointer", // Cursor indicates loading
+          // cursor: isAnalysisLoading ? "pointer" : "wait",
           zIndex: 1000,
           display: "flex",
           alignItems: "center",
@@ -592,7 +633,6 @@ const Map = () => {
           width="21"
           height="21"
         />
-        {/* If hovered, show text */}
         {isHovered && (
           <span
             style={{ marginLeft: "5px", fontSize: "13px", fontWeight: "bold" }}
@@ -600,7 +640,6 @@ const Map = () => {
             {windowButtonText}
           </span>
         )}
-        {/* If analysis is not complete and loading is true, show a small spinner */}
         {!analysisComplete && isAnalysisLoading && (
           <div
             style={{
@@ -626,7 +665,7 @@ const Map = () => {
           }
         `}</style>
       </button>
-
+      ;
       {showLegend && (
         <div
           style={{
@@ -671,7 +710,6 @@ const Map = () => {
           </div>
         </div>
       )}
-
       {isSideWindowOpen ? (
         <div className="responsive-sidebar">
           <style jsx>{`
@@ -857,94 +895,86 @@ const Map = () => {
                     gap: "10px",
                   }}
                 >
-                  {/* <div
+                  <div
                     style={{
+                      flex: 1,
                       display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-evenly",
-                      width: "100%",
+                      justifyContent: "center",
                     }}
-                  > */}
-                    <div
+                  >
+                    <label
                       style={{
-                        flex: 1,
-                        display: "flex",
-                        justifyContent: "center",
+                        color: "white",
+                        cursor: isChartLoading ? "not-allowed" : "pointer",
                       }}
                     >
-                      <label
-                        style={{
-                          color: "white",
-                          cursor: isChartLoading ? "not-allowed" : "pointer",
-                        }}
-                      >
-                        <input
-                          type="radio"
-                          name="chartOption"
-                          value="ssp"
-                          style={{ marginRight: "5px" }}
-                          checked={selectedOption === "ssp"}
-                          onChange={(e) => setSelectedOption(e.target.value)}
-                          disabled={isChartLoading}
-                        />
-                        SSP
-                      </label>
-                    </div>
+                      <input
+                        type="radio"
+                        name="chartOption"
+                        value="ssp"
+                        style={{ marginRight: "5px" }}
+                        checked={selectedOption === "ssp"}
+                        onChange={(e) => setSelectedOption(e.target.value)}
+                        disabled={isChartLoading}
+                      />
+                      SSP
+                    </label>
+                  </div>
 
-                    <div
+                  <div
+                    style={{
+                      flex: 1,
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <label
                       style={{
-                        flex: 1,
-                        display: "flex",
-                        justifyContent: "center",
+                        color: "white",
+                        cursor: isChartLoading ? "not-allowed" : "pointer",
+                        whiteSpace: "nowrap",
                       }}
                     >
-                      <label
-                        style={{
-                          color: "white",
-                          cursor: isChartLoading ? "not-allowed" : "pointer",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        <input
-                          type="radio"
-                          name="chartOption"
-                          value="storm"
-                          style={{ marginRight: "5px" }}
-                          checked={selectedOption === "storm"}
-                          onChange={(e) => setSelectedOption(e.target.value)}
-                          disabled={isChartLoading}
-                        />
-                        Storm Surge (m)
-                      </label>
-                    </div>
+                      <input
+                        type="radio"
+                        name="chartOption"
+                        value="storm"
+                        style={{ marginRight: "5px" }}
+                        checked={selectedOption === "storm"}
+                        onChange={(e) => setSelectedOption(e.target.value)}
+                        disabled={isChartLoading}
+                      />
+                      Storm Surge (m)
+                    </label>
+                  </div>
 
-                    <div
+                  <div
+                    style={{
+                      flex: 1,
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <label
                       style={{
-                        flex: 1,
-                        display: "flex",
-                        justifyContent: "center",
+                        color: "white",
+                        cursor: isChartLoading ? "not-allowed" : "pointer",
                       }}
                     >
-                      <label
-                        style={{
-                          color: "white",
-                          cursor: isChartLoading ? "not-allowed" : "pointer",
-                        }}
-                      >
-                        <input
-                          type="radio"
-                          name="chartOption"
-                          value="years"
-                          style={{ marginRight: "5px" }}
-                          checked={selectedOption === "years"}
-                          onChange={(e) => setSelectedOption(e.target.value)}
-                          disabled={isChartLoading}
-                        />
-                        Year
-                      </label>
-                    </div>
+                      <input
+                        type="radio"
+                        name="chartOption"
+                        value="years"
+                        style={{ marginRight: "5px" }}
+                        checked={selectedOption === "years"}
+                        onChange={(e) => setSelectedOption(e.target.value)}
+                        disabled={isChartLoading}
+                      />
+                      Year
+                    </label>
+                  </div>
                   {/* </div> */}
-                  {/* This is the Generate button inside the panel, unchanged */}
+                  {/* This is the Generate button inside the panel*/}
                   <CoolButton
                     isChartLoading={isChartLoading}
                     onClick={handleGenerate}
@@ -991,22 +1021,23 @@ const Map = () => {
 
                     chartData.forEach((item: any) => {
                       let labelValue = "";
-                    
+
                       if (displayedOption === "ssp") {
                         labelValue = item.ssp;
                       } else if (displayedOption === "storm") {
                         // Convert "0_0", "0_5", etc., to "0", "0.5", etc.
-                        labelValue = item.storm_surge.replace("_", ".").replace(/\.0$/, ""); // Removes ".0" for integers like "1.0"
+                        labelValue = item.storm_surge
+                          .replace("_", ".")
+                          .replace(/\.0$/, ""); // Removes ".0" for integers like "1.0"
                       } else if (displayedOption === "years") {
                         labelValue = String(item.year);
                       }
-                    
+
                       labels.push(labelValue);
                       popValues.push(item.result.GHS_POP_E2020_GLOBE);
                       urbanValues.push(item.result.GHS_BUILT_S_E2020_GLOBE);
                       cerealsValues.push(item.result.cereals);
                     });
-                    
 
                     const baseChartOptions = {
                       responsive: true,
@@ -1149,7 +1180,6 @@ const Map = () => {
           )}
         </div>
       ) : null}
-
       {isExposureModalOpen && (
         <Modal onClose={closeExposureModal}>
           <div
@@ -1164,13 +1194,18 @@ const Map = () => {
             </h3>
             <br />
             <p>
-              The exposure assessment is generated after you draw a polygon and
-              run the analysis.
+              The exposure assessment is generated after drawing an area of
+              interest on the map using rectangle/polygon buttons the area of
+              interest. The values for population and urban area exposure are
+              derived from the Copernicus Global Human Settlement products for
+              population and built-up surface areas. The values for affected
+              cultivated areas are derived from the WorldCereal product from
+              ESA, and they include second maize, spring cereal and winter
+              cereal.
             </p>
           </div>
         </Modal>
       )}
-
       {isStatModalOpen && (
         <Modal onClose={closeStatModal}>
           <div
@@ -1185,8 +1220,10 @@ const Map = () => {
             </h3>
             <br />
             <p>
-              The statistical analysis allows you to generate charts after
-              running the analysis.
+              The statistical analysis function allows to generate an impact
+              assessment overview for the area of interest and therefore
+              investigate the changes over time as well as in terms of SSP and
+              increasing storm surge heights.
             </p>
           </div>
         </Modal>
