@@ -58,27 +58,29 @@ interface AreaRequestPayload {
 function CoolButton({
   isChartLoading,
   onClick,
+  onCancel,
 }: {
   isChartLoading: boolean;
   onClick: () => void;
+  onCancel: () => void;
 }) {
   const [isHovered, setIsHovered] = useState(false);
   const [isActive, setIsActive] = useState(false);
 
   const baseStyle: React.CSSProperties = {
-    backgroundColor: isChartLoading ? "#999" : "#F76501",
+    backgroundColor: isChartLoading ? "#f44336" : "#F76501", // Red when loading
     color: "white",
     border: "none",
     borderRadius: "4px",
     padding: "7px 13px",
-    cursor: isChartLoading ? "not-allowed" : "pointer",
+    cursor: "pointer",
     fontSize: "13px",
     fontWeight: "bold",
     transition: "all 0.2s ease",
   };
 
   const hoverStyle: React.CSSProperties =
-    isHovered && !isChartLoading
+    isHovered && !isActive
       ? {
           transform: "scale(1.05)",
           boxShadow: "0 4px 10px rgba(247,101,1,0.4)",
@@ -86,7 +88,7 @@ function CoolButton({
       : {};
 
   const activeStyle: React.CSSProperties =
-    isActive && !isChartLoading
+    isActive
       ? {
           transform: "scale(0.95)",
           boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
@@ -100,10 +102,12 @@ function CoolButton({
   };
 
   const handleClick = () => {
-    if (!isChartLoading) {
+    if (isChartLoading) {
+      onCancel(); // Trigger the cancel behavior
+    } else {
       setIsActive(true);
       setTimeout(() => setIsActive(false), 100);
-      onClick();
+      onClick(); // Trigger the API call
     }
   };
 
@@ -113,12 +117,12 @@ function CoolButton({
       onClick={handleClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      disabled={isChartLoading}
     >
-      Generate
+      {isChartLoading ? "Cancel" : "Generate"}
     </button>
   );
 }
+
 
 const Map = () => {
   const center: LatLngExpression = [48.1074, 13.2275];
@@ -308,6 +312,8 @@ const Map = () => {
     }
   
     if (!analysisComplete) {
+      // Clear charts when starting a new analysis
+      setChartData(null);
       // If analysis is not complete, treat this as "Run Analysis"
       if (drawnPolygons.length === 0) {
         alert("Please draw a polygon first before running the analysis.");
@@ -351,15 +357,23 @@ const Map = () => {
   
 
   const handleGenerate = async () => {
+    if (isChartLoading) {
+      // Cancel the API call
+      abortController?.abort();
+      setAbortController(null);
+      setIsChartLoading(false);
+      return;
+    }
+  
     if (!hasFetchedData) {
       alert("Please run the analysis first before generating charts.");
       return;
     }
-
+  
     let sspToSend = selectedSSP || "ssp126";
     let stormToSend = formatStormSurge(stormSurge);
     let yearToSend: number | string = parseInt(selectedYear);
-
+  
     if (selectedOption === "ssp") {
       sspToSend = "all";
     } else if (selectedOption === "storm") {
@@ -367,7 +381,10 @@ const Map = () => {
     } else if (selectedOption === "years") {
       yearToSend = "all";
     }
-
+  
+    const controller = new AbortController(); // Create an AbortController
+    setAbortController(controller); // Store it in state
+  
     try {
       setIsChartLoading(true);
       const apiUrl = `${basePath}/api/chartApi`;
@@ -381,25 +398,31 @@ const Map = () => {
         storm_surge: stormToSend,
         year: yearToSend,
       };
-
+  
       const res = await fetch(apiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
+        signal: controller.signal, // Pass the AbortController's signal
       });
-
+  
       if (!res.ok) {
         throw new Error(`Request failed with status ${res.status}`);
       }
-
+  
       const data = await res.json();
       console.log("Response from /chartApi:", data);
       setChartData(data);
       setDisplayedOption(selectedOption);
     } catch (err) {
-      console.error("Error calling /chartApi:", err);
+      if (err instanceof Error && err.name === "AbortError") {
+        console.log("API call canceled");
+      } else {
+        console.error("Error calling /chartApi:", err);
+      }
     } finally {
       setIsChartLoading(false);
+      setAbortController(null);
     }
   };
 
@@ -421,7 +444,7 @@ const Map = () => {
   const [isHovered, setIsHovered] = useState(false);
 
   const windowButtonText = isAnalysisLoading
-    ? "Stop/Cancel"
+    ? "Cancel"
     : analysisComplete
     ? "Open"
     : "Run Analysis";
@@ -978,6 +1001,11 @@ const Map = () => {
                   <CoolButton
                     isChartLoading={isChartLoading}
                     onClick={handleGenerate}
+                    onCancel={() => {
+                      abortController?.abort(); // Cancel the request
+                      setIsChartLoading(false);
+                      setAbortController(null);
+                    }}
                   />
                 </div>
 
