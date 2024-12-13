@@ -819,20 +819,22 @@ const Map = () => {
                 const readableLabels: Record<string, string> = {
                   GHS_POP_E2020_GLOBE: "Population",
                   GHS_BUILT_S_E2020_GLOBE: "Urban Area Extent",
-                  cereals: "Cultivated Area Extent",
+                  cereals_rice: "Cultivated Area Extent",
                 };
 
                 const units: Record<string, string> = {
                   GHS_POP_E2020_GLOBE: "",
                   GHS_BUILT_S_E2020_GLOBE: "m²",
-                  cereals: "ha",
+                  cereals_rice: "ha",
                 };
 
                 const icons: Record<string, string> = {
                   GHS_POP_E2020_GLOBE: `${basePath}/people.svg`,
                   GHS_BUILT_S_E2020_GLOBE: `${basePath}/building.svg`,
-                  cereals: `${basePath}/wheat2.svg`,
+                  cereals_rice: `${basePath}/wheat2.svg`,
                 };
+
+                if (key === "cereals") return null;
 
                 const label = readableLabels[key] || key;
                 const unit = units[key] || "";
@@ -1064,7 +1066,7 @@ const Map = () => {
                       labels.push(labelValue);
                       popValues.push(item.result.GHS_POP_E2020_GLOBE);
                       urbanValues.push(item.result.GHS_BUILT_S_E2020_GLOBE);
-                      cerealsValues.push(item.result.cereals);
+                      cerealsValues.push(item.result.cereals_rice);
                     });
 
                     const baseChartOptions = {
