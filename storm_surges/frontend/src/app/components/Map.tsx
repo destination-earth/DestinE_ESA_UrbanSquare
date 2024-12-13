@@ -1044,31 +1044,32 @@ const Map = () => {
                   chartData &&
                   chartData.length > 0 &&
                   (() => {
+                    // Filter out items where year is 2020
+                    const filteredChartData = chartData.filter((item: any) => item.year !== 2020);
+                
                     let labels: string[] = [];
                     let popValues: number[] = [];
                     let urbanValues: number[] = [];
                     let cerealsValues: number[] = [];
-
-                    chartData.forEach((item: any) => {
+                
+                    filteredChartData.forEach((item: any) => {
                       let labelValue = "";
-
+                
                       if (displayedOption === "ssp") {
                         labelValue = item.ssp;
                       } else if (displayedOption === "storm") {
                         // Convert "0_0", "0_5", etc., to "0", "0.5", etc.
-                        labelValue = item.storm_surge
-                          .replace("_", ".")
-                          .replace(/\.0$/, ""); // Removes ".0" for integers like "1.0"
+                        labelValue = item.storm_surge.replace("_", ".").replace(/\.0$/, ""); // Removes ".0" for integers like "1.0"
                       } else if (displayedOption === "years") {
                         labelValue = String(item.year);
                       }
-
+                
                       labels.push(labelValue);
                       popValues.push(item.result.GHS_POP_E2020_GLOBE);
                       urbanValues.push(item.result.GHS_BUILT_S_E2020_GLOBE);
                       cerealsValues.push(item.result.cereals_rice);
                     });
-
+                
                     const baseChartOptions = {
                       responsive: true,
                       plugins: {
@@ -1086,7 +1087,7 @@ const Map = () => {
                         },
                       },
                     };
-
+                
                     const populationData = {
                       labels,
                       datasets: [
@@ -1097,7 +1098,7 @@ const Map = () => {
                         },
                       ],
                     };
-
+                
                     const urbanData = {
                       labels,
                       datasets: [
@@ -1108,7 +1109,7 @@ const Map = () => {
                         },
                       ],
                     };
-
+                
                     const cerealsData = {
                       labels,
                       datasets: [
@@ -1119,7 +1120,7 @@ const Map = () => {
                         },
                       ],
                     };
-
+                
                     return (
                       <div style={{ marginBottom: "20px" }}>
                         <div style={{ marginBottom: "30px" }}>
@@ -1140,16 +1141,13 @@ const Map = () => {
                               fontSize: "12px",
                             }}
                             onClick={() =>
-                              downloadChart(
-                                populationRef,
-                                "population_chart.png"
-                              )
+                              downloadChart(populationRef, "population_chart.png")
                             }
                           >
                             Download Population Chart
                           </button>
                         </div>
-
+                
                         <div style={{ marginBottom: "30px" }}>
                           <Bar
                             ref={urbanRef}
@@ -1167,14 +1165,12 @@ const Map = () => {
                               cursor: "pointer",
                               fontSize: "12px",
                             }}
-                            onClick={() =>
-                              downloadChart(urbanRef, "urban_chart.png")
-                            }
+                            onClick={() => downloadChart(urbanRef, "urban_chart.png")}
                           >
                             Download Urban Chart
                           </button>
                         </div>
-
+                
                         <div>
                           <Bar
                             ref={cerealsRef}
@@ -1192,9 +1188,7 @@ const Map = () => {
                               cursor: "pointer",
                               fontSize: "12px",
                             }}
-                            onClick={() =>
-                              downloadChart(cerealsRef, "cereals_chart.png")
-                            }
+                            onClick={() => downloadChart(cerealsRef, "cereals_chart.png")}
                           >
                             Download Agricultural Chart
                           </button>
@@ -1202,7 +1196,8 @@ const Map = () => {
                       </div>
                     );
                   })()
-                )}
+                )
+                }
               </div>
             </div>
           ) : (
