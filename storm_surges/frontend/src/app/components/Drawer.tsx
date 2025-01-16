@@ -318,7 +318,7 @@ const Drawer: React.FC<DrawerProps> = ({
             <p>
               <br />
               <strong>SSP</strong>
-              <br />A Shared Socioeconomic Pathway (SSP) is a future scenario
+              <br />Socioeconomic Pathway (SSP) is a future scenario
               that considers climate change and socio-economic global changes
               (natural resources, population growth). SSPs range from optimistic
               to pessimistic scenarios: in SSP119, it is assumed that society
