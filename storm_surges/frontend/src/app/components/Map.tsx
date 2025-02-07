@@ -447,6 +447,14 @@ const Map = () => {
       }
 
       const data = await resp.json();
+      // Filter out features that represent rooftop solar panels
+      if (data.elements) {
+        data.elements = data.elements.filter((el: any) => {
+          return !(
+            el.tags && el.tags["generator:type"] === "solar_photovoltaic_panel"
+          );
+        });
+      }
       setOverpassData(data);
       console.log("Overpass data:", data);
     } catch (err) {
