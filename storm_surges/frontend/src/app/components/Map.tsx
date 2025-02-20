@@ -323,6 +323,14 @@ const Map = () => {
   const [overpassData, setOverpassData] = useState<any>(null);
   const [isOverpassLoading, setIsOverpassLoading] = useState(false);
   const [overpassError, setOverpassError] = useState<string | null>(null);
+  const [visibleAmenities, setVisibleAmenities] = useState<
+    Record<AmenityCategory, boolean>
+  >({
+    education: true,
+    emergency: true,
+    healthcare: true,
+    power: true,
+  });
 
   // For polygons drawn
   const [drawnPolygons, setDrawnPolygons] = useState<number[][][][]>([]);
@@ -675,6 +683,13 @@ const Map = () => {
     link.click();
   };
 
+  const toggleAmenityVisibility = (category: AmenityCategory) => {
+    setVisibleAmenities((prev) => ({
+      ...prev,
+      [category]: !prev[category], // Toggle visibility
+    }));
+  };
+
   const [isHovered, setIsHovered] = useState(false);
 
   const windowButtonText = isAnalysisLoading
@@ -806,75 +821,36 @@ const Map = () => {
 
           {/* Markers for Overpass data */}
           {overpassData?.elements?.map((el: any) => {
-            // If it's a node
-            if (el.type === "node") {
-              const lat = el.lat;
-              const lon = el.lon;
-              if (lat && lon) {
-                const name =
-                  el.tags?.name || el.tags?.amenity || "Unnamed Node";
+            const category = getCategoryFromTags(el.tags || {});
+            if (!category || !visibleAmenities[category]) return null; // Hide if toggled off
 
-                // [ADDED] Get the color from the tags
-                const color = getMarkerColor(el.tags || {});
+            const lat = el.type === "node" ? el.lat : el.center?.lat;
+            const lon = el.type === "node" ? el.lon : el.center?.lon;
+            if (!lat || !lon) return null;
 
-                return (
-                  <CircleMarker
-                    key={`node-${el.id}`}
-                    center={[lat, lon]}
-                    // Use the color for stroke & fill
-                    color={color}
-                    fillColor={color}
-                    radius={6}
-                    fillOpacity={1.0}
-                  >
-                    <Popup>
-                      <strong>{name}</strong>
-                      <br />
-                      {Object.entries(el.tags || {}).map(([k, v]) => (
-                        <div key={k}>
-                          {k}: {String(v)}
-                        </div>
-                      ))}
-                    </Popup>
-                  </CircleMarker>
-                );
-              }
-            }
+            const name = el.tags?.name || el.tags?.amenity || "Unnamed";
+            const color = getMarkerColor(el.tags || {});
 
-            // If it's a way or relation, we use 'center' from "out center;"
-            if ((el.type === "way" || el.type === "relation") && el.center) {
-              const lat = el.center.lat;
-              const lon = el.center.lon;
-              if (lat && lon) {
-                const name =
-                  el.tags?.name || el.tags?.amenity || "Unnamed Way/Rel";
-
-                // [ADDED] Get the color from the tags
-                const color = getMarkerColor(el.tags || {});
-
-                return (
-                  <CircleMarker
-                    key={`${el.type}-${el.id}`}
-                    center={[lat, lon]}
-                    color={color}
-                    fillColor={color}
-                    radius={8}
-                    fillOpacity={0.8}
-                  >
-                    <Popup>
-                      <strong>{name}</strong>
-                      <br />
-                      {Object.entries(el.tags || {}).map(([k, v]) => (
-                        <div key={k}>
-                          {k}: {String(v)}
-                        </div>
-                      ))}
-                    </Popup>
-                  </CircleMarker>
-                );
-              }
-            }
-            return null;
+            return (
+              <CircleMarker
+                key={`${el.type}-${el.id}`}
+                center={[lat, lon]}
+                color={color}
+                fillColor={color}
+                radius={el.type === "node" ? 6 : 8} // Slightly larger for ways/relations
+                fillOpacity={1.0}
+              >
+                <Popup>
+                  <strong>{name}</strong>
+                  <br />
+                  {Object.entries(el.tags || {}).map(([k, v]) => (
+                    <div key={k}>
+                      {k}: {String(v)}
+                    </div>
+                  ))}
+                </Popup>
+              </CircleMarker>
+            );
           })}
         </FeatureGroup>
       </MapContainer>
@@ -1053,6 +1029,55 @@ const Map = () => {
             ></div>
             <span>Areas at risk of flood</span>
           </div>
+        </div>
+      )}
+
+      {!isSideWindowOpen && overpassData && (
+        <div
+          style={{
+            position: "absolute",
+            top: "250px", // Adjust as needed
+            right: "10px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
+            zIndex: 1000,
+          }}
+        >
+          {Object.keys(visibleAmenities).map((category) => {
+            if (
+              overpassData?.elements?.some(
+                (el: any) => getCategoryFromTags(el.tags || {}) === category
+              )
+            ) {
+              return (
+                <button
+                  key={category}
+                  onClick={() =>
+                    toggleAmenityVisibility(category as AmenityCategory)
+                  }
+                  style={{
+                    background: visibleAmenities[category as AmenityCategory]
+                      ? "#f76501"
+                      : "gray",
+                    color: "white",
+                    border: "1px solid black",
+                    borderRadius: "5px",
+                    padding: "6px",
+                    cursor: "pointer",
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {visibleAmenities[category as AmenityCategory]
+                    ? "Hide"
+                    : "Show"}{" "}
+                  {category.charAt(0).toUpperCase() + category.slice(1)}
+                </button>
+              );
+            }
+            return null;
+          })}
         </div>
       )}
 
@@ -1700,6 +1725,71 @@ const Map = () => {
               <li>Energy Systems (power plants, storage tanks, etc.)</li>
               <li>Healthcare (hospitals, clinics, etc.)</li>
             </ul>
+
+            {/* Legend */}
+            <div style={{ marginTop: "20px" }}>
+              <h4 style={{ marginBottom: "10px" }}>Legend:</h4>
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: "5px" }}
+              >
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
+                >
+                  <span
+                    style={{
+                      width: "15px",
+                      height: "15px",
+                      backgroundColor: "blue",
+                      display: "inline-block",
+                      borderRadius: "50%",
+                    }}
+                  ></span>
+                  <span>Energy Systems</span>
+                </div>
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
+                >
+                  <span
+                    style={{
+                      width: "15px",
+                      height: "15px",
+                      backgroundColor: "red",
+                      display: "inline-block",
+                      borderRadius: "50%",
+                    }}
+                  ></span>
+                  <span>Emergency Response</span>
+                </div>
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
+                >
+                  <span
+                    style={{
+                      width: "15px",
+                      height: "15px",
+                      backgroundColor: "purple",
+                      display: "inline-block",
+                      borderRadius: "50%",
+                    }}
+                  ></span>
+                  <span>Education</span>
+                </div>
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
+                >
+                  <span
+                    style={{
+                      width: "15px",
+                      height: "15px",
+                      backgroundColor: "green",
+                      display: "inline-block",
+                      borderRadius: "50%",
+                    }}
+                  ></span>
+                  <span>Healthcare</span>
+                </div>
+              </div>
+            </div>
           </div>
         </Modal>
       )}
