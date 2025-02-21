@@ -331,6 +331,7 @@ const Map = () => {
     healthcare: true,
     power: true,
   });
+  const [showAmenities, setShowAmenities] = useState(false);
 
   // For polygons drawn
   const [drawnPolygons, setDrawnPolygons] = useState<number[][][][]>([]);
@@ -1032,16 +1033,59 @@ const Map = () => {
         </div>
       )}
 
-      {!isSideWindowOpen && overpassData && (
+    {/* Check if there are any amenities before showing the toggle button */}
+{!isSideWindowOpen &&
+  overpassData &&
+  Object.keys(visibleAmenities).some((category) =>
+    overpassData?.elements?.some(
+      (el: any) => getCategoryFromTags(el.tags || {}) === category
+    )
+  ) && (
+    <>
+      {/* Show/Hide Amenities Toggle Button */}
+      {/* Show/Hide Amenities Toggle Button */}
+<button
+  onClick={() => setShowAmenities((prev) => !prev)}
+  style={{
+    position: "fixed",
+    right: "10px",
+    top: "320px",
+    background: "white",
+    color: "black",
+    border: "1px solid black",
+    borderRadius: "5px",
+    padding: "5px",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "34px",
+    height: "34px",
+    zIndex: 1000,
+    opacity: 0.8,
+  }}
+>
+  <Image
+    src={`${basePath}/${showAmenities ? "hidden.svg" : "visible.svg"}`}
+    alt={showAmenities ? "Hide Amenities" : "Show Amenities"}
+    width={24}
+    height={24}
+  />
+</button>
+
+
+      {/* Amenity Buttons (Only shown when toggled on) */}
+      {showAmenities && (
         <div
           style={{
-            position: "absolute",
-            top: "250px", // Adjust as needed
+            position: "fixed",
+            top: "365px", // Position below the toggle button
             right: "10px",
             display: "flex",
             flexDirection: "column",
             gap: "8px",
-            zIndex: 1000,
+            alignItems: "flex-end",
+            zIndex: 999,
           }}
         >
           {Object.keys(visibleAmenities).map((category) => {
@@ -1058,15 +1102,18 @@ const Map = () => {
                   }
                   style={{
                     background: visibleAmenities[category as AmenityCategory]
-                      ? "#f76501"
-                      : "gray",
+                      ? "gray"
+                      : "#f76501",
                     color: "white",
                     border: "1px solid black",
                     borderRadius: "5px",
-                    padding: "6px",
+                    padding: "6px 10px",
                     cursor: "pointer",
                     fontSize: "12px",
                     fontWeight: "bold",
+                    textAlign: "center",
+                    width: "fit-content",
+                    minWidth: "100px",
                   }}
                 >
                   {visibleAmenities[category as AmenityCategory]
@@ -1080,6 +1127,8 @@ const Map = () => {
           })}
         </div>
       )}
+    </>
+  )}
 
       {/* The sidebar */}
       {isSideWindowOpen && (
