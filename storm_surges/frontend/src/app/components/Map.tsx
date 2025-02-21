@@ -1662,7 +1662,6 @@ const Map = () => {
             <h3 style={{ marginTop: 0, fontWeight: "bold" }}>
               Exposure Assessment
             </h3>
-            {/* <br /> */}
             <p>
               The exposure assessment is generated after drawing an area of
               interest on the map using rectangle/polygon buttons the area of
@@ -1689,7 +1688,6 @@ const Map = () => {
             <h3 style={{ marginTop: 0, fontWeight: "bold" }}>
               Statistical Analysis
             </h3>
-            <br />
             <p>
               The statistical analysis function allows to generate an impact
               assessment overview for the area of interest and therefore
