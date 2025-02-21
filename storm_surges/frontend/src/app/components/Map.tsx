@@ -1662,7 +1662,7 @@ const Map = () => {
             <h3 style={{ marginTop: 0, fontWeight: "bold" }}>
               Exposure Assessment
             </h3>
-            <br />
+            {/* <br /> */}
             <p>
               The exposure assessment is generated after drawing an area of
               interest on the map using rectangle/polygon buttons the area of
@@ -1720,7 +1720,7 @@ const Map = () => {
             <ul style={{ listStyleType: "disc", paddingLeft: "20px" }}>
               <li>Education (schools, universities, etc.)</li>
               <li>
-                Emergency Response (Ambulance stations, fire stations, etc.)
+                Emergency Response (ambulance stations, fire stations, etc.)
               </li>
               <li>Energy Systems (power plants, storage tanks, etc.)</li>
               <li>Healthcare (hospitals, clinics, etc.)</li>

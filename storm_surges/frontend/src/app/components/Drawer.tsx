@@ -317,7 +317,7 @@ const Drawer: React.FC<DrawerProps> = ({
             </p>
             <p>
               <br />
-              <strong>SSP</strong>
+              <strong className="text-center">SSP</strong>
               <br />Socioeconomic Pathway (SSP) is a future scenario
               that considers climate change and socio-economic global changes
               (natural resources, population growth). SSPs range from optimistic
@@ -329,7 +329,7 @@ const Drawer: React.FC<DrawerProps> = ({
               rise projections applied in this service are described below.
               <br />
               <ul>
-                <li>
+                <li className="mt-5">
                   <strong>SSP119</strong>: holds warming to approximately 1.5°C
                   above 1850-1900 in 2100 after slight overshoot (median) and
                   implies net zero CO2 emissions around the middle of the
