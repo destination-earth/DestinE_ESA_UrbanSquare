@@ -331,7 +331,7 @@ const Map = () => {
     healthcare: true,
     power: true,
   });
-  const [showAmenities, setShowAmenities] = useState(false);
+  const [showAmenities, setShowAmenities] = useState(true);
 
   // For polygons drawn
   const [drawnPolygons, setDrawnPolygons] = useState<number[][][][]>([]);
@@ -1042,8 +1042,6 @@ const Map = () => {
     )
   ) && (
     <>
-      {/* Show/Hide Amenities Toggle Button */}
-      {/* Show/Hide Amenities Toggle Button */}
 <button
   onClick={() => setShowAmenities((prev) => !prev)}
   style={{
