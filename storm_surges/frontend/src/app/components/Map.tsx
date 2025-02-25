@@ -11,7 +11,7 @@ import {
 } from "react-leaflet";
 import L, { LatLngExpression, LatLngBounds } from "leaflet";
 import Drawer from "./Drawer";
-import LoadingIndicator from "./LoadingIndicator";
+// import LoadingIndicator from "./LoadingIndicator";
 import Image from "next/image";
 import CachedWMSLayer from "./CachedWMSLayer";
 import { EditControl } from "react-leaflet-draw";
@@ -434,14 +434,14 @@ const Map = () => {
       alert("Please select at least one category.");
       return;
     }
-
+  
     const coords = drawnPolygons[0];
     const tags = buildOverpassTags(selectedCategories);
-
+  
     try {
       setIsOverpassLoading(true);
       setOverpassError(null);
-
+  
       const resp = await fetch(`${basePath}/api/overpass`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -454,7 +454,7 @@ const Map = () => {
         const errorData = await resp.json();
         throw new Error(errorData.error || "Error from Overpass");
       }
-
+  
       const data = await resp.json();
       // Filter out features that represent rooftop solar panels
       if (data.elements) {
@@ -464,8 +464,15 @@ const Map = () => {
           );
         });
       }
-      setOverpassData(data);
-      console.log("Overpass data:", data);
+      
+      // Check if there are any amenities
+      if (!data.elements || data.elements.length === 0) {
+        alert("No critical infrastructure available in the area selected.");
+        setOverpassData(null);
+      } else {
+        setOverpassData(data);
+        console.log("Overpass data:", data);
+      }
     } catch (err) {
       console.error(err);
       setOverpassError(
@@ -702,7 +709,7 @@ const Map = () => {
   return (
     <div className="relative flex-1">
       <style>{customDrawControlStyles}</style>
-      <LoadingIndicator isLoading={isLoading} />
+      {/* <LoadingIndicator isLoading={isLoading} />  Loading wheel on the footer */}
       {/* Drawer with your existing props */}
       <Drawer
         isDrawerOpen={isDrawerOpen}
@@ -1033,100 +1040,123 @@ const Map = () => {
         </div>
       )}
 
-    {/* Check if there are any amenities before showing the toggle button */}
-{!isSideWindowOpen &&
-  overpassData &&
-  Object.keys(visibleAmenities).some((category) =>
-    overpassData?.elements?.some(
-      (el: any) => getCategoryFromTags(el.tags || {}) === category
-    )
-  ) && (
-    <>
-<button
-  onClick={() => setShowAmenities((prev) => !prev)}
-  style={{
-    position: "fixed",
-    right: "10px",
-    top: "320px",
-    background: "white",
-    color: "black",
-    border: "1px solid black",
-    borderRadius: "5px",
-    padding: "5px",
-    cursor: "pointer",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "34px",
-    height: "34px",
-    zIndex: 1000,
-    opacity: 0.8,
-  }}
->
-  <Image
-    src={`${basePath}/${showAmenities ? "hidden.svg" : "visible.svg"}`}
-    alt={showAmenities ? "Hide Amenities" : "Show Amenities"}
-    width={24}
-    height={24}
-  />
-</button>
+      {/* Check if there are any amenities before showing the toggle button */}
+      {!isSideWindowOpen &&
+        overpassData &&
+        Object.keys(visibleAmenities).some((category) =>
+          overpassData?.elements?.some(
+            (el: any) => getCategoryFromTags(el.tags || {}) === category
+          )
+        ) && (
+          <>
+            {/* Eye button */}
+            <button
+              onClick={() => setShowAmenities((prev) => !prev)}
+              style={{
+                position: "fixed",
+                right: "10px",
+                top: "320px",
+                background: "white",
+                color: "black",
+                border: "1px solid black",
+                borderRadius: "5px",
+                padding: "5px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "34px",
+                height: "34px",
+                zIndex: 1000,
+                opacity: 0.7,
+              }}
+            >
+              <Image
+                src={`${basePath}/${
+                  showAmenities ? "hidden.svg" : "visible.svg"
+                }`}
+                alt={showAmenities ? "Hide Amenities" : "Show Amenities"}
+                width={24}
+                height={24}
+              />
+            </button>
 
+            {/* Categories Dropdown (Only shown when toggled on) */}
+            {showAmenities && (
+              <div
+                style={{
+                  position: "fixed",
+                  top: "355px", // Position below the toggle button
+                  right: "10px",
+                  background: "white",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  padding: "10px",
+                  boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
+                  zIndex: 999,
+                  width: "200px",
+                  opacity: 0.7,
+                }}
+              >
+                {Object.keys(visibleAmenities).map((category) => {
+                  if (
+                    overpassData?.elements?.some(
+                      (el: any) =>
+                        getCategoryFromTags(el.tags || {}) === category
+                    )
+                  ) {
+                    const categoryLabels = {
+                      education: "Education",
+                      emergency: "Emergency Response",
+                      healthcare: "Healthcare",
+                      power: "Energy Systems",
+                    };
 
-      {/* Amenity Buttons (Only shown when toggled on) */}
-      {showAmenities && (
-        <div
-          style={{
-            position: "fixed",
-            top: "365px", // Position below the toggle button
-            right: "10px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "8px",
-            alignItems: "flex-end",
-            zIndex: 999,
-          }}
-        >
-          {Object.keys(visibleAmenities).map((category) => {
-            if (
-              overpassData?.elements?.some(
-                (el: any) => getCategoryFromTags(el.tags || {}) === category
-              )
-            ) {
-              return (
-                <button
-                  key={category}
-                  onClick={() =>
-                    toggleAmenityVisibility(category as AmenityCategory)
+                    const displayLabel =
+                      categoryLabels[category as keyof typeof categoryLabels] ||
+                      category.charAt(0).toUpperCase() + category.slice(1);
+                    return (
+                      <div
+                        key={category}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          margin: "8px 0",
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          id={`checkbox-${category}`}
+                          checked={
+                            visibleAmenities[category as AmenityCategory]
+                          }
+                          onChange={() =>
+                            toggleAmenityVisibility(category as AmenityCategory)
+                          }
+                          style={{
+                            marginRight: "10px",
+                            cursor: "pointer",
+                          }}
+                        />
+                        <label
+                          htmlFor={`checkbox-${category}`}
+                          style={{
+                            cursor: "pointer",
+                            color: "black",
+                            fontSize: "14px",
+                          }}
+                        >
+                          {displayLabel}
+                        </label>
+                      </div>
+                    );
                   }
-                  style={{
-                    background: visibleAmenities[category as AmenityCategory]
-                      ? "gray"
-                      : "#f76501",
-                    color: "white",
-                    border: "1px solid black",
-                    borderRadius: "5px",
-                    padding: "6px 10px",
-                    cursor: "pointer",
-                    fontSize: "12px",
-                    fontWeight: "bold",
-                    textAlign: "center",
-                    width: "fit-content",
-                    minWidth: "100px",
-                  }}
-                >
-                  {visibleAmenities[category as AmenityCategory]
-                    ? "Hide"
-                    : "Show"}{" "}
-                  {category.charAt(0).toUpperCase() + category.slice(1)}
-                </button>
-              );
-            }
-            return null;
-          })}
-        </div>
-      )}
-    </>
-  )}
+                  return null;
+                })}
+              </div>
+            )}
+          </>
+        )}
 
       {/* The sidebar */}
       {isSideWindowOpen && (

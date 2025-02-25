@@ -28,7 +28,7 @@ const Footer = () => {
       >
         <div>
           <Image
-            src={basePath + "/ipcc2.png"}
+            src={basePath + "/ipcc.png"}
             alt="Ipcc Logo"
             width={40}
             height={60}
