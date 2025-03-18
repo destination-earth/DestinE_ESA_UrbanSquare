@@ -1,7 +1,7 @@
 # 🌩️​ Sea Level Rise and Storm Surges
 
 ## Scope
-The application consists of 30m resolution global maps of inundation risk due to sea level rise (SLR) and potential storm surges, and it allows the user to assess the impact of future flood events on the most vulnerable coastal areas, under various what-if scenarios. The what-if scenarios can be run for six model years between 2040-2150, and are configured based on five global Shared Socioeconomic Pathways (SSPs) and seven storm surge heights. 
+The application consists of 30m resolution global maps of inundation risk due to sea level rise (SLR) and potential storm surges, and it allows the user to assess the impact of future flood events on the most vulnerable coastal areas, under various what-if scenarios. The what-if scenarios can be run for 7 model years between 2040-2150, and are configured based on 5 global Shared Socioeconomic Pathways (SSPs) and 7 storm surge heights. Additionally, by intersecting the flood maps with other datasets it is possible to compute the impact assessment and statistical analysis for any area of interest.
 
 ## Data
 - Global Copernicus Digital Elevation Model (DEM) at 30m (https://spacedata.copernicus.eu/collections/copernicus-digital-elevation-model).
@@ -10,10 +10,7 @@ The application consists of 30m resolution global maps of inundation risk due to
 
 - SLR projections by IPCC AR6 (https://www.ipcc.ch/report/ar6/syr/downloads/report/IPCC_AR6_SYR_LongerReport.pdf). [Note: this is applicable only to the global sea, no other waterbodies are inluded.]
 
-
-
-### Inundation Layer Modelling
-
+## Inundation Layer Modelling
 As a first step, the Copernicus waterbodies layer is aligned with the DEM tiles. Then the elevation baseline values are adjusted by using the data for the SSP119 scenario in 2020 at medium confidence level. Areas below the current sea level are marked as Protected Areas (green): since these areas are not currently at risk of inundation due to the rise of sea level (no other waterbodies are considered), we assume they are protected by infrastructure.
 
 For each what-if scenario, the extent of the inundation is computed by marking pixels with DEM values below zero as Potentially Flooded Areas (red). This process involves up-sampling and cropping the data to align with DEM boundaries.
@@ -52,7 +49,7 @@ When configuring the scenario, the user can choose between low and medium confid
 
 
 <p align="center">
-  <img src="https://github.com/destination-earth/DestinE_ESA_UrbanSquare/blob/main/storm_surges/docs/GUI.png"  width="80%" height="150%">
+  <img src="https://github.com/destination-earth/DestinE_ESA_UrbanSquare/blob/main/storm_surges/docs/SISTEMA_SLR_image1.png"  width="80%" height="150%">
   <img src="https://github.com/destination-earth/DestinE_ESA_UrbanSquare/blob/main/storm_surges/docs/legend.png" width="10%" height="10%">
 </p>
 <p align="center"><em>Interface showing the what-if scenario configuration parameters and an example output.</em></p>
