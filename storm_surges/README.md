@@ -27,7 +27,6 @@ Overall, this detailed process allows for a comprehensive analysis of the potent
 
 
 ## What-if Scenarios
-
 The tool allows the user to run different what-if scenarios for any area of the globe. Below are the descriptions of the what-if parameters.
 
 The scenarios can be run for six model years between 2040-2150, and are configured based on five global Shared Socioeconomic Pathways (SSPs) and seven storm surge heights (0-5m).
@@ -46,17 +45,18 @@ SSP585: is a high reference scenario with no additional climate policy. Emission
 
 When configuring the scenario, the user can choose between low and medium confidence levels, where, ad reported by the IPCC, the low confidence level indicates that there is 20% chance that the event may occur, while a 50% chance for the medium confidence level.
 
-
-
 <p align="center">
   <img src="https://github.com/destination-earth/DestinE_ESA_UrbanSquare/blob/main/storm_surges/docs/SISTEMA_SLR_image1.png"  width="80%" height="150%">
   <img src="https://github.com/destination-earth/DestinE_ESA_UrbanSquare/blob/main/storm_surges/docs/legend.png" width="10%" height="10%">
 </p>
 <p align="center"><em>Interface showing the what-if scenario configuration parameters and an example output.</em></p>
 
+<p align="center">
+  <img src="https://github.com/destination-earth/DestinE_ESA_UrbanSquare/blob/main/storm_surges/docs/impact.png"  width="80%" height="150%">
+</p>
+<p align="center"><em>Impact assessment for an area of interest. It includes: measurements of exposure, critical infrastructures at risk, and statistical analysis for the what-if scenarios. In this example, the chart shows the change in number of affected population over time.</em></p>
 
 ## Integration with DestinE
-
 The capabilities of the sea level rise and storm surge component of Urban Square will be greatly enhanced with the integration with the DestinE data service. In particular, the inundation products in Europe will become more robust and higher in resolution thanks to the EEA 10 m digital elevation model and the use of the sea level projections from the climate change adaptation digital twin, at 5km resolution.
 
 <p align="center">
