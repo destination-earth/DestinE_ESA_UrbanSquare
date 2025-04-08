@@ -95,3 +95,13 @@ header, footer {
   
 }
 
+
+.header-link {
+  color: #FFFFFF;
+  text-decoration: none;
+  transition: color 250ms ease-in-out;
+}
+
+.header-link:hover {
+  color: #7A7A7A;
+}

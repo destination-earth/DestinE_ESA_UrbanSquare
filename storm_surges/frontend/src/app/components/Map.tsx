@@ -434,14 +434,14 @@ const Map = () => {
       alert("Please select at least one category.");
       return;
     }
-  
+
     const coords = drawnPolygons[0];
     const tags = buildOverpassTags(selectedCategories);
-  
+
     try {
       setIsOverpassLoading(true);
       setOverpassError(null);
-  
+
       const resp = await fetch(`${basePath}/api/overpass`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -454,7 +454,7 @@ const Map = () => {
         const errorData = await resp.json();
         throw new Error(errorData.error || "Error from Overpass");
       }
-  
+
       const data = await resp.json();
       // Filter out features that represent rooftop solar panels
       if (data.elements) {
@@ -464,7 +464,7 @@ const Map = () => {
           );
         });
       }
-      
+
       // Check if there are any amenities
       if (!data.elements || data.elements.length === 0) {
         alert("No critical infrastructure available in the area selected.");
@@ -505,7 +505,7 @@ const Map = () => {
       const payload = createApiPayload(formattedCoords);
       setIsAnalysisLoading(true);
       setApiError(null);
-
+  
       const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -514,32 +514,74 @@ const Map = () => {
         body: JSON.stringify(payload),
         signal: controller.signal,
       });
-
+  
+      // Get response data regardless of status for better error messages
+      const responseData = await response.json().catch(() => null);
+  
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          errorData.error || `Request failed with status ${response.status}`
-        );
+        let errorMessage = "";
+        
+        // Handle specific HTTP error codes
+        switch (response.status) {
+          case 404:
+            errorMessage = responseData?.detail || "Resource not found. There may be no inundation data available for this location or parameter combination.";
+            break;
+          case 400:
+            errorMessage = responseData?.detail || "Invalid request. Please check your parameters and try again.";
+            break;
+          case 500:
+            errorMessage = "Server error. The analysis service is experiencing issues.";
+            break;
+          case 503:
+            errorMessage = "Service unavailable. The analysis service is currently down or overloaded.";
+            break;
+          default:
+            errorMessage = responseData?.detail || responseData?.error || `Request failed with status ${response.status}`;
+        }
+  
+        // Set the error for UI display
+        setApiError(errorMessage);
+        
+        // Throw error with a prefix that we can detect in the catch block
+        throw new Error(`Analysis Error: ${errorMessage}`);
       }
-
-      const data = await response.json();
-      setApiResponse(data);
+  
+      // Process successful response
+      setApiResponse(responseData);
       setHasFetchedData(true);
       setAnalysisComplete(true);
       setIsSideWindowOpen(true);
     } catch (error) {
-      if (error instanceof Error) {
-        if (error.name === "AbortError") {
-          console.log("Fetch request canceled");
-        } else {
-          setApiError(error.message);
-        }
-      } else {
-        console.error("An unknown error occurred:", error);
-        setApiError("An unknown error occurred.");
-      }
-    } finally {
+      // First, stop the loading animation
       setIsAnalysisLoading(false);
+      
+      // Use non-blocking approach to allow UI to update first
+      setTimeout(() => {
+        if (error instanceof Error) {
+          if (error.name === "AbortError") {
+            console.log("Fetch request canceled");
+            const errorMessage = "Request canceled.";
+            // Show alert after UI has updated
+            alert(errorMessage);
+            setApiError(errorMessage);
+          } else {
+            // Display the error message
+            alert(error.message);
+            
+            // Extract the original error message if it has our prefix
+            const errorMsg = error.message.startsWith("Analysis Error: ") 
+              ? error.message.substring("Analysis Error: ".length)
+              : error.message;
+              
+            setApiError(errorMsg);
+          }
+        } else {
+          const errorMessage = "An unknown error occurred.";
+          alert(`Error: ${errorMessage}`);
+          console.error("An unknown error occurred:", error);
+          setApiError(errorMessage);
+        }
+      }, 10); // Tiny delay to allow UI to update first
     }
   };
 
@@ -761,7 +803,7 @@ const Map = () => {
         maxZoom={19}
         minZoom={3}
         attributionControl={false}
-        style={{ height: "100%", width: "100%" }}
+        style={{ height: "100%", width: "100%", zIndex: 1 }}
         maxBounds={bounds}
         preferCanvas={true}
       >
