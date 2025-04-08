@@ -26,7 +26,7 @@ const footerStyles = {
     zIndex: 1000, // Increased z-index to appear above the map
   } as React.CSSProperties,
   footerInnerContainer: {
-    maxWidth: "1600px",
+    // maxWidth: "1600px",
     height: "100%",
     display: "flex",
     flexDirection: "row" as const,
@@ -123,8 +123,8 @@ const footerStyles = {
     backgroundColor: "#1E2637",
   } as React.CSSProperties,
   mobileFooterLogo: {
-    maxWidth: "80px",
-    maxHeight: "40px",
+    maxWidth: "100px",
+    maxHeight: "60px",
     width: "auto",
     height: "auto",
   } as React.CSSProperties,
@@ -345,9 +345,9 @@ const Footer = () => {
               className="footer-logo" 
               alt="destination earth" 
               src={`${basePath}/destination-earth.png`} 
-              width={80} 
-              height={40}
-              style={footerStyles.footerLogo}
+              width={120} 
+              height={90}
+              // style={footerStyles.footerLogo}
             />
           </Link>
           <Link href="https://european-union.europa.eu/">
@@ -355,9 +355,9 @@ const Footer = () => {
               className="footer-logo" 
               alt="eu commission" 
               src={`${basePath}/funded-by-EU.png`} 
-              width={80} 
-              height={40}
-              style={footerStyles.footerLogo}
+              width={120} 
+              height={90}
+              // style={footerStyles.footerLogo}
             />
           </Link>
           {/* <Link href="#"> */}
@@ -365,9 +365,9 @@ const Footer = () => {
               className="footer-logo" 
               alt="implemented by" 
               src={`${basePath}/implemented-by.png`} 
-              width={80} 
-              height={40}
-              style={footerStyles.footerLogo}
+              width={120} 
+              height={90}
+              // style={footerStyles.footerLogo}
             />
           {/* </Link> */}
           <Link href="https://www.ecmwf.int/">
@@ -375,9 +375,9 @@ const Footer = () => {
               className="footer-logo" 
               alt="ecmwf" 
               src={`${basePath}/ecmwf.png`} 
-              width={80} 
-              height={40}
-              style={footerStyles.footerLogo}
+              width={120} 
+              height={90}
+              // style={footerStyles.footerLogo}
             />
           </Link>
           <Link href="https://www.esa.int/">
@@ -385,9 +385,9 @@ const Footer = () => {
               className="footer-logo" 
               alt="esa" 
               src={`${basePath}/esa.png`} 
-              width={80} 
-              height={40}
-              style={footerStyles.footerLogo}
+              width={120} 
+              height={90}
+              // style={footerStyles.footerLogo}
             />
           </Link>
           <Link href="https://www.eumetsat.int/">
@@ -395,9 +395,9 @@ const Footer = () => {
               className="footer-logo" 
               alt="eumetsat" 
               src={`${basePath}/eumetsat.png`} 
-              width={80} 
-              height={40}
-              style={footerStyles.footerLogo}
+              width={120} 
+              height={90}
+              // style={footerStyles.footerLogo}
             />
           </Link>
         </div>

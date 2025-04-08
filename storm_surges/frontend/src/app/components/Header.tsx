@@ -11,7 +11,7 @@ const headerStyles = {
     display: "flex",
     flexDirection: "row" as const,
     alignItems: "center",
-    justifyContent: "center",
+    // justifyContent: "center",
     height: "64px",
     maxHeight: "64px",
     margin: 0,
@@ -23,7 +23,7 @@ const headerStyles = {
     zIndex: 99,
   } as React.CSSProperties,
   headerInnerContainer: {
-    maxWidth: "1600px",
+    // maxWidth: "1600px",
     height: "100%",
     display: "flex",
     flexDirection: "row" as const,
@@ -45,11 +45,11 @@ const headerStyles = {
   } as React.CSSProperties,
   centralContainer: {
     height: "100%",
-    maxWidth: "800px",
+    // maxWidth: "800px",
     display: "flex",
     flexDirection: "row" as const,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-end",
     flexGrow: 1,
     margin: 0,
     padding: "0 40px",
@@ -59,7 +59,7 @@ const headerStyles = {
     height: "100%",
     flexDirection: "row" as const,
     alignItems: "center",
-    justifyContent: "flex-end",
+    justifyContent: "right",
     gap: "20px",
   } as React.CSSProperties,
   headerLink: {
@@ -74,14 +74,6 @@ const headerStyles = {
     color: "#EF2B89",
   } as React.CSSProperties,
   infoContainer: {
-    position: "relative",
-    height: "100%",
-    display: "flex",
-    flexDirection: "row" as const,
-    alignItems: "center",
-    justifyContent: "center",
-  } as React.CSSProperties,
-  userContainer: {
     position: "relative",
     height: "100%",
     display: "flex",
@@ -143,96 +135,6 @@ const headerStyles = {
   frameLinkHover: {
     backgroundColor: "#1E2637",
     color: "#7A7A7A",
-  } as React.CSSProperties,
-  loginDiv: {
-    display: "flex",
-    flexDirection: "row" as const,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "0 40px",
-    borderRadius: "18px",
-    height: "36px",
-    background:
-      "linear-gradient(90deg, #EF2B89 0%, #EF2B89 40%, #7B34DB 60%, #7B34DB 100%)",
-    backgroundSize: "400% 100%",
-    animationName: "violet-to-mix",
-    animationDuration: "250ms",
-    animationTimingFunction: "ease-in-out",
-    animationFillMode: "forwards",
-    cursor: "pointer",
-    textAlign: "center",
-    margin: "0 auto",
-  } as React.CSSProperties,
-  loginA: {
-    display: "flex",
-    textDecoration: "none",
-    flexDirection: "row" as const,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "20px",
-  } as React.CSSProperties,
-  loginIcon: {
-    width: "18px",
-    height: "18px",
-    color: "#FFFFFF",
-    padding: 0,
-    margin: 0,
-  } as React.CSSProperties,
-  loginText: {
-    maxWidth: "200px",
-    fontSize: "16px",
-    color: "#FFFFFF",
-    margin: 0,
-    padding: 0,
-    overflow: "hidden",
-    whiteSpace: "nowrap" as const,
-    textOverflow: "ellipsis",
-  } as React.CSSProperties,
-  notLogged: {
-    display: "none",
-  } as React.CSSProperties,
-  logged: {
-    display: "flex",
-  } as React.CSSProperties,
-  menuIconContainer: {
-    display: "flex",
-    flexDirection: "row" as const,
-    alignItems: "center",
-    justifyContent: "center",
-  } as React.CSSProperties,
-  menuIcon: {
-    width: "40px",
-    height: "40px",
-    transition: "color 250ms ease-in-out",
-    color: "#FFFFFF",
-  } as React.CSSProperties,
-  dropdownMenuContainer: {
-    display: "none",
-    flexDirection: "column" as const,
-    alignItems: "center",
-    width: "100%",
-    height: "calc(100dvh - 64px)",
-    top: 0,
-    padding: 0,
-    fontFamily: "Roboto-Bold, sans-serif",
-    fontSize: "16px",
-    zIndex: 999,
-  } as React.CSSProperties,
-  dropdownLink: {
-    display: "flex",
-    flexDirection: "row" as const,
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-    flexGrow: 1,
-    backgroundColor: "#0D1527FF",
-    borderTop: "solid 1px #000",
-    borderBottom: "solid 1px #000",
-  } as React.CSSProperties,
-  dropdownLinkA: {
-    textDecoration: "none",
-    color: "#FFFFFF",
-    transition: "color 250ms ease-in-out",
   } as React.CSSProperties,
   // Modal styles
   modalOverlay: {
@@ -299,7 +201,6 @@ const Header = () => {
   const [headerUserMenuIsVisible, setHeaderUserMenuIsVisible] = useState(false);
   const [headerHasRevealed, setHeaderHasRevealed] = useState(false);
   const [dropdownIsVisible, setDropdownIsVisible] = useState(false);
-  const [userIsAuthenticated, setUserIsAuthenticated] = useState(true); // Set this based on your auth logic
   const [isModalOpen, setModalOpen] = useState(false); // For the IPCC modal
 
   // Refs
@@ -307,8 +208,6 @@ const Header = () => {
   const infoFrameRef = useRef<HTMLDivElement>(null);
   const userFrameRef = useRef<HTMLDivElement>(null);
   const mainContainerRef = useRef<HTMLDivElement>(null);
-  const footerContainerRef = useRef<HTMLDivElement>(null);
-  const dropdownMenuContainerRef = useRef<HTMLDivElement>(null);
 
   // For tracking scroll position
   const scrollPositionPrecRef = useRef(0);
@@ -441,28 +340,6 @@ const Header = () => {
     };
   }, []);
 
-  // Media query handler for dropdown menu
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(min-width: 1025px)");
-
-    const handleMediaQueryChange = (e: MediaQueryListEvent) => {
-      if (e.matches) {
-        hideDropdownMenu();
-      }
-    };
-
-    mediaQuery.addEventListener("change", handleMediaQueryChange);
-
-    // Initial check
-    if (mediaQuery.matches) {
-      hideDropdownMenu();
-    }
-
-    return () => {
-      mediaQuery.removeEventListener("change", handleMediaQueryChange);
-    };
-  }, []);
-
   // Function to show/hide header info menu
   const showHeaderInfoMenu = () => {
     if (infoFrameRef.current) {
@@ -497,47 +374,6 @@ const Header = () => {
     }
   };
 
-  // Function to hide dropdown menu
-  const hideDropdownMenu = () => {
-    if (dropdownMenuContainerRef.current) {
-      dropdownMenuContainerRef.current.style.display = "none";
-      setDropdownIsVisible(false);
-    }
-
-    if (mainContainerRef.current) {
-      mainContainerRef.current.style.display = "block";
-    }
-
-    if (footerContainerRef.current) {
-      footerContainerRef.current.style.display = "flex";
-    }
-  };
-
-  // Toggle dropdown menu
-  const toggleDropdownMenu = () => {
-    if (dropdownIsVisible) {
-      hideDropdownMenu();
-    } else {
-      if (dropdownMenuContainerRef.current) {
-        dropdownMenuContainerRef.current.style.display = "flex";
-      }
-
-      if (mainContainerRef.current) {
-        mainContainerRef.current.style.display = "none";
-      }
-
-      if (footerContainerRef.current) {
-        footerContainerRef.current.style.display = "none";
-      }
-
-      if (headerRef.current) {
-        headerRef.current.style.backgroundColor = backgroundColor;
-      }
-
-      setDropdownIsVisible(true);
-    }
-  };
-
   // Toggle info menu
   const toggleInfoMenu = () => {
     if (headerInfoMenuIsVisible) {
@@ -545,18 +381,6 @@ const Header = () => {
     } else {
       showHeaderInfoMenu();
       hideHeaderUserMenu();
-    }
-  };
-
-  // Toggle user menu
-  const toggleUserMenu = () => {
-    if (headerUserMenuIsVisible) {
-      hideHeaderUserMenu();
-    } else {
-      if (userIsAuthenticated) {
-        showHeaderUserMenu();
-        hideHeaderInfoMenu();
-      }
     }
   };
 
@@ -597,7 +421,7 @@ const Header = () => {
                 id="service-logo"
                 alt="service-home"
                 src={`${basePath}/sistemaLogo.png`}
-                width={80}
+                width={100}
                 height={50}
               />
             </Link>
@@ -616,7 +440,7 @@ const Header = () => {
           {/* Right container */}
           <div id="right-container" style={headerStyles.rightContainer}>
             {/* IPCC Logo with Modal */}
-            <Image
+            {/* <Image
               id="ipcc-logo"
               alt="IPCC Logo"
               src={`${basePath}/ipcc.png`}
@@ -624,7 +448,7 @@ const Header = () => {
               height={36}
               style={headerStyles.logo}
               onClick={openModal}
-            />
+            /> */}
 
             {/* Info Button */}
             <div id="info-container" style={headerStyles.infoContainer}>
@@ -673,197 +497,16 @@ const Header = () => {
                 </Link>
               </div>
             </div>
-
-            {/* User Container */}
-            <div id="user-container" style={headerStyles.userContainer}>
-              <div
-                id="login-div"
-                style={headerStyles.loginDiv}
-                onClick={toggleUserMenu}
-              >
-                <Link
-                  className="login-a not-logged"
-                  href="#"
-                  style={{
-                    ...headerStyles.loginA,
-                    ...(userIsAuthenticated
-                      ? headerStyles.notLogged
-                      : headerStyles.logged),
-                  }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    style={{
-                      ...headerStyles.loginIcon,
-                      ...(userIsAuthenticated
-                        ? headerStyles.notLogged
-                        : headerStyles.logged),
-                    }}
-                  >
-                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-                    <polyline points="10 17 15 12 10 7"></polyline>
-                    <line x1="15" y1="12" x2="3" y2="12"></line>
-                  </svg>
-                  <p
-                    className="login-text not-logged"
-                    style={{
-                      ...headerStyles.loginText,
-                      ...(userIsAuthenticated
-                        ? headerStyles.notLogged
-                        : headerStyles.logged),
-                    }}
-                  >
-                    Sign In
-                  </p>
-                </Link>
-
-                <div
-                  className="login-a logged"
-                  style={{
-                    ...headerStyles.loginA,
-                    ...(userIsAuthenticated
-                      ? headerStyles.logged
-                      : headerStyles.notLogged),
-                  }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    style={{
-                      ...headerStyles.loginIcon,
-                      ...(userIsAuthenticated
-                        ? headerStyles.logged
-                        : headerStyles.notLogged),
-                    }}
-                  >
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>
-                  <p
-                    className="login-text logged"
-                    style={{
-                      ...headerStyles.loginText,
-                      ...(userIsAuthenticated
-                        ? headerStyles.logged
-                        : headerStyles.notLogged),
-                    }}
-                  >
-                    User Name
-                  </p>
-                </div>
-              </div>
-
-              {/* User Menu */}
-              <div
-                id="user-frame"
-                className="logged"
-                ref={userFrameRef}
-                style={{
-                  ...headerStyles.userFrame,
-                  ...(userIsAuthenticated ? {} : headerStyles.notLogged),
-                }}
-              >
-                <Link
-                  className="frame-link"
-                  href="/account"
-                  style={headerStyles.frameLink}
-                >
-                  Account Settings
-                </Link>
-                <Link
-                  className="frame-link"
-                  href="/logout"
-                  style={headerStyles.frameLink}
-                >
-                  Logout
-                </Link>
-              </div>
-            </div>
-
-            {/* Mobile menu icon */}
-            <div
-              id="menu-icon-container"
-              style={headerStyles.menuIconContainer}
-              onClick={toggleDropdownMenu}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                id="menu-icon"
-                style={headerStyles.menuIcon}
-              >
-                {dropdownIsVisible ? (
-                  // X icon
-                  <>
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </>
-                ) : (
-                  // Menu icon
-                  <>
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <line x1="3" y1="18" x2="21" y2="18"></line>
-                  </>
-                )}
-              </svg>
-            </div>
+            <Image
+              id="ipcc-logo"
+              alt="IPCC Logo"
+              src={`${basePath}/ipcc.png`}
+              width={35}
+              height={36}
+              style={headerStyles.logo}
+              onClick={openModal}
+            />
           </div>
-        </div>
-      </div>
-
-      {/* Mobile Menu Container */}
-      <div
-        id="dropdown-menu-container"
-        ref={dropdownMenuContainerRef}
-        style={headerStyles.dropdownMenuContainer}
-      >
-        <div className="dropdown-link" style={headerStyles.dropdownLink}>
-          <Link href="#" style={headerStyles.dropdownLinkA}>
-            Home
-          </Link>
-        </div>
-        <div className="dropdown-link" style={headerStyles.dropdownLink}>
-          <Link href="#" style={headerStyles.dropdownLinkA}>
-            Service Link 1
-          </Link>
-        </div>
-        <div className="dropdown-link" style={headerStyles.dropdownLink}>
-          <Link href="#" style={headerStyles.dropdownLinkA}>
-            Service Link 2
-          </Link>
-        </div>
-        <div className="dropdown-link" style={headerStyles.dropdownLink}>
-          <Link href="#" style={headerStyles.dropdownLinkA}>
-            Service Link 3
-          </Link>
-        </div>
-        <div className="dropdown-link" style={headerStyles.dropdownLink}>
-          <Link href="#" style={headerStyles.dropdownLinkA}>
-            Service Link 4
-          </Link>
         </div>
       </div>
 
