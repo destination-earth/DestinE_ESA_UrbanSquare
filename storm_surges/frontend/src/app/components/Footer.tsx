@@ -148,99 +148,89 @@ const Footer = () => {
   const footerMenuRef = useRef<HTMLDivElement>(null);
   const footerMenuIconRef = useRef<SVGSVGElement>(null);
   
-  // For tracking scroll position
-  const footerScrollPositionPrecRef = useRef(0);
-  const tempFooterPrevPosRef = useRef(0);
+  // For tracking user activity
   const footerHidingTimeoutIdRef = useRef<NodeJS.Timeout | null>(null);
   
   // Constants
   const footerHeight = "64px";
   const footerHideTimeout = 4000;
 
-  // Function to handle scroll event
-  useEffect(() => {
-    const handleScroll = () => {
-      const deltaY = window.scrollY - tempFooterPrevPosRef.current;
-      
-      if (window.scrollY >= (document.documentElement.scrollHeight - window.innerHeight - 50)) {
-        showFooter();
-      } else {
-        if (deltaY < 0 && deltaY > -100) {
-          setTimeout(() => {
-            footerScrollPositionPrecRef.current = window.scrollY;
-          }, 500);
-          
-          if (footerHasRevealed) {
-            if (footerHidingTimeoutIdRef.current) {
-              clearTimeout(footerHidingTimeoutIdRef.current);
-            }
-            
-            hideFooter();
-            setTimeout(() => {
-              hideFooterMenu();
-            }, 500);
-          }
-        } else if (deltaY > 0 && deltaY < 100) {
-          if (window.scrollY - footerScrollPositionPrecRef.current > 0) {
-            showFooter();
-            
-            footerHidingTimeoutIdRef.current = setTimeout(() => {
-              hideFooter();
-            }, footerHideTimeout);
-          }
-        }
-      }
-      
-      tempFooterPrevPosRef.current = window.scrollY;
-    };
 
-    window.addEventListener('scroll', handleScroll);
+
+  // Set up bottom edge detection for showing footer
+  useEffect(() => {
+    // Set initial hide timeout when component mounts
+    if (footerHidingTimeoutIdRef.current) {
+      clearTimeout(footerHidingTimeoutIdRef.current);
+    }
+    footerHidingTimeoutIdRef.current = setTimeout(() => {
+      hideFooter();
+    }, footerHideTimeout);
     
+    // Define the bottom edge sensitivity area (in pixels from bottom)
+    const bottomSensitivityArea = 10;
+    
+    // Handle mouse movement to detect bottom edge
+    const handleMouseMove = (e: MouseEvent) => {
+      const distanceFromBottom = window.innerHeight - e.clientY;
+      
+      // If mouse is near the bottom of the screen
+      if (distanceFromBottom <= bottomSensitivityArea) {
+        // Show footer when mouse is near bottom
+        showFooter();
+        
+        // Always set a new timeout to hide it after 4 seconds
+        if (footerHidingTimeoutIdRef.current) {
+          clearTimeout(footerHidingTimeoutIdRef.current);
+        }
+        footerHidingTimeoutIdRef.current = setTimeout(() => {
+          hideFooter();
+        }, footerHideTimeout);
+      }
+    };
+    
+    // Add event listener for mouse movement
+    document.addEventListener('mousemove', handleMouseMove);
+    
+    // Cleanup function
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('mousemove', handleMouseMove);
+      
       if (footerHidingTimeoutIdRef.current) {
         clearTimeout(footerHidingTimeoutIdRef.current);
       }
     };
-  }, [footerHasRevealed]);
-
-  // Mouse events for footer
+  }, [footerHasRevealed, footerMenuIsVisible]);
+  
+  // Mouse events specifically for footer
   useEffect(() => {
     if (!footerRef.current) return;
     
     const handleMouseOver = () => {
+      // When mouse is over footer, cancel any hide timeout and keep it visible
       if (footerHidingTimeoutIdRef.current) {
         clearTimeout(footerHidingTimeoutIdRef.current);
       }
     };
     
     const handleMouseLeave = () => {
+      // When mouse leaves footer, always set a 4-second hide timeout
       if (footerHidingTimeoutIdRef.current) {
         clearTimeout(footerHidingTimeoutIdRef.current);
       }
-      
       footerHidingTimeoutIdRef.current = setTimeout(() => {
         hideFooter();
       }, footerHideTimeout);
     };
     
-    // Mouse move handler for showing footer when near bottom
-    const handleMouseMove = (e: MouseEvent) => {
-      if (e.y > window.innerHeight - 50) {
-        showFooter();
-      }
-    };
-    
     footerRef.current.addEventListener('mouseover', handleMouseOver);
     footerRef.current.addEventListener('mouseleave', handleMouseLeave);
-    document.addEventListener('mousemove', handleMouseMove);
     
     return () => {
       if (footerRef.current) {
         footerRef.current.removeEventListener('mouseover', handleMouseOver);
         footerRef.current.removeEventListener('mouseleave', handleMouseLeave);
       }
-      document.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
 
@@ -273,11 +263,13 @@ const Footer = () => {
 
   // Function to hide footer
   const hideFooter = () => {
-    if (footerRef.current && document.documentElement.scrollHeight !== window.innerHeight && 
-        window.scrollY < (document.documentElement.scrollHeight - window.innerHeight - 50)) {
+    if (footerRef.current) {
       setFooterHasRevealed(false);
       footerRef.current.style.transition = 'bottom 500ms ease-in-out, background-color 500ms ease-in-out';
       footerRef.current.style.bottom = `-${footerHeight}`;
+      
+      // Also hide menu when hiding footer
+      hideFooterMenu();
     }
   };
 
@@ -290,11 +282,7 @@ const Footer = () => {
       
       setTimeout(() => {
         setFooterHasRevealed(true);
-      }, 500);
-      
-      if (footerHidingTimeoutIdRef.current) {
-        clearTimeout(footerHidingTimeoutIdRef.current);
-      }
+      }, 250);
     }
   };
 
@@ -310,10 +298,23 @@ const Footer = () => {
   const toggleFooterMenu = () => {
     if (footerMenuIsVisible) {
       hideFooterMenu();
+      
+      // Set hide timeout when closing menu
+      if (footerHidingTimeoutIdRef.current) {
+        clearTimeout(footerHidingTimeoutIdRef.current);
+      }
+      footerHidingTimeoutIdRef.current = setTimeout(() => {
+        hideFooter();
+      }, footerHideTimeout);
     } else {
       if (footerMenuRef.current) {
         footerMenuRef.current.style.display = 'flex';
         setFooterMenuIsVisible(true);
+        
+        // Cancel any hide timer when opening menu
+        if (footerHidingTimeoutIdRef.current) {
+          clearTimeout(footerHidingTimeoutIdRef.current);
+        }
       }
     }
   };

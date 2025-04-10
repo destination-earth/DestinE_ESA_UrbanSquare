@@ -1233,8 +1233,8 @@ const Map = () => {
           <style jsx>{`
             .responsive-sidebar {
               position: fixed;
-              top: 60px;
-              bottom: 36.1667px;
+              top: 63px;
+              bottom: 0px;
               right: 0;
               width: 25vw;
               background-color: #0d1527;
@@ -1340,7 +1340,7 @@ const Map = () => {
 
                 // Format number with thousand separators
                 const formatNumber = (num: number): string => {
-                  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "'");
+                  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
                 };
 
                 // For urban area: convert to km² if over 100,000 m²
@@ -1412,6 +1412,7 @@ const Map = () => {
                     alignItems: "center",
                     justifyContent: "center",
                     marginBottom: "20px",
+                    marginTop: "25px",
                   }}
                 >
                   <h3
