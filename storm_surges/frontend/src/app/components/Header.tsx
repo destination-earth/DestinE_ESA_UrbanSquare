@@ -411,7 +411,7 @@ const Header = () => {
               <Image
                 id="urban-square-logo"
                 alt="urban-square-page"
-                src={`${basePath}/urbanSquare.png`}
+                src={`${basePath}/urbansquare.png`}
                 width={140}
                 height={35}
               />
