@@ -355,7 +355,7 @@ const Footer = () => {
               className="footer-logo" 
               alt="eu commission" 
               src={`${basePath}/funded-by-EU.png`} 
-              width={120} 
+              width={160} 
               height={90}
               // style={footerStyles.footerLogo}
             />

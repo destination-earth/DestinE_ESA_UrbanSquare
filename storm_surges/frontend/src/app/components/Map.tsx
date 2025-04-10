@@ -286,6 +286,24 @@ function getMarkerColor(tags: Record<string, string>): string {
 }
 
 const Map = () => {
+  useEffect(() => {
+    // This ensures Leaflet-specific code only runs in the browser
+    // Fix Leaflet icon issues (with TypeScript workaround)
+    const L = require("leaflet");
+
+    // Use type assertion to tell TypeScript that the property exists
+    delete (L.Icon.Default.prototype as any)._getIconUrl;
+
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl:
+        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+      iconUrl:
+        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+      shadowUrl:
+        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+    });
+  }, []);
+
   const center: LatLngExpression = [48.1074, 13.2275];
   const bounds: LatLngBounds = new LatLngBounds(
     [-85.05112878, -180.0],
@@ -505,7 +523,7 @@ const Map = () => {
       const payload = createApiPayload(formattedCoords);
       setIsAnalysisLoading(true);
       setApiError(null);
-  
+
       const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -514,38 +532,47 @@ const Map = () => {
         body: JSON.stringify(payload),
         signal: controller.signal,
       });
-  
+
       // Get response data regardless of status for better error messages
       const responseData = await response.json().catch(() => null);
-  
+
       if (!response.ok) {
         let errorMessage = "";
-        
+
         // Handle specific HTTP error codes
         switch (response.status) {
           case 404:
-            errorMessage = responseData?.detail || "Resource not found. There may be no inundation data available for this location or parameter combination.";
+            errorMessage =
+              responseData?.detail ||
+              "Resource not found. There may be no inundation data available for this location or parameter combination.";
             break;
           case 400:
-            errorMessage = responseData?.detail || "Invalid request. Please check your parameters and try again.";
+            errorMessage =
+              responseData?.detail ||
+              "Invalid request. Please check your parameters and try again.";
             break;
           case 500:
-            errorMessage = "Server error. The analysis service is experiencing issues.";
+            errorMessage =
+              "Server error. The analysis service is experiencing issues.";
             break;
           case 503:
-            errorMessage = "Service unavailable. The analysis service is currently down or overloaded.";
+            errorMessage =
+              "Service unavailable. The analysis service is currently down or overloaded.";
             break;
           default:
-            errorMessage = responseData?.detail || responseData?.error || `Request failed with status ${response.status}`;
+            errorMessage =
+              responseData?.detail ||
+              responseData?.error ||
+              `Request failed with status ${response.status}`;
         }
-  
+
         // Set the error for UI display
         setApiError(errorMessage);
-        
+
         // Throw error with a prefix that we can detect in the catch block
         throw new Error(`Analysis Error: ${errorMessage}`);
       }
-  
+
       // Process successful response
       setApiResponse(responseData);
       setHasFetchedData(true);
@@ -554,7 +581,7 @@ const Map = () => {
     } catch (error) {
       // First, stop the loading animation
       setIsAnalysisLoading(false);
-      
+
       // Use non-blocking approach to allow UI to update first
       setTimeout(() => {
         if (error instanceof Error) {
@@ -567,12 +594,12 @@ const Map = () => {
           } else {
             // Display the error message
             alert(error.message);
-            
+
             // Extract the original error message if it has our prefix
-            const errorMsg = error.message.startsWith("Analysis Error: ") 
+            const errorMsg = error.message.startsWith("Analysis Error: ")
               ? error.message.substring("Analysis Error: ".length)
               : error.message;
-              
+
             setApiError(errorMsg);
           }
         } else {
@@ -1308,9 +1335,51 @@ const Map = () => {
                 if (key === "cereals") return null;
 
                 const label = readableLabels[key] || key;
-                const unit = units[key] || "";
-                const iconPath = icons[key];
+                let unit = units[key] || "";
+                let displayValue = Number(value);
 
+                // Format number with thousand separators
+                const formatNumber = (num: number): string => {
+                  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "'");
+                };
+
+                // For urban area: convert to km² if over 100,000 m²
+                if (
+                  key === "GHS_BUILT_S_E2020_GLOBE" &&
+                  displayValue > 100000
+                ) {
+                  displayValue = displayValue / 1000000; // Convert to km²
+                  unit = "km²";
+                  // Format with 2 decimal places for km²
+                  return (
+                    <div
+                      key={key}
+                      style={{
+                        marginBottom: "10px",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      {icons[key] && (
+                        <Image
+                          src={icons[key]}
+                          alt={`${label} icon`}
+                          width={24}
+                          height={24}
+                          style={{ marginRight: "10px" }}
+                        />
+                      )}
+                      <strong>{label}</strong>:{" "}
+                      {formatNumber(Math.floor(displayValue))}
+                      {displayValue % 1 !== 0
+                        ? "." + (displayValue % 1).toFixed(2).split(".")[1]
+                        : ""}{" "}
+                      {unit}
+                    </div>
+                  );
+                }
+
+                // For all other values, just format with thousand separators
                 return (
                   <div
                     key={key}
@@ -1320,16 +1389,17 @@ const Map = () => {
                       alignItems: "center",
                     }}
                   >
-                    {iconPath && (
+                    {icons[key] && (
                       <Image
-                        src={iconPath}
+                        src={icons[key]}
                         alt={`${label} icon`}
                         width={24}
                         height={24}
                         style={{ marginRight: "10px" }}
                       />
                     )}
-                    <strong>{label}</strong>: {String(value)} {unit}
+                    <strong>{label}</strong>: {formatNumber(displayValue)}{" "}
+                    {unit}
                   </div>
                 );
               })}

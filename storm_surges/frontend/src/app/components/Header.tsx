@@ -43,6 +43,11 @@ const headerStyles = {
     padding: 0,
     gap: "20px",
   } as React.CSSProperties,
+  urbanSquareContainer: {
+    display: "flex",
+    alignItems: "center",
+    height: "100%",
+  },
   centralContainer: {
     height: "100%",
     // maxWidth: "800px",
@@ -408,13 +413,20 @@ const Header = () => {
               />
             </Link>
             {/* Urban Square Logo */}
-            <Image
-              id="urban-square-logo"
-              alt="urban-square-page"
-              src={`${basePath}/UrbanSquare.svg`}
-              width={180}
-              height={120}
-            />
+            <div style={headerStyles.urbanSquareContainer}>
+              <Image
+                id="urban-square-logo"
+                alt="urban-square-page"
+                src={`${basePath}/UrbanS_Logo.png`}
+                width={190}
+                height={35}
+                style={{
+                  objectFit: "contain",
+                  marginTop: "8px",
+                  
+                }}
+              />
+            </div>
             {/* Sistema Logo */}
             <Link href="https://www.sistema.at/">
               <Image
@@ -439,17 +451,6 @@ const Header = () => {
 
           {/* Right container */}
           <div id="right-container" style={headerStyles.rightContainer}>
-            {/* IPCC Logo with Modal */}
-            {/* <Image
-              id="ipcc-logo"
-              alt="IPCC Logo"
-              src={`${basePath}/ipcc.png`}
-              width={50}
-              height={36}
-              style={headerStyles.logo}
-              onClick={openModal}
-            /> */}
-
             {/* Info Button */}
             <div id="info-container" style={headerStyles.infoContainer}>
               <div
