@@ -43,11 +43,6 @@ const headerStyles = {
     padding: 0,
     gap: "20px",
   } as React.CSSProperties,
-  urbanSquareContainer: {
-    display: "flex",
-    alignItems: "center",
-    height: "100%",
-  },
   centralContainer: {
     height: "100%",
     // maxWidth: "800px",
@@ -410,23 +405,17 @@ const Header = () => {
                 alt="destine platform home"
                 src={`${basePath}/destination_earth_logo.svg`}
                 width={160}
-                height={36}
+                height={35}
               />
             </Link>
-            {/* Urban Square Logo */}
-            <div style={headerStyles.urbanSquareContainer}>
               <Image
                 id="urban-square-logo"
                 alt="urban-square-page"
-                src={`${basePath}/UrbanS_Logo.png`}
-                width={190}
+                src={`${basePath}/urbansquare.png`}
+                width={140}
                 height={35}
-                style={{
-                  objectFit: "contain",
-                  marginTop: "8px",
-                }}
               />
-            </div>
+            {/* </div> */}
             {/* Sistema Logo */}
             <Link href="https://www.sistema.at/">
               <Image
