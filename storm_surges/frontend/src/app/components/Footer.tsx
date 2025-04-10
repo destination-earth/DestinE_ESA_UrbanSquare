@@ -137,25 +137,23 @@ const footerStyles = {
 };
 
 const Footer = () => {
-  const basePath = process.env.BASEPATH || '';
-  
+  const basePath = process.env.BASEPATH || "";
+
   // State variables
   const [footerMenuIsVisible, setFooterMenuIsVisible] = useState(false);
   const [footerHasRevealed, setFooterHasRevealed] = useState(true);
-  
+
   // Refs
   const footerRef = useRef<HTMLDivElement>(null);
   const footerMenuRef = useRef<HTMLDivElement>(null);
   const footerMenuIconRef = useRef<SVGSVGElement>(null);
-  
+
   // For tracking user activity
   const footerHidingTimeoutIdRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   // Constants
   const footerHeight = "64px";
   const footerHideTimeout = 4000;
-
-
 
   // Set up bottom edge detection for showing footer
   useEffect(() => {
@@ -166,19 +164,19 @@ const Footer = () => {
     footerHidingTimeoutIdRef.current = setTimeout(() => {
       hideFooter();
     }, footerHideTimeout);
-    
+
     // Define the bottom edge sensitivity area (in pixels from bottom)
     const bottomSensitivityArea = 10;
-    
+
     // Handle mouse movement to detect bottom edge
     const handleMouseMove = (e: MouseEvent) => {
       const distanceFromBottom = window.innerHeight - e.clientY;
-      
+
       // If mouse is near the bottom of the screen
       if (distanceFromBottom <= bottomSensitivityArea) {
         // Show footer when mouse is near bottom
         showFooter();
-        
+
         // Always set a new timeout to hide it after 4 seconds
         if (footerHidingTimeoutIdRef.current) {
           clearTimeout(footerHidingTimeoutIdRef.current);
@@ -188,31 +186,31 @@ const Footer = () => {
         }, footerHideTimeout);
       }
     };
-    
+
     // Add event listener for mouse movement
-    document.addEventListener('mousemove', handleMouseMove);
-    
+    document.addEventListener("mousemove", handleMouseMove);
+
     // Cleanup function
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      
+      document.removeEventListener("mousemove", handleMouseMove);
+
       if (footerHidingTimeoutIdRef.current) {
         clearTimeout(footerHidingTimeoutIdRef.current);
       }
     };
   }, [footerHasRevealed, footerMenuIsVisible]);
-  
+
   // Mouse events specifically for footer
   useEffect(() => {
     if (!footerRef.current) return;
-    
+
     const handleMouseOver = () => {
       // When mouse is over footer, cancel any hide timeout and keep it visible
       if (footerHidingTimeoutIdRef.current) {
         clearTimeout(footerHidingTimeoutIdRef.current);
       }
     };
-    
+
     const handleMouseLeave = () => {
       // When mouse leaves footer, always set a 4-second hide timeout
       if (footerHidingTimeoutIdRef.current) {
@@ -222,42 +220,42 @@ const Footer = () => {
         hideFooter();
       }, footerHideTimeout);
     };
-    
-    footerRef.current.addEventListener('mouseover', handleMouseOver);
-    footerRef.current.addEventListener('mouseleave', handleMouseLeave);
-    
+
+    footerRef.current.addEventListener("mouseover", handleMouseOver);
+    footerRef.current.addEventListener("mouseleave", handleMouseLeave);
+
     return () => {
       if (footerRef.current) {
-        footerRef.current.removeEventListener('mouseover', handleMouseOver);
-        footerRef.current.removeEventListener('mouseleave', handleMouseLeave);
+        footerRef.current.removeEventListener("mouseover", handleMouseOver);
+        footerRef.current.removeEventListener("mouseleave", handleMouseLeave);
       }
     };
   }, []);
 
   // Media query handler for mobile link display
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(min-width: 1025px)');
-    
+    const mediaQuery = window.matchMedia("(min-width: 1025px)");
+
     const handleMediaQueryChange = (e: MediaQueryListEvent) => {
-      const mobileLinks = document.getElementsByClassName('mobile-link');
-      
+      const mobileLinks = document.getElementsByClassName("mobile-link");
+
       for (let i = 0; i < mobileLinks.length; i++) {
         const element = mobileLinks[i] as HTMLElement;
-        element.style.display = e.matches ? 'none' : 'block';
+        element.style.display = e.matches ? "none" : "block";
       }
     };
-    
-    mediaQuery.addEventListener('change', handleMediaQueryChange);
-    
+
+    mediaQuery.addEventListener("change", handleMediaQueryChange);
+
     // Initial check
-    const mobileLinks = document.getElementsByClassName('mobile-link');
+    const mobileLinks = document.getElementsByClassName("mobile-link");
     for (let i = 0; i < mobileLinks.length; i++) {
       const element = mobileLinks[i] as HTMLElement;
-      element.style.display = mediaQuery.matches ? 'none' : 'block';
+      element.style.display = mediaQuery.matches ? "none" : "block";
     }
-    
+
     return () => {
-      mediaQuery.removeEventListener('change', handleMediaQueryChange);
+      mediaQuery.removeEventListener("change", handleMediaQueryChange);
     };
   }, []);
 
@@ -265,9 +263,10 @@ const Footer = () => {
   const hideFooter = () => {
     if (footerRef.current) {
       setFooterHasRevealed(false);
-      footerRef.current.style.transition = 'bottom 500ms ease-in-out, background-color 500ms ease-in-out';
+      footerRef.current.style.transition =
+        "bottom 500ms ease-in-out, background-color 500ms ease-in-out";
       footerRef.current.style.bottom = `-${footerHeight}`;
-      
+
       // Also hide menu when hiding footer
       hideFooterMenu();
     }
@@ -276,10 +275,11 @@ const Footer = () => {
   // Function to show footer
   const showFooter = () => {
     if (footerRef.current) {
-      footerRef.current.style.transition = 'bottom 250ms ease-in-out, background-color 500ms ease-in-out';
-      footerRef.current.style.bottom = '0px';
-      footerRef.current.style.position = 'fixed';
-      
+      footerRef.current.style.transition =
+        "bottom 250ms ease-in-out, background-color 500ms ease-in-out";
+      footerRef.current.style.bottom = "0px";
+      footerRef.current.style.position = "fixed";
+
       setTimeout(() => {
         setFooterHasRevealed(true);
       }, 250);
@@ -289,7 +289,7 @@ const Footer = () => {
   // Function to hide footer menu
   const hideFooterMenu = () => {
     if (footerMenuRef.current) {
-      footerMenuRef.current.style.display = 'none';
+      footerMenuRef.current.style.display = "none";
       setFooterMenuIsVisible(false);
     }
   };
@@ -298,7 +298,7 @@ const Footer = () => {
   const toggleFooterMenu = () => {
     if (footerMenuIsVisible) {
       hideFooterMenu();
-      
+
       // Set hide timeout when closing menu
       if (footerHidingTimeoutIdRef.current) {
         clearTimeout(footerHidingTimeoutIdRef.current);
@@ -308,9 +308,9 @@ const Footer = () => {
       }, footerHideTimeout);
     } else {
       if (footerMenuRef.current) {
-        footerMenuRef.current.style.display = 'flex';
+        footerMenuRef.current.style.display = "flex";
         setFooterMenuIsVisible(true);
-        
+
         // Cancel any hide timer when opening menu
         if (footerHidingTimeoutIdRef.current) {
           clearTimeout(footerHidingTimeoutIdRef.current);
@@ -320,83 +320,92 @@ const Footer = () => {
   };
 
   return (
-    <div 
-      id="footer-container" 
+    <div
+      id="footer-container"
       ref={footerRef}
       style={footerStyles.footerContainer}
     >
-      <div id="footer-inner-container" style={footerStyles.footerInnerContainer}>
+      <div
+        id="footer-inner-container"
+        style={footerStyles.footerInnerContainer}
+      >
         {/* Left Container */}
-        <div id="footer-left-container" style={footerStyles.footerLeftContainer}>
+        <div
+          id="footer-left-container"
+          style={footerStyles.footerLeftContainer}
+        >
           <Link href="https://destination-earth.eu">
-            <Image 
-              id="footer-desp-logo" 
-              alt="desp-home" 
-              src={`${basePath}/desp_logo.svg`} 
-              width={64} 
+            <Image
+              id="footer-desp-logo"
+              alt="desp-home"
+              src={`${basePath}/desp_logo.svg`}
+              width={64}
               height={40}
             />
           </Link>
         </div>
 
         {/* Central Container */}
-        <div id="footer-central-container" style={footerStyles.footerCentralContainer}>
+        <div
+          id="footer-central-container"
+          style={footerStyles.footerCentralContainer}
+        >
           <Link href="https://destination-earth.eu">
-            <Image 
-              className="footer-logo" 
-              alt="destination earth" 
-              src={`${basePath}/destination-earth.png`} 
-              width={120} 
+            <Image
+              className="footer-logo"
+              alt="destination earth"
+              src={`${basePath}/destination-earth.png`}
+              width={120}
               height={90}
               // style={footerStyles.footerLogo}
             />
           </Link>
           <Link href="https://european-union.europa.eu/">
-            <Image 
-              className="footer-logo" 
-              alt="eu commission" 
-              src={`${basePath}/funded-by-EU.png`} 
-              width={160} 
+            <Image
+              className="footer-logo"
+              alt="eu commission"
+              src={`${basePath}/funded-by-EU.png`}
+              width={160}
               height={90}
               // style={footerStyles.footerLogo}
             />
           </Link>
           {/* <Link href="#"> */}
-            <Image 
-              className="footer-logo" 
-              alt="implemented by" 
-              src={`${basePath}/implemented-by.png`} 
-              width={120} 
-              height={90}
-              // style={footerStyles.footerLogo}
-            />
+          <Image
+            className="footer-logo"
+            alt="implemented by"
+            src={`${basePath}/implemented-by.png`}
+            width={120}
+            height={90}
+            // style={footerStyles.footerLogo}
+          />
           {/* </Link> */}
           <Link href="https://www.ecmwf.int/">
-            <Image 
-              className="footer-logo" 
-              alt="ecmwf" 
-              src={`${basePath}/ecmwf.png`} 
-              width={120} 
+            <Image
+              className="footer-logo"
+              alt="ecmwf"
+              src={`${basePath}/ecmwf.png`}
+              width={120}
               height={90}
               // style={footerStyles.footerLogo}
             />
           </Link>
           <Link href="https://www.esa.int/">
-            <Image 
-              className="footer-logo" 
-              alt="esa" 
-              src={`${basePath}/esa.png`} 
-              width={120} 
+            <Image
+              className="footer-logo"
+              alt="esa"
+              src={`${basePath}/esa.png`}
+              width={120}
               height={90}
               // style={footerStyles.footerLogo}
             />
           </Link>
           <Link href="https://www.eumetsat.int/">
-            <Image 
-              className="footer-logo" 
-              alt="eumetsat" 
-              src={`${basePath}/eumetsat.png`} 
-              width={120} 
+            <Image
+              className="footer-logo"
+              alt="eumetsat"
+              src={`${basePath}/eumetsat.png`}
+              width={120}
               height={90}
               // style={footerStyles.footerLogo}
             />
@@ -404,17 +413,20 @@ const Footer = () => {
         </div>
 
         {/* Right Container */}
-        <div id="footer-right-container" style={footerStyles.footerRightContainer}>
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            width="24" 
-            height="24" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
+        <div
+          id="footer-right-container"
+          style={footerStyles.footerRightContainer}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
             id="footer-menu-icon"
             ref={footerMenuIconRef}
             style={footerStyles.footerMenuIcon}
@@ -440,19 +452,35 @@ const Footer = () => {
 
       {/* Footer menu */}
       <div id="footer-menu" ref={footerMenuRef} style={footerStyles.footerMenu}>
-        <Link className="frame-link" href="/code-of-conduct" style={footerStyles.frameLink}>
+        <Link
+          className="frame-link"
+          href="https://platform.destine.eu/code-of-conduct/"
+          style={footerStyles.frameLink}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Code of Conduct
         </Link>
-        <Link className="frame-link" href="/terms-and-conditions" style={footerStyles.frameLink}>
+        <Link
+          className="frame-link"
+          href="https://platform.destine.eu/terms-and-conditions/"
+          style={footerStyles.frameLink}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Terms and Conditions
         </Link>
-        <Link className="frame-link" href="/privacy-policies" style={footerStyles.frameLink}>
+        <Link
+          className="frame-link"
+          href="https://platform.destine.eu/privacy-policies/"
+          style={footerStyles.frameLink}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Privacy Policies
         </Link>
-        <Link className="frame-link" href="/legal-notice" style={footerStyles.frameLink}>
-          Legal Notice
-        </Link>
-        <div className="mobile-link" style={footerStyles.mobileLink}>
+
+        {/* <div className="mobile-link" style={footerStyles.mobileLink}>
           <hr style={footerStyles.footerMenuDivider} />
           <Link className="footer-frame-link" href="https://destination-earth.eu" style={footerStyles.footerFrameLink}>
             <Image 
@@ -514,7 +542,7 @@ const Footer = () => {
               style={footerStyles.mobileFooterLogo}
             />
           </Link>
-        </div>
+        </div> */}
       </div>
     </div>
   );

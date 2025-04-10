@@ -80,6 +80,7 @@ const headerStyles = {
   } as React.CSSProperties,
   infoContainer: {
     position: "relative",
+    marginRight: "40px",
     height: "100%",
     display: "flex",
     flexDirection: "row" as const,
@@ -423,7 +424,6 @@ const Header = () => {
                 style={{
                   objectFit: "contain",
                   marginTop: "8px",
-                  
                 }}
               />
             </div>
@@ -484,15 +484,19 @@ const Header = () => {
               >
                 <Link
                   className="frame-link"
-                  href="/docs"
+                  href="https://platform.destine.eu/services/documents-and-api/doc/?service_name=urbansquare"
                   style={headerStyles.frameLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   Docs
                 </Link>
                 <Link
                   className="frame-link"
-                  href="/support"
+                  href="https://platform.destine.eu/support/"
                   style={headerStyles.frameLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   Support
                 </Link>
