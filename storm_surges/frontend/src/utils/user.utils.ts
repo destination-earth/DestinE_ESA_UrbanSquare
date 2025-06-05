@@ -11,7 +11,6 @@ export const getUserId = async (): Promise<string> => {
 
   const basePath = process.env.BASEPATH || "";
 
-  // Try to get from API endpoint first (server-side headers)
   try {
     const response = await fetch(`${basePath}/api/user`); 
     if (response.ok) {
