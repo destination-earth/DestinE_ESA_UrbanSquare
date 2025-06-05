@@ -1,22 +1,61 @@
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
+import { getMonitoringService } from "../../services/monitoring.service";
+import { getUserId } from "../../utils/user.utils";
 
 interface ToggleButtonProps {
   isLoading: boolean;
   toggleOverlayLayer: () => void;
   isDisabled: boolean;
+  // Add these props to pass the configuration values
+  confidenceLevel: string;
+  selectedSSP: string | null;
+  selectedYear: string;
+  stormSurge: number;
 }
 
 const ToggleButton: React.FC<ToggleButtonProps> = ({
   isLoading,
   toggleOverlayLayer,
   isDisabled,
+  confidenceLevel,
+  selectedSSP,
+  selectedYear,
+  stormSurge,
 }) => {
-  const handleClick = () => {
+  const handleClick = async () => {
     if (isDisabled) {
-      // Show a message when the button is disabled
       alert("Please select all necessary parameters before running the query.");
     } else {
+      console.log('🔘 RUN button clicked with params:', {
+        confidenceLevel,
+        selectedSSP,
+        selectedYear,
+        stormSurge
+      });
+      
+      // Send monitoring log before triggering the overlay
+      try {
+        const monitoringService = getMonitoringService();
+        console.log('👤 Fetching user ID...');
+        const userId = await getUserId();
+        console.log('👤 User ID obtained:', userId);
+        
+        console.log('📤 Sending monitoring log...');
+        await monitoringService.sendLog({
+          userId,
+          confidenceLevel,
+          selectedSSP,
+          selectedYear,
+          stormSurge,
+        });
+        console.log('✅ Monitoring log process completed');
+      } catch (error) {
+        console.error("❌ Failed to send monitoring log:", error);
+      }
+      
+      // Proceed with the original action
+      console.log('🗺️ Triggering overlay layer...');
       toggleOverlayLayer();
     }
   };

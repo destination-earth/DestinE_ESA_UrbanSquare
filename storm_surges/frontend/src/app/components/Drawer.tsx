@@ -297,12 +297,22 @@ const Drawer: React.FC<DrawerProps> = ({
             isLoading={isLoading}
             toggleOverlayLayer={toggleOverlayLayer}
             isDisabled={!isValidConfiguration()}
+            confidenceLevel={confidenceLevel}
+            selectedSSP={selectedSSP}
+            selectedYear={selectedYear}
+            stormSurge={stormSurge}
           />
         </div>
       </div>
       {isInfoModalOpen && (
         <Modal onClose={toggleInfoModal}>
-          <div style={{ padding: "20px", backgroundColor: "black", color: "white"}}>
+          <div
+            style={{
+              padding: "20px",
+              backgroundColor: "black",
+              color: "white",
+            }}
+          >
             <p>
               <strong>Confidence Level</strong>
               <br />
@@ -318,11 +328,12 @@ const Drawer: React.FC<DrawerProps> = ({
             <p>
               <br />
               <strong className="text-center">SSP</strong>
-              <br />Socioeconomic Pathway (SSP) is a future scenario
-              that considers climate change and socio-economic global changes
-              (natural resources, population growth). SSPs range from optimistic
-              to pessimistic scenarios: in SSP119, it is assumed that society
-              will be taking “the green road” towards a more sustainable planet;
+              <br />
+              Socioeconomic Pathway (SSP) is a future scenario that considers
+              climate change and socio-economic global changes (natural
+              resources, population growth). SSPs range from optimistic to
+              pessimistic scenarios: in SSP119, it is assumed that society will
+              be taking “the green road” towards a more sustainable planet;
               while in SSP585 a complete fossil-fueled development is
               considered. The definition of the five Shared Socioeconomic
               Pathway (SSP) scenarios used to develop the IPCC AR 6 sea level
