@@ -8,7 +8,7 @@ const monitoringConfigs: Record<string, MonitoringConfig> = {
     apiKey: 'OWdrQ2daWUJMTmVjVVRBRDdpWHE6SF9obG1tUkZSaGlsaEVMdmVTQzhkZw=='
   },
   production: {
-    // Update these values when deploying to production
+    // These can be set via environment variables when deploying to production
     endpoint: process.env.NEXT_PUBLIC_MONITORING_ENDPOINT || 'monitoring.prod.desp.space',
     datastreamName: process.env.NEXT_PUBLIC_MONITORING_DATASTREAM || 'urbansquare.ext.monitoring-default',
     apiKey: process.env.NEXT_PUBLIC_MONITORING_API_KEY || ''

@@ -1,4 +1,3 @@
-// monitoring.service.ts
 interface MonitoringConfig {
   endpoint: string;
   datastreamName: string;
@@ -25,7 +24,7 @@ class MonitoringService {
     console.log('🚀 Monitoring Service initialized with config:', {
       endpoint: config.endpoint,
       datastreamName: config.datastreamName,
-      apiKey: config.apiKey.substring(0, 10) + '...' // Show only first 10 chars for security
+      apiKey: config.apiKey.substring(0, 10) + '...'
     });
   }
 

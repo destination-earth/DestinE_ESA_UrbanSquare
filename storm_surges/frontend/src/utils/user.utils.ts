@@ -1,4 +1,3 @@
-// utils/user.utils.ts
 let cachedUserId: string | null = null;
 
 /**
@@ -10,14 +9,11 @@ export const getUserId = async (): Promise<string> => {
     return cachedUserId;
   }
 
-  // Get basePath from environment or window
-  const basePath = process.env.NEXT_PUBLIC_BASEPATH || 
-                  (typeof window !== 'undefined' ? (window as any).__BASEPATH__ : '') || 
-                  '';
+  const basePath = process.env.BASEPATH || "";
 
   // Try to get from API endpoint first (server-side headers)
   try {
-    const response = await fetch(`${basePath}/api/user`); // Updated with basePath
+    const response = await fetch(`${basePath}/api/user`); 
     if (response.ok) {
       const data = await response.json();
       if (data.userId && data.userId !== 'anonymous') {
