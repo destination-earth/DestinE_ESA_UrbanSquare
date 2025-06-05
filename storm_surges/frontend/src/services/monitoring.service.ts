@@ -15,7 +15,6 @@ interface LogEntry {
   ssp: string;
   year: string;
   storm_surge: number;
-  message?: string;
 }
 
 class MonitoringService {
@@ -58,8 +57,7 @@ class MonitoringService {
     confidence_level: params.confidenceLevel.toLowerCase(),
     ssp: params.selectedSSP || "ssp126",
     year: params.selectedYear,
-    storm_surge: actualStormSurge,  // Use the converted value
-    message: `User generated sea level rise map for year ${params.selectedYear} with SSP ${params.selectedSSP || "ssp126"}, confidence level ${params.confidenceLevel}, and storm surge ${actualStormSurge}m`
+    storm_surge: actualStormSurge,
   };
 
     console.log('📦 Log entry to be sent:', JSON.stringify(logEntry, null, 2));
