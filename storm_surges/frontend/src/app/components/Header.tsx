@@ -408,6 +408,7 @@ const Header = () => {
                 height={35}
               />
             </Link>
+            <Link href="https://destinationearth.murmureo.com/urban-square/">
               <Image
                 id="urban-square-logo"
                 alt="urban-square-page"
@@ -415,6 +416,7 @@ const Header = () => {
                 width={140}
                 height={35}
               />
+              </Link>
             {/* </div> */}
             {/* Sistema Logo */}
             <Link href="https://www.sistema.at/">
@@ -425,16 +427,6 @@ const Header = () => {
                 width={100}
                 height={50}
               />
-            </Link>
-          </div>
-
-          {/* Central container */}
-          <div id="central-container" style={headerStyles.centralContainer}>
-            <Link
-              href="https://destinationearth.murmureo.com/urban-square/"
-              className="header-link"
-            >
-              Home
             </Link>
           </div>
 
