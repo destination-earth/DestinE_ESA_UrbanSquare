@@ -13,6 +13,8 @@ interface UserMenuProps {
   userFrameRef: React.RefObject<HTMLDivElement>;
 }
 
+const basePath = process.env.BASEPATH || "";
+
 const UserMenu: React.FC<UserMenuProps> = ({
   isAuthenticated,
   userName,
@@ -30,17 +32,14 @@ const UserMenu: React.FC<UserMenuProps> = ({
         style={{
           ...headerStyles.loginDiv,
           ...(loginHover ? headerStyles.loginDivHover : {}),
-          ...(isMobile ? { padding: "0 9px" } : {})
+          ...(isMobile ? { padding: "0 9px" } : {}),
         }}
         onMouseEnter={() => onLoginHover(true)}
         onMouseLeave={() => onLoginHover(false)}
         onClick={isAuthenticated ? onToggleMenu : undefined}
       >
         {!isAuthenticated ? (
-          <Link
-            href={getLoginUrl()}
-            style={headerStyles.loginLink}
-          >
+          <Link href={getLoginUrl()} style={headerStyles.loginLink}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="18"
@@ -88,7 +87,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
           ref={userFrameRef}
           style={{
             ...headerStyles.userFrame,
-            ...(isMobile ? { left: "auto", right: "-20px" } : {})
+            ...(isMobile ? { left: "auto", right: "-20px" } : {}),
           }}
         >
           <Link
@@ -102,7 +101,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
           </Link>
           <Link
             className="frame-link"
-            href="/urban-square/oauth2/sign_out"
+            href={`${basePath}/oauth2/sign_out`}
             style={headerStyles.frameLink}
           >
             Logout
