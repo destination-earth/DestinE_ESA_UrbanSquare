@@ -13,8 +13,6 @@ interface UserMenuProps {
   userFrameRef: React.RefObject<HTMLDivElement>;
 }
 
-const basePath = process.env.BASEPATH || "";
-
 const UserMenu: React.FC<UserMenuProps> = ({
   isAuthenticated,
   userName,
@@ -101,7 +99,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
           </Link>
           <Link
             className="frame-link"
-            href={`${basePath}/oauth2/sign_out`}
+            href="https://destinationearth.murmureo.com/urban-square/oauth2/sign_out"
             style={headerStyles.frameLink}
           >
             Logout
