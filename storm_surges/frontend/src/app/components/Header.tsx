@@ -274,7 +274,7 @@ const Header = () => {
               >
                 <Link
                   className="frame-link"
-                  href="https://platform.destine.eu/services/documents-and-api/doc/?service_name=urbansquare"
+                  href="https://platform.destine.eu/services/documents-and-api/doc/?service_name=urban-square"
                   style={headerStyles.frameLink}
                   target="_blank"
                   rel="noopener noreferrer"
