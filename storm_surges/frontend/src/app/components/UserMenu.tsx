@@ -90,7 +90,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
         >
           <Link
             className="frame-link"
-            href="https://iam.prod.desp.space/realms/desp/account/"
+            href="https://auth.destine.eu/realms/desp/account/"
             style={headerStyles.frameLink}
             target="_blank"
             rel="noopener noreferrer"
