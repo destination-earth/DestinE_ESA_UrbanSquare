@@ -1257,7 +1257,7 @@ model, scenario, date and time; insert DESP credentials).</p></li>
 <td>Expected Results</td>
 <td><ul>
 <li><p>Successfully generate plot of the requested variable</p>
-<p><img src="media/IVVtestreport-Picture19.png" /></p></li>
+</li>
 </ul></td>
 </tr>
 <tr>
@@ -1330,7 +1330,7 @@ key.</p></li>
 <li><p>Select Dataset : Select Extremes-DT.</p></li>
 <li><p>Provide the following configuration:</p></li>
 </ol>
-<p><img src="media/IVVtestreport-Picture20.png"
+<p><img src="media/IVVtestreport-Picture19.png"
 style="width:4.72441in;height:3.00948in" /></p>
 <ol start="4" type="1">
 <li><p>Run the query</p></li>
@@ -1344,7 +1344,7 @@ style="width:4.72441in;height:3.00948in" /></p>
 <li><p>A URL will be received for later download</p></li>
 <li><p>When plotted, the content of the Grib file should look as
 follow</p>
-<p><img src="media/IVVtestreport-Picture21.png"
+<p><img src="media/IVVtestreport-Picture20.png"
 style="width:4.72441in;height:2.44709in" /></p></li>
 </ul></td>
 </tr>
@@ -1443,12 +1443,12 @@ gdalinfo and QGIS (or similar). [*]…</p></li>
 <td>Expected Results</td>
 <td><ul>
 <li><p>The HDA API request retrieves results successfully.</p>
-<p><img src="media/IVVtestreport-Picture22.png"
+<p><img src="media/IVVtestreport-Picture221.png"
 style="width:5.11389in;height:1.50417in" /></p></li>
 <li><p>The data is successfully downloaded.</p></li>
 <li><p>The GeoTIFF is correctly created and can be visualized on QGIS
 (or similar).</p>
-<p><img src="media/IVVtestreport-Picture23.png"
+<p><img src="media/IVVtestreport-Picture22.png"
 style="width:5.11389in;height:2.53819in" /></p></li>
 </ul></td>
 </tr>
@@ -1646,7 +1646,7 @@ resolutions, other significant differences were noticed. This is due to
 the distinct nature of the products, as explained above.
 
 <figure>
-<img src="media/IVVtestreport-Picture24.png" style="width:6.29921in;height:1.55977in"
+<img src="media/IVVtestreport-Picture23.png" style="width:6.29921in;height:1.55977in"
 alt="A blue and white map AI-generated content may be incorrect." />
 <figcaption><p>Figure 5: IPCC AR6 SSP3-7.0 sea level rise for the year
 2040 (left). CCADT SSP3-7.0 average time-mean sea surface height for the
@@ -1658,7 +1658,7 @@ While with some differences (as expected, since they are generated from
 different models), similar trends can be seen.
 
 <figure>
-<img src="media/IVVtestreport-Picture25" style="width:6.29921in;height:1.55926in"
+<img src="media/IVVtestreport-Picture24" style="width:6.29921in;height:1.55926in"
 alt="A blue and red watercolor map AI-generated content may be incorrect." />
 <figcaption><p>Figure 6: CMIP6 ACCESS-CM2 SSP3-7.0 zos (left). CCADT
 SSP3-7.0 zos (right).</p></figcaption>
@@ -1700,6 +1700,7 @@ Nonetheless, they would not provide desired improvements.
 [5] <https://confluence.ecmwf.int/display/DDCZ/Data+portfolio+errata+for+Climate+DT+Phase+1>
 
 [6] <https://confluence.ecmwf.int/display/DDCZ/Data+portfolio+errata+for+Climate+DT+Phase+1>
+
 
 
 
