@@ -1443,7 +1443,7 @@ gdalinfo and QGIS (or similar). [*]…</p></li>
 <td>Expected Results</td>
 <td><ul>
 <li><p>The HDA API request retrieves results successfully.</p>
-<p><img src="media/IVVtestreport-Picture221.png"
+<p><img src="media/IVVtestreport-Picture21.png"
 style="width:5.11389in;height:1.50417in" /></p></li>
 <li><p>The data is successfully downloaded.</p></li>
 <li><p>The GeoTIFF is correctly created and can be visualized on QGIS
@@ -1700,6 +1700,7 @@ Nonetheless, they would not provide desired improvements.
 [5] <https://confluence.ecmwf.int/display/DDCZ/Data+portfolio+errata+for+Climate+DT+Phase+1>
 
 [6] <https://confluence.ecmwf.int/display/DDCZ/Data+portfolio+errata+for+Climate+DT+Phase+1>
+
 
 
 
