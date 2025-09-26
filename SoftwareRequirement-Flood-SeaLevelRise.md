@@ -1,5 +1,3 @@
-<img src="media/image1.png" style="width:8.20895in;height:5.46992in" />
-
 **<span class="smallcaps">REVISION HISTORY</span>**
 
 <table>
@@ -550,3 +548,4 @@ assessment statistical data.</td>
 </tr>
 </tbody>
 </table>
+
