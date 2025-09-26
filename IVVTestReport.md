@@ -1658,7 +1658,7 @@ While with some differences (as expected, since they are generated from
 different models), similar trends can be seen.
 
 <figure>
-<img src="media/IVVtestreport-Picture24" style="width:6.29921in;height:1.55926in"
+<img src="media/IVVtestreport-Picture24.png" style="width:6.29921in;height:1.55926in"
 alt="A blue and red watercolor map AI-generated content may be incorrect." />
 <figcaption><p>Figure 6: CMIP6 ACCESS-CM2 SSP3-7.0 zos (left). CCADT
 SSP3-7.0 zos (right).</p></figcaption>
@@ -1700,6 +1700,7 @@ Nonetheless, they would not provide desired improvements.
 [5] <https://confluence.ecmwf.int/display/DDCZ/Data+portfolio+errata+for+Climate+DT+Phase+1>
 
 [6] <https://confluence.ecmwf.int/display/DDCZ/Data+portfolio+errata+for+Climate+DT+Phase+1>
+
 
 
 
