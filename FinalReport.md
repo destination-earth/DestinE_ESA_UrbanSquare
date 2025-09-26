@@ -1,10 +1,3 @@
-<img src="media/image1.png" style="width:1.65833in;height:0.90069in"
-alt="Une image contenant Police, blanc, logo, Graphique Description générée automatiquement" /><img src="media/image2.jpg" style="width:1.24167in;height:0.90069in"
-alt="Immagine che contiene testo, emblema, simbolo, cerchio Il contenuto generato dall&#39;IA potrebbe non essere corretto." /><img src="media/image3.png" style="width:1.94653in;height:0.85833in"
-alt="Homepage - SISTEMA" /><img src="media/image4.png" style="width:1.31944in;height:1.125in"
-alt="Immagine che contiene Elementi grafici, schermata, grafica, testo Il contenuto generato dall&#39;IA potrebbe non essere corretto." /><img src="media/image5.png" style="width:6.26806in;height:0.63403in" />  
-<img src="media/image6.png" style="width:8.20895in;height:5.46992in" />
-
 REVISION HISTORY
 
 <table>
@@ -693,7 +686,7 @@ multi-partner coordination, the integration of new , and user feedback
 loops.
 
 <figure>
-<img src="media/image9.png" style="width:8.68816in;height:6.18027in"
+<img src="media/finalreport-Picture1.png" style="width:8.68816in;height:6.18027in"
 alt="A diagram with text and images AI-generated content may be incorrect." />
 <figcaption><p>: UrbanSquare Roadmap</p></figcaption>
 </figure>
@@ -785,3 +778,4 @@ The UrbanSquare consortium takes the commitment to maintain the service,
 at least in its current state, but more probably with continuous
 evolutions, for the next 6 months, visible and operational on DestinE
 platform.
+
