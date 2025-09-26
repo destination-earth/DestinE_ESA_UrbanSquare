@@ -160,7 +160,7 @@ At this stage in development, it relies on DestinE user management
 system (IAM) and on different endpoints provided to access data.
 
 <figure>
-<img src="media/image2.png" style="width:6.76772in;height:1.25in"
+<img src="media/IVVtestreport-Picture1.png" style="width:6.76772in;height:1.25in"
 alt="Une image contenant texte, capture d’écran, diagramme, Police Description générée automatiquement" />
 <figcaption><p>Figure 1: Interfaces between UrbanSquare and DestinE
 Software Platform</p></figcaption>
@@ -184,7 +184,7 @@ federation with the DestinE IAM system and the access to the DestinE
 data sources.
 
 <figure>
-<img src="media/image3.jpeg" style="width:6.76806in;height:4.32847in"
+<img src="media/IVVtestreport-Picture2.png" style="width:6.76806in;height:4.32847in"
 alt="Une image contenant texte, capture d’écran, diagramme, Police Description générée automatiquement" />
 <figcaption><p>Figure 2: UrbanSquare components high-level
 architecture.</p></figcaption>
@@ -265,7 +265,7 @@ executing:</p></li>
 </ol>
 <p>kubectl get deployments -n air-quality-ns</p>
 <p>The output should look like this:</p>
-<p><img src="media/image4.png"
+<p><img src="media/IVVtestreport-Picture3.png"
 style="width:4.72441in;height:0.36183in" /></p>
 <ol start="4" type="1">
 <li><p>Check the status of the pods, repeatedly, until it reaches the
@@ -274,7 +274,7 @@ ContainerCreating), by running:</p></li>
 </ol>
 <p>kubectl get pods -n air-quality-ns --watch</p>
 <p>The final output should look like this:</p>
-<p><img src="media/image5.png"
+<p><img src="media/IVVtestreport-Picture4.png"
 style="width:4.72441in;height:0.28193in" /></p></td>
 </tr>
 <tr>
@@ -363,7 +363,7 @@ appears. Provide a DestinE user/password to enter the service
 (registration can be done on <a
 href="https://platform.destine.eu/">https://platform.destine.eu/</a>).</p></li>
 </ol>
-<p><img src="media/image6.png"
+<p><img src="media/IVVtestreport-Picture5.png"
 style="width:1.88547in;height:2.11898in" /></p>
 <ol start="3" type="1">
 <li><p>The landing page of the service is displayed. By default the map
@@ -372,7 +372,7 @@ last available date is displayed over the whole area. A graphs showing
 the daily evolution of the NO2 concentration over this period is also
 displayed.</p></li>
 </ol>
-<p><img src="media/image7.png"
+<p><img src="media/IVVtestreport-Picture6.png"
 style="width:4.72441in;height:2.23665in" /></p>
 <ol start="4" type="1">
 <li><p>A setting panel can be open on the left. Provide the following
@@ -384,13 +384,13 @@ configuration and then click on “Validate settings”:</p></li>
 <li><p>Time series settings: Day</p></li>
 <li><p>Air quality standard: WHO</p></li>
 <li><p>Zone selection: blanks</p>
-<p><img src="media/image8.png"
+<p><img src="media/IVVtestreport-Picture7.png"
 style="width:4.72441in;height:3.05152in" /></p></li>
 </ul>
 <ol start="5" type="1">
 <li><p>The map and the graphs are updated as follow:</p></li>
 </ol>
-<p><img src="media/image9.png"
+<p><img src="media/IVVtestreport-Picture8.png"
 style="width:4.72441in;height:2.21775in" /></p>
 <ol start="6" type="1">
 <li><p>Provide the following configuration and then click on “Validate
@@ -406,7 +406,7 @@ settings”:</p></li>
 <ol start="7" type="1">
 <li><p>The map and the graphs are updated as follow:</p></li>
 </ol>
-<p><img src="media/image10.png"
+<p><img src="media/IVVtestreport-Picture9.png"
 style="width:4.72441in;height:2.23181in" /></p></td>
 </tr>
 <tr>
@@ -729,7 +729,7 @@ Destine operation team:
     associated with a set of metadata (user ID, timestamp, event type…).
     Below is an example of a generated log.
 
-    <img src="media/image11.png" style="width:6.2365in;height:3.14961in"
+    <img src="media/IVVtestreport-Picture10.png" style="width:6.2365in;height:3.14961in"
     alt="A screenshot of a computer AI-generated content may be incorrect." />
 
 Figure 3: Active user check log for the Urban heat application
@@ -915,10 +915,10 @@ been describe:
 All web applications have been harmonised to display the standard
 DestinE header and footer with the proper legal mentions.
 
-<img src="media/image12.png" style="width:6.76806in;height:0.25139in" />
+<img src="media/IVVtestreport-Picture11.png" style="width:6.76806in;height:0.25139in" />
 
 <figure>
-<img src="media/image13.png" style="width:6.76806in;height:0.25486in" />
+<img src="media/IVVtestreport-Picture12.png" style="width:6.76806in;height:0.25486in" />
 <figcaption><p>Figure 4: DestinE standard header and
 footer</p></figcaption>
 </figure>
@@ -973,10 +973,10 @@ model, scenario, date and time; insert DESP credentials).…</p></li>
 <td>Expected Results</td>
 <td><ul>
 <li><p>Successfully access data (i.e. through HDA API)</p>
-<p><img src="media/image14.png"
+<p><img src="media/IVVtestreport-Picture13.png"
 style="width:5.11389in;height:1.49375in" /></p></li>
 <li><p>Successfully generate plot of the global variable</p>
-<p><img src="media/image15.png"
+<p><img src="media/IVVtestreport-Picture14.png"
 style="width:5.1375in;height:3.28611in" /></p></li>
 </ul></td>
 </tr>
@@ -1055,10 +1055,10 @@ Murmuration account</p></li>
 <li><p>In the Configuration panel, check that the following
 configuration is set:</p></li>
 </ol>
-<p><img src="media/image16.png"
+<p><img src="media/IVVtestreport-Picture15.png"
 style="width:3.14961in;height:1.8256in" /></p>
 <ol start="4" type="1">
-<li><p>Click on the Run button <img src="media/image17.png"
+<li><p>Click on the Run button <img src="media/IVVtestreport-Picture16.png"
 style="width:1.1811in;height:0.3695in" />, and then Custom Run</p></li>
 <li><p>Provide the following input parameters:</p></li>
 </ol>
@@ -1077,7 +1077,7 @@ France)</em></p>
 finished, if no error occurs the status shall look as follow:</p></li>
 </ol>
 <blockquote>
-<p><img src="media/image18.png"
+<p><img src="media/IVVtestreport-Picture17.png"
 style="width:4.72441in;height:5.30852in" /></p>
 </blockquote></td>
 </tr>
@@ -1174,11 +1174,11 @@ EO:MEEO:DAT:REANALYSIS_ERA5_SINGLE_LEVELS_MONTHLY_MEANS:COG</p></li>
 <td>Expected Results</td>
 <td><ul>
 <li><p>On success the content should look as follow</p>
-<p><img src="media/image19.png"
+<p><img src="media/IVVtestreport-Picture18.png"
 style="width:4.72441in;height:2.41846in" /></p></li>
 <li><p>The following lines of code verify that the product has been
 definitely downloaded and is available in cache.</p>
-<p><img src="media/image20.png"
+<p><img src="media/IVVtestreport-Picture19.png"
 style="width:4.72441in;height:2.74494in" /></p></li>
 </ul></td>
 </tr>
@@ -1257,7 +1257,7 @@ model, scenario, date and time; insert DESP credentials).</p></li>
 <td>Expected Results</td>
 <td><ul>
 <li><p>Successfully generate plot of the requested variable</p>
-<p><img src="media/image21.png" /></p></li>
+<p><img src="media/IVVtestreport-Picture20.png" /></p></li>
 </ul></td>
 </tr>
 <tr>
@@ -1330,7 +1330,7 @@ key.</p></li>
 <li><p>Select Dataset : Select Extremes-DT.</p></li>
 <li><p>Provide the following configuration:</p></li>
 </ol>
-<p><img src="media/image22.png"
+<p><img src="media/IVVtestreport-Picture21.png"
 style="width:4.72441in;height:3.00948in" /></p>
 <ol start="4" type="1">
 <li><p>Run the query</p></li>
@@ -1344,7 +1344,7 @@ style="width:4.72441in;height:3.00948in" /></p>
 <li><p>A URL will be received for later download</p></li>
 <li><p>When plotted, the content of the Grib file should look as
 follow</p>
-<p><img src="media/image23.png"
+<p><img src="media/IVVtestreport-Picture22.png"
 style="width:4.72441in;height:2.44709in" /></p></li>
 </ul></td>
 </tr>
@@ -1443,12 +1443,12 @@ gdalinfo and QGIS (or similar). [*]…</p></li>
 <td>Expected Results</td>
 <td><ul>
 <li><p>The HDA API request retrieves results successfully.</p>
-<p><img src="media/image24.png"
+<p><img src="media/IVVtestreport-Picture23.png"
 style="width:5.11389in;height:1.50417in" /></p></li>
 <li><p>The data is successfully downloaded.</p></li>
 <li><p>The GeoTIFF is correctly created and can be visualized on QGIS
 (or similar).</p>
-<p><img src="media/image25.png"
+<p><img src="media/IVVtestreport-Picture24.png"
 style="width:5.11389in;height:2.53819in" /></p></li>
 </ul></td>
 </tr>
@@ -1646,7 +1646,7 @@ resolutions, other significant differences were noticed. This is due to
 the distinct nature of the products, as explained above.
 
 <figure>
-<img src="media/image26.png" style="width:6.29921in;height:1.55977in"
+<img src="media/IVVtestreport-Picture25.png" style="width:6.29921in;height:1.55977in"
 alt="A blue and white map AI-generated content may be incorrect." />
 <figcaption><p>Figure 5: IPCC AR6 SSP3-7.0 sea level rise for the year
 2040 (left). CCADT SSP3-7.0 average time-mean sea surface height for the
@@ -1658,7 +1658,7 @@ While with some differences (as expected, since they are generated from
 different models), similar trends can be seen.
 
 <figure>
-<img src="media/image27.png" style="width:6.29921in;height:1.55926in"
+<img src="media/IVVtestreport-Picture26" style="width:6.29921in;height:1.55926in"
 alt="A blue and red watercolor map AI-generated content may be incorrect." />
 <figcaption><p>Figure 6: CMIP6 ACCESS-CM2 SSP3-7.0 zos (left). CCADT
 SSP3-7.0 zos (right).</p></figcaption>
@@ -1700,4 +1700,5 @@ Nonetheless, they would not provide desired improvements.
 [5] <https://confluence.ecmwf.int/display/DDCZ/Data+portfolio+errata+for+Climate+DT+Phase+1>
 
 [6] <https://confluence.ecmwf.int/display/DDCZ/Data+portfolio+errata+for+Climate+DT+Phase+1>
+
 
