@@ -1,5 +1,3 @@
-<img src="media/image1.png" style="width:8.20895in;height:5.46992in" />
-
 **<span class="smallcaps">REVISION HISTORY</span>**
 
 <table>
@@ -1241,27 +1239,27 @@ Flux</td>
 ## Air quality
 
 <figure>
-<img src="media/image9.png" style="width:6.29921in;height:2.59033in" />
+<img src="media/UseCaseDescriptor-Picture1.png" style="width:6.29921in;height:2.59033in" />
 <figcaption><p>: Air quality component workflow</p></figcaption>
 </figure>
 
 ## Urban Heat
 
 <figure>
-<img src="media/image10.png" style="width:6.29921in;height:2.73982in" />
+<img src="media/UseCaseDescriptor-Picture2.png" style="width:6.29921in;height:2.73982in" />
 <figcaption><p>: Urban Heat component workflow</p></figcaption>
 </figure>
 
 ## Sea level rise and storm surges
 
 <figure>
-<img src="media/image11.png" style="width:6.76772in;height:3.80556in" />
+<img src="media/UseCaseDescriptor-Picture3.png" style="width:6.76772in;height:3.80556in" />
 <figcaption><p>: Inundation maps generation workflow for the Storm and
 Sea level rise component.</p></figcaption>
 </figure>
 
 <figure>
-<img src="media/image12.png" style="width:6.76772in;height:2.93056in"
+<img src="media/UseCaseDescriptor-Picture4.png" style="width:6.76772in;height:2.93056in"
 alt="A diagram of a model AI-generated content may be incorrect." />
 <figcaption><p>: Storm and Sea level rise component
 architecture.</p></figcaption>
@@ -1270,7 +1268,7 @@ architecture.</p></figcaption>
 ## Flood
 
 <figure>
-<img src="media/image13.png" style="width:4.72441in;height:5.14803in" />
+<img src="media/UseCaseDescriptor-Picture5.png" style="width:4.72441in;height:5.14803in" />
 <figcaption><p>: Flood component workflow</p></figcaption>
 </figure>
 
@@ -1293,14 +1291,14 @@ These features are visualised in the Flood/Resources GUI, and statistics
 are computed, as shown in the Figure below.
 
 <figure>
-<img src="media/image14.png" style="width:6.76806in;height:2.90833in"
+<img src="media/UseCaseDescriptor-Picture6.png" style="width:6.76806in;height:2.90833in"
 alt="A aerial view of a river AI-generated content may be incorrect." />
 <figcaption><p>: Buildings, roads and forests feature in the Flood
 GUI</p></figcaption>
 </figure>
 
 <figure>
-<img src="media/image15.png" style="width:4.63606in;height:2.91707in"
+<img src="media/UseCaseDescriptor-Picture7.png" style="width:4.63606in;height:2.91707in"
 alt="A map of land with numbers and text AI-generated content may be incorrect." />
 <figcaption><p>: Flood impact statistics</p></figcaption>
 </figure>
@@ -1312,7 +1310,7 @@ alt="A map of land with numbers and text AI-generated content may be incorrect."
 1.  Selection of a testing area
 
 <figure>
-<img src="media/image16.png" style="width:5.51181in;height:4.59336in"
+<img src="media/UseCaseDescriptor-Picture8.png" style="width:5.51181in;height:4.59336in"
 alt="Aerial view of a city AI-generated content may be incorrect." />
 <figcaption><p>: Selected area (Valencia, Spain)</p></figcaption>
 </figure>
@@ -1334,7 +1332,7 @@ alt="Aerial view of a city AI-generated content may be incorrect." />
     classify roads in the study area.
 
 <figure>
-<img src="media/image17.png" style="width:5.51181in;height:4.13386in"
+<img src="media/UseCaseDescriptor-Picture9.png" style="width:5.51181in;height:4.13386in"
 alt="A yellow and blue graph AI-generated content may be incorrect." />
 <figcaption><p>: Result of the road classifier</p></figcaption>
 </figure>
@@ -1348,7 +1346,7 @@ alt="A yellow and blue graph AI-generated content may be incorrect." />
       threshold of 0.33 was set to classify areas as roads.
 
 <figure>
-<img src="media/image18.png" style="width:5.51181in;height:4.13835in"
+<img src="media/UseCaseDescriptor-Picture10.png" style="width:5.51181in;height:4.13835in"
 alt="A map of a city AI-generated content may be incorrect." />
 <figcaption><p>: Result of the road probability
 classifier</p></figcaption>
@@ -1368,7 +1366,7 @@ classifier</p></figcaption>
       polygon vectors for further analysis.
 
 <figure>
-<img src="media/image19.png" style="width:5.51181in;height:5.51181in"
+<img src="media/UseCaseDescriptor-Picture11.png" style="width:5.51181in;height:5.51181in"
 alt="A blue and white map AI-generated content may be incorrect." />
 <figcaption><p>: Vectorised road network</p></figcaption>
 </figure>
@@ -1381,7 +1379,7 @@ alt="A blue and white map AI-generated content may be incorrect." />
       - As an undirected graph (nodes and edges representation)
 
 <figure>
-<img src="media/image20.png" style="width:3.14961in;height:3.14961in"
+<img src="media/UseCaseDescriptor-Picture12.png" style="width:3.14961in;height:3.14961in"
 alt="A map of the constellation of the constellation of the star AI-generated content may be incorrect." />
 <figcaption><p>: OSM graph road network</p></figcaption>
 </figure>
@@ -1413,7 +1411,7 @@ alt="A map of the constellation of the constellation of the star AI-generated co
 > Sensing*, *17*(5), 770. <https://doi.org/10.3390/rs17050770>
 
 <figure>
-<img src="media/image21.png" style="width:5.51181in;height:4.13386in"
+<img src="media/UseCaseDescriptor-Picture13.png" style="width:5.51181in;height:4.13386in"
 alt="A map of a city AI-generated content may be incorrect." />
 <figcaption><p>: Mud index</p></figcaption>
 </figure>
@@ -1427,7 +1425,7 @@ alt="A map of a city AI-generated content may be incorrect." />
     to be a blockage caused by mud and marked in a different colour
 
 <figure>
-<img src="media/image22.png" style="width:5.51181in;height:5.51181in"
+<img src="media/UseCaseDescriptor-Picture14.pngg" style="width:5.51181in;height:5.51181in"
 alt="A map of a city AI-generated content may be incorrect." />
 <figcaption><p>: Detection of blocked roads</p></figcaption>
 </figure>
@@ -1536,7 +1534,7 @@ environmental conditions (topography, land cover) and human activities
 data (road network, traffic tendency, population density...).
 
 <figure>
-<img src="media/image23.png" style="width:6.29921in;height:2.52692in" />
+<img src="media/UseCaseDescriptor-Picture15.png" style="width:6.29921in;height:2.52692in" />
 <figcaption><p>: Super resolution air quality monitoring
 model</p></figcaption>
 </figure>
@@ -1567,7 +1565,7 @@ The “what-if” scenarios are built on the following hypotheses:
   raster map used as input of the model.
 
 <figure>
-<img src="media/image24.png" style="width:6.29921in;height:2.16688in" />
+<img src="media/UseCaseDescriptor-Picture16.png" style="width:6.29921in;height:2.16688in" />
 <figcaption><p>: Air quality what-if scenario</p></figcaption>
 </figure>
 
@@ -1582,7 +1580,7 @@ The implemented scenarios include different influential factors:
   will demonstrate how a surge in traffic could worsen air quality.
 
 <figure>
-<img src="media/image25.png" style="width:5.51181in;height:2.20563in"
+<img src="media/UseCaseDescriptor-Picture17.png" style="width:5.51181in;height:2.20563in"
 alt="A screen shot of a graph AI-generated content may be incorrect." />
 <figcaption><p>: Air quality road traffic what if
 scenario</p></figcaption>
@@ -1594,7 +1592,7 @@ scenario</p></figcaption>
   quality.
 
 <figure>
-<img src="media/image26.png" style="width:5.51181in;height:2.18188in"
+<img src="media/UseCaseDescriptor-Picture18.png" style="width:5.51181in;height:2.18188in"
 alt="A screen shot of a graph AI-generated content may be incorrect." />
 <figcaption><p>: Air quality temperature what if
 scenario</p></figcaption>
@@ -1698,7 +1696,7 @@ information about past or future flood by merely inquiring about the
 water level at a certain point or area of a given river.
 
 <figure>
-<img src="media/image27.png" style="width:6.76772in;height:2.33333in"
+<img src="media/UseCaseDescriptor-Picture19.png" style="width:6.76772in;height:2.33333in"
 alt="A screenshot of a computer AI-generated content may be incorrect." />
 <figcaption><p>: Flood forecast GUI</p></figcaption>
 </figure>
@@ -1712,7 +1710,7 @@ provided the option to select a river and a monitoring point on it as
 well.
 
 <figure>
-<img src="media/image28.png" style="width:6.76806in;height:2.65833in"
+<img src="media/UseCaseDescriptor-Picture20.png" style="width:6.76806in;height:2.65833in"
 alt="A screenshot of a computer AI-generated content may be incorrect." />
 <figcaption><p>: Flood simulation GUI</p></figcaption>
 </figure>
@@ -1722,7 +1720,7 @@ simulated flood on the specified location with its flood span, and
 flooded areas, as shown in Figure 21.
 
 <figure>
-<img src="media/image29.png" style="width:6.76806in;height:2.66042in"
+<img src="media/UseCaseDescriptor-Picture21.png" style="width:6.76806in;height:2.66042in"
 alt="A map of a body of water AI-generated content may be incorrect." />
 <figcaption><p>: Flood simulation results</p></figcaption>
 </figure>
@@ -1819,13 +1817,13 @@ the flood simulator of ISME-HYDRO with equal streamflow conditions. It
 clearly shows that the two images display the same trend in the flooded
 areas.
 
-<img src="media/image30.png" style="width:4.7in;height:3.2167in"
+<img src="media/UseCaseDescriptor-Picture22.png" style="width:4.7in;height:3.2167in"
 alt="A blue river flowing through a city AI-generated content may be incorrect." />
 
 : Simulation of flood on the Danube around Svishtov with HEC-RAS
 
 <figure>
-<img src="media/image31.png" style="width:4.52616in;height:3.15833in"
+<img src="media/UseCaseDescriptor-Picture23.png" style="width:4.52616in;height:3.15833in"
 alt="A blue river flowing through a green area AI-generated content may be incorrect." />
 <figcaption><p>: Simulation of flood on the Danube around Svishtov with
 ISME-HYDRO flood simulator</p></figcaption>
@@ -1836,14 +1834,14 @@ Valencia, produced with HEC-RAS and with ISME-HYDRO flood simulator.
 Again, the trends are almost identical.
 
 <figure>
-<img src="media/image32.png" style="width:4.54167in;height:3.45833in"
+<img src="media/UseCaseDescriptor-Picture24.png" style="width:4.54167in;height:3.45833in"
 alt="A map of a city AI-generated content may be incorrect." />
 <figcaption><p>: Simulation of flood on Turia river in Valencia with
 HEC-RAS</p></figcaption>
 </figure>
 
 <figure>
-<img src="media/image33.png" style="width:4.54167in;height:3.54809in"
+<img src="media/iUseCaseDescriptor-Picture25.png" style="width:4.54167in;height:3.54809in"
 alt="A map of a city AI-generated content may be incorrect." />
 <figcaption><p>: Simulation of flood on the Turia river in Valencia with
 ISME-HYDRO flood simulator</p></figcaption>
@@ -1854,7 +1852,7 @@ placed one on top of the other. No significance divergences in the flood
 shape can be noticed.
 
 <figure>
-<img src="media/image34.png" style="width:4.46667in;height:3.50417in"
+<img src="media/UseCaseDescriptor-Picture26.png" style="width:4.46667in;height:3.50417in"
 alt="A map of a city AI-generated content may be incorrect." />
 <figcaption><p>: Visualization of the flood simulations on Turia river
 in Valencia with HEC-RAS and ISME-HYDRO flood simulator</p></figcaption>
@@ -1868,7 +1866,7 @@ Figure 26 show this comparison for the simulations of floods on the
 Danube river around Svishtov and on Turia river in Valencia.
 
 <figure>
-<img src="media/image35.png" style="width:6.76806in;height:2.55556in"
+<img src="media/UseCaseDescriptor-Picture27.png" style="width:6.76806in;height:2.55556in"
 alt="A screenshot of a graph showing a map AI-generated content may be incorrect." />
 <figcaption><p>: Heatmaps of the flood simulations with HEC-RAS and
 ISME-HYDRO flood simulator on the Danube river around
@@ -1878,7 +1876,7 @@ Svishtov.</p></figcaption>
 The differences in the depths, hence the stream flows are insignificant.
 
 <figure>
-<img src="media/image36.png" style="width:6.76806in;height:2.55556in"
+<img src="media/UseCaseDescriptor-Picture28.png" style="width:6.76806in;height:2.55556in"
 alt="A graph of a graph showing a variety of blue dots AI-generated content may be incorrect." />
 <figcaption><p>: Heatmaps of the flood simulations with HEC-RAS and
 ISME-HYDRO flood simulator on the Turia river in
@@ -1895,7 +1893,7 @@ analysis of the curves establishes differences in the curves related to
 the higher water levels, but overall they follow a parallel trend.
 
 <figure>
-<img src="media/image37.png" style="width:6.76806in;height:3.86736in"
+<img src="media/UseCaseDescriptor-Picture29.png" style="width:6.76806in;height:3.86736in"
 alt="A graph showing a red line and blue line AI-generated content may be incorrect." />
 <figcaption><p>: Comparison of Minimal and Maximal water levels of the
 flood simulation on the Danube river around Svishtov with HEC-RAS and
@@ -1903,7 +1901,7 @@ with ISME-HYDRO flood simulator</p></figcaption>
 </figure>
 
 <figure>
-<img src="media/image38.png" style="width:6.76806in;height:3.86736in"
+<img src="media/UseCaseDescriptor-Picture30.png" style="width:6.76806in;height:3.86736in"
 alt="A graph of a flood AI-generated content may be incorrect." />
 </figure>
 
@@ -2199,19 +2197,19 @@ Turia river in Valencia are shown on Table 12 below.
 Figures 31-34 show the visualization of the overlaps between the HEC-RAS
 model outcomes and ISME-HYDRO simulator outcome.
 
-<img src="media/image39.png" style="width:9.44882in;height:4.63829in" />
+<img src="media/UseCaseDescriptor-Picture31.png" style="width:9.44882in;height:4.63829in" />
 
 Figure 31 HEC-RAS vs. ISME-HYDRO outcome for streamflow of 10960 m3/sec
 
-<img src="media/image40.png" style="width:9.44882in;height:4.63829in" />
+<img src="media/UseCaseDescriptor-Picture32.png" style="width:9.44882in;height:4.63829in" />
 
 Figure 32 HEC-RAS vs. ISME-HYDRO outcome for streamflow of 14656 m3/sec
 
-<img src="media/image41.png" style="width:9.44882in;height:4.63829in" />
+<img src="media/UseCaseDescriptor-Picture33.png" style="width:9.44882in;height:4.63829in" />
 
 Figure 33 HEC-RAS vs. ISME-HYDRO outcome for streamflow of 17296 m3/sec
 
-<img src="media/image42.png" style="width:9.44882in;height:4.63829in" />
+<img src="media/UseCaseDescriptor-Picture34.png" style="width:9.44882in;height:4.63829in" />
 
 Figure 34 HEC-RAS vs. ISME-HYDRO outcome for streamflow of 6984 m3/sec
 
@@ -2290,7 +2288,7 @@ figure 8:
   Integrated Assessment Models (IAMs) under any of the SSPs other than
   the fossil fuelled SSP5 socioeconomic development pathway.
 
-<img src="media/image43.png" style="width:5.75042in;height:2.118in" /><img src="media/image44.png" style="width:0.73438in;height:2.11673in" />
+<img src="media/UseCaseDescriptor-Picture35.png" style="width:5.75042in;height:2.118in" /><img src="media/image44.png" style="width:0.73438in;height:2.11673in" />
 
 : Global mean sea level rise by SSP scenario
 
@@ -2340,7 +2338,7 @@ decade and 52 projected for the coming decade within the demonstrator
 area.
 
 <figure>
-<img src="media/image45.png" style="width:6.76806in;height:3.37986in"
+<img src="media/UseCaseDescriptor-Picture36.png" style="width:6.76806in;height:3.37986in"
 alt="A screenshot of a map AI-generated content may be incorrect." />
 <figcaption><p>: Precipitation levels and key figures for extreme
 episodes</p></figcaption>
@@ -2353,7 +2351,7 @@ For past events, It allows to visualise where the precipitation occurred
 (see Figure 27).
 
 <figure>
-<img src="media/image46.png" style="width:6.76806in;height:2.72361in"
+<img src="media/UseCaseDescriptor-Picture37.png" style="width:6.76806in;height:2.72361in"
 alt="A map of the north and south america AI-generated content may be incorrect." />
 <figcaption><p>:Precipitation level for the extreme episode in 2024,
 October 29<sup>th</sup>.</p></figcaption>
@@ -2364,7 +2362,7 @@ from CCADT, offering scenarios of what could potentially occur in the
 coming years.
 
 <figure>
-<img src="media/image47.png" style="width:6.76806in;height:2.68403in"
+<img src="media/UseCaseDescriptor-Picture38.png" style="width:6.76806in;height:2.68403in"
 alt="A map of the ocean AI-generated content may be incorrect." />
 <figcaption><p>: Precipitation level for a scenario in 2031, November
 7<sup>th</sup>, as per the projection of CCADT.</p></figcaption>
