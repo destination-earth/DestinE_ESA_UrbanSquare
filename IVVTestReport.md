@@ -1,5 +1,3 @@
-<img src="media/image1.png" style="width:8.20895in;height:5.46992in" />
-
 **<span class="smallcaps">REVISION HISTORY</span>**
 
 <table>
@@ -1702,3 +1700,4 @@ Nonetheless, they would not provide desired improvements.
 [5] <https://confluence.ecmwf.int/display/DDCZ/Data+portfolio+errata+for+Climate+DT+Phase+1>
 
 [6] <https://confluence.ecmwf.int/display/DDCZ/Data+portfolio+errata+for+Climate+DT+Phase+1>
+
