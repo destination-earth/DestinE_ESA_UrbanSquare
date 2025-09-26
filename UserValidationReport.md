@@ -1,5 +1,3 @@
-<img src="media/image1.png" style="width:8.20895in;height:5.46992in" />
-
 **<span class="smallcaps">REVISION HISTORY</span>**
 
 <table>
@@ -774,7 +772,7 @@ class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
-<img src="media/image2.png" style="width:6.76806in;height:2.20278in"
+<img src="media/uservalreport-Picture1.png" style="width:6.76806in;height:2.20278in"
 alt="A screenshot of a computer AI-generated content may be incorrect." />
 
 *Figure 1: Example of monthly air quality reports for the city of
@@ -810,7 +808,7 @@ level.</p>
 <p>We performed a test with an “obvious” case: the redevelopment of
 Ramier island, where a conference centre has been replaced by a green
 space.</p>
-<p><img src="media/image3.png"
+<p><img src="media/uservalreport-Picture2.png"
 style="width:4.44306in;height:1.36667in" /></p>
 <p>The visualisation clearly shows the difference. The quantified
 information enabling the impact of the change to be measured in concrete
@@ -1267,3 +1265,4 @@ data into a DestinE service.</p></li>
 </tr>
 </tbody>
 </table>
+
