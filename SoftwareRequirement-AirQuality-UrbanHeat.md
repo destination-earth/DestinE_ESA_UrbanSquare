@@ -1,5 +1,3 @@
-<img src="media/image1.png" style="width:8.20895in;height:5.46992in" />
-
 **<span class="smallcaps">REVISION HISTORY</span>**
 
 <table>
@@ -111,7 +109,7 @@ been identified for each component.
 The following table recap the different components and the associated
 end-users.
 
-<img src="media/image2.png" style="width:3.93701in;height:2.2805in" />
+<img src="media/reqAirqualityUrbanHeat-Picture1.png" style="width:3.93701in;height:2.2805in" />
 
 *Figure 7: Users involved in the components implementation*
 
@@ -695,20 +693,20 @@ figures, with first the general methodology and then the results
 obtained on two test areas in Toulouse.
 
 <figure>
-<img src="media/image3.png" style="width:6.76806in;height:3.28958in" />
+<img src="media/reqAirqualityUrbanHeat-Picture2.png" style="width:6.76806in;height:3.28958in" />
 <figcaption><p>: Methodology to assess the response to heat wave of
 different tree species</p></figcaption>
 </figure>
 
 <figure>
-<img src="media/image4.png" style="width:6.76806in;height:4.24028in" />
+<img src="media/reqAirqualityUrbanHeat-Picture3.png" style="width:6.76806in;height:4.24028in" />
 <figcaption><p>: Response to heat waves of different tree species in 2
 test area in Toulouse – Raw evolution of the NDVI over
 time.</p></figcaption>
 </figure>
 
 <figure>
-<img src="media/image5.png" style="width:6.76806in;height:4.58403in" />
+<img src="media/reqAirqualityUrbanHeat-Picture4.png" style="width:6.76806in;height:4.58403in" />
 <figcaption><p>: Response to heat waves of different tree species in 2
 test area in Toulouse – Assessment of the NDVI evolution before, during
 and after heat waves</p></figcaption>
@@ -743,3 +741,4 @@ Based on affordable data and scalable data access & processing resources
 thanks to the Destination Earth platform, it will offer an online
 dashboard with automatic setup for new areas, reducing costs and
 enabling broad scalability and impact.
+
