@@ -27,21 +27,11 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({
     if (isDisabled) {
       alert("Please select all necessary parameters before running the query.");
     } else {
-      console.log('🔘 RUN button clicked with params:', {
-        confidenceLevel,
-        selectedSSP,
-        selectedYear,
-        stormSurge
-      });
-      
-      // Send monitoring log before triggering the overlay
+      toggleOverlayLayer();
       try {
         const monitoringService = getMonitoringService();
-        console.log('👤 Fetching user ID...');
         const userId = await getUserId();
-        console.log('👤 User ID obtained:', userId);
-        
-        console.log('📤 Sending monitoring log...');
+
         await monitoringService.sendLog({
           userId,
           confidenceLevel,
@@ -49,14 +39,9 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({
           selectedYear,
           stormSurge,
         });
-        console.log('✅ Monitoring log process completed');
       } catch (error) {
-        console.error("❌ Failed to send monitoring log:", error);
+        console.error("Failed to send monitoring log:", error);
       }
-      
-      // Proceed with the original action
-      console.log('🗺️ Triggering overlay layer...');
-      toggleOverlayLayer();
     }
   };
 
@@ -84,8 +69,6 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({
         justifyContent: "center",
         alignItems: "center",
       }}
-      // Remove the 'disabled' attribute to allow handling clicks
-      // disabled={isDisabled}
     >
       {isLoading ? (
         <Box sx={{ position: "relative", display: "inline-flex" }}>

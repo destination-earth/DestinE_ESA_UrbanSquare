@@ -21,11 +21,6 @@ class MonitoringService {
 
   constructor(config: MonitoringConfig) {
     this.config = config;
-    console.log('🚀 Monitoring Service initialized with config:', {
-      endpoint: config.endpoint,
-      datastreamName: config.datastreamName,
-      apiKey: config.apiKey.substring(0, 10) + '...'
-    });
   }
 
   private formatTimestamp(): string {
@@ -39,59 +34,48 @@ class MonitoringService {
     selectedYear: string;
     stormSurge: number;
   }): Promise<void> {
-    console.log('📊 Monitoring Service - Preparing to send log with params:', params);
-    
     const timestamp = this.formatTimestamp();
-    console.log('⏰ Generated timestamp:', timestamp);
-
     const actualStormSurge = params.stormSurge / 10;
-  console.log('🌊 Storm surge conversion:', params.stormSurge, '→', actualStormSurge);
-    
-  const logEntry: LogEntry = {
-    "@timestamp": timestamp,
-    service_name: "urban-square-sea-level-rise",
-    event_timestamp: timestamp,
-    event_type: "sea_level_rise_map_generated",
-    user_id: params.userId,
-    confidence_level: params.confidenceLevel.toLowerCase(),
-    ssp: params.selectedSSP || "ssp126",
-    year: params.selectedYear,
-    storm_surge: actualStormSurge,
-  };
-
-    console.log('📦 Log entry to be sent:', JSON.stringify(logEntry, null, 2));
+    const logEntry: LogEntry = {
+      "@timestamp": timestamp,
+      service_name: "urban-square-sea-level-rise",
+      event_timestamp: timestamp,
+      event_type: "sea_level_rise_map_generated",
+      user_id: params.userId,
+      confidence_level: params.confidenceLevel.toLowerCase(),
+      ssp: params.selectedSSP || "ssp126",
+      year: params.selectedYear,
+      storm_surge: actualStormSurge,
+    };
 
     const url = `https://${this.config.endpoint}/elasticsearch/${this.config.datastreamName}/_doc/?pretty`;
-    console.log('🌐 Sending to URL:', url);
 
     try {
-      console.log('🔑 Authorization header:', `ApiKey ${this.config.apiKey.substring(0, 10)}...`);
-      
       const response = await fetch(url, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Authorization': `ApiKey ${this.config.apiKey}`,
-          'Content-Type': 'application/json',
+          Authorization: `ApiKey ${this.config.apiKey}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(logEntry),
       });
 
-      console.log('📬 Response status:', response.status, response.statusText);
-      
       if (!response.ok) {
-        console.error('❌ Failed to send monitoring log:', response.status, response.statusText);
+        console.error(
+          "Failed to send monitoring log:",
+          response.status,
+          response.statusText
+        );
         const responseText = await response.text();
-        console.error('❌ Response body:', responseText);
+        console.error("Response body:", responseText);
       } else {
-        console.log('✅ Monitoring log sent successfully!');
         const responseData = await response.json();
-        console.log('✅ Response data:', responseData);
       }
     } catch (error) {
-      console.error('❌ Error sending monitoring log:', error);
-      console.error('❌ Error details:', {
-        message: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : undefined
+      console.error("Error sending monitoring log:", error);
+      console.error("Error details:", {
+        message: error instanceof Error ? error.message : "Unknown error",
+        stack: error instanceof Error ? error.stack : undefined,
       });
     }
   }
@@ -101,16 +85,16 @@ class MonitoringService {
 let monitoringServiceInstance: MonitoringService | null = null;
 
 export const initializeMonitoring = (config: MonitoringConfig) => {
-  console.log('🎯 Initializing Monitoring Service...');
   monitoringServiceInstance = new MonitoringService(config);
 };
 
 export const getMonitoringService = (): MonitoringService => {
   if (!monitoringServiceInstance) {
-    console.error('❌ Monitoring service not initialized!');
-    throw new Error('Monitoring service not initialized. Call initializeMonitoring first.');
+    console.error("Monitoring service not initialized!");
+    throw new Error(
+      "Monitoring service not initialized. Call initializeMonitoring first."
+    );
   }
-  console.log('✅ Returning monitoring service instance');
   return monitoringServiceInstance;
 };
 

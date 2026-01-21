@@ -28,6 +28,7 @@ import {
   Legend,
 } from "chart.js";
 import Modal from "./Modal";
+import * as turf from "@turf/turf";
 
 ChartJS.register(
   CategoryScale,
@@ -287,11 +288,8 @@ function getMarkerColor(tags: Record<string, string>): string {
 
 const Map = () => {
   useEffect(() => {
-    // This ensures Leaflet-specific code only runs in the browser
-    // Fix Leaflet icon issues (with TypeScript workaround)
     const L = require("leaflet");
 
-    // Use type assertion to tell TypeScript that the property exists
     delete (L.Icon.Default.prototype as any)._getIconUrl;
 
     L.Icon.Default.mergeOptions({
@@ -302,6 +300,21 @@ const Map = () => {
       shadowUrl:
         "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
     });
+
+    if (L.GeometryUtil && L.GeometryUtil.readableArea) {
+      L.GeometryUtil.readableArea = function (
+        area: number,
+        isMetric?: boolean
+      ) {
+        const areaKm2 = area / 1000000;
+
+        if (areaKm2 >= 1) {
+          return areaKm2.toFixed(2) + " km²";
+        } else {
+          return area.toFixed(2) + " m²";
+        }
+      };
+    }
   }, []);
 
   const center: LatLngExpression = [48.1074, 13.2275];
@@ -311,7 +324,7 @@ const Map = () => {
   );
   const [useDefaultLayer, setUseDefaultLayer] = useState(true);
   const [showOverlayLayer, setShowOverlayLayer] = useState(false);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
   const [showOpenButton, setShowOpenButton] = useState(true);
   const [confidenceLevel, setConfidenceLevel] = useState("Medium");
   const [selectedSSP, setSelectedSSP] = useState<string | null>("ssp126");
@@ -353,6 +366,7 @@ const Map = () => {
 
   // For polygons drawn
   const [drawnPolygons, setDrawnPolygons] = useState<number[][][][]>([]);
+  const [drawnAreaKm2, setDrawnAreaKm2] = useState<number | null>(null);
 
   // Modal states
   const [isExposureModalOpen, setIsExposureModalOpen] = useState(false);
@@ -489,7 +503,6 @@ const Map = () => {
         setOverpassData(null);
       } else {
         setOverpassData(data);
-        console.log("Overpass data:", data);
       }
     } catch (err) {
       console.error(err);
@@ -586,7 +599,6 @@ const Map = () => {
       setTimeout(() => {
         if (error instanceof Error) {
           if (error.name === "AbortError") {
-            console.log("Fetch request canceled");
             const errorMessage = "Request canceled.";
             // Show alert after UI has updated
             alert(errorMessage);
@@ -612,12 +624,93 @@ const Map = () => {
     }
   };
 
+  const calculateAndShowArea = (layer: any) => {
+    const L = require("leaflet");
+    const leafletCoords = layer.getLatLngs ? layer.getLatLngs() : null;
+
+    if (!leafletCoords || !leafletCoords[0]) return;
+
+    let areaInSquareMeters = 0;
+
+    if (L.GeometryUtil && L.GeometryUtil.geodesicArea) {
+      areaInSquareMeters = L.GeometryUtil.geodesicArea(leafletCoords[0]);
+    } else {
+      const geoJsonCoords = leafletCoords[0].map((coord: any) => [
+        coord.lng,
+        coord.lat,
+      ]);
+      geoJsonCoords.push(geoJsonCoords[0]);
+      const polygon = turf.polygon([geoJsonCoords]);
+      areaInSquareMeters = turf.area(polygon);
+    }
+
+    const areaInSquareKm = areaInSquareMeters / 1_000_000;
+
+    // Add or update the permanent tooltip
+    const tooltipContent =
+      areaInSquareKm >= 1
+        ? `${areaInSquareKm.toFixed(2)} km²`
+        : `${areaInSquareMeters.toFixed(2)} m²`;
+
+    layer
+      .bindTooltip(tooltipContent, {
+        permanent: true,
+        direction: "center",
+        className: "area-tooltip",
+      })
+      .openTooltip();
+
+    return areaInSquareKm;
+  };
+
   const handleDrawCreated = (e: any) => {
     const { layer } = e;
     const leafletCoords = layer.getLatLngs();
+
+    // Calculate area
+    const areaInSquareKm = calculateAndShowArea(layer);
+
+    if (!areaInSquareKm) return;
+
+    console.log(`Drawn polygon area: ${areaInSquareKm.toFixed(2)} km²`);
+
+    if (areaInSquareKm > 100) {
+      alert(
+        `Area exceeding size limit (100 km2).\n\nPlease draw a smaller area.`
+      );
+      layer.remove();
+      return;
+    }
+
     const formattedCoords = formatCoordinates(leafletCoords);
-    // Store polygon, reset analysisComplete
     setDrawnPolygons([formattedCoords]);
+    setDrawnAreaKm2(areaInSquareKm ?? null);
+    setAnalysisComplete(false);
+  };
+
+  const handleDrawEdited = (e: any) => {
+    const layers = e.layers;
+    layers.eachLayer((layer: any) => {
+      const areaInSquareKm = calculateAndShowArea(layer);
+
+      if (areaInSquareKm && areaInSquareKm > 100) {
+        alert(
+          `The edited area exceeds the maximum limit of 100 km².\n\nPlease reduce the size.`
+        );
+      } else {
+        // Update the stored polygon coordinates and area
+        const leafletCoords = layer.getLatLngs();
+        const formattedCoords = formatCoordinates(leafletCoords);
+        setDrawnPolygons([formattedCoords]);
+        setDrawnAreaKm2(areaInSquareKm ?? null);
+        setAnalysisComplete(false);
+      }
+    });
+  };
+
+  const handleDrawDeleted = (e: any) => {
+    setDrawnPolygons([]);
+    setDrawnAreaKm2(null);
     setAnalysisComplete(false);
   };
 
@@ -654,7 +747,6 @@ const Map = () => {
       } catch (error) {
         if (error instanceof Error) {
           if (error.name === "AbortError") {
-            console.log("Fetch request canceled");
           } else {
             console.error("An error occurred:", error.message);
           }
@@ -730,12 +822,10 @@ const Map = () => {
       }
 
       const data = await res.json();
-      console.log("Response from /chartApi:", data);
       setChartData(data);
       setDisplayedOption(selectedOption);
     } catch (err) {
       if (err instanceof Error && err.name === "AbortError") {
-        console.log("API call canceled");
       } else {
         console.error("Error calling /chartApi:", err);
       }
@@ -875,11 +965,21 @@ const Map = () => {
             <EditControl
               position="topright"
               onCreated={handleDrawCreated}
+              onEdited={handleDrawEdited}
+              onDeleted={handleDrawDeleted}
               draw={{
                 circle: false,
                 circlemarker: false,
                 marker: false,
                 polyline: false,
+                rectangle: {
+                  showArea: true,
+                  shapeOptions: {
+                    color: "#97009c",
+                    fillOpacity: 0.2,
+                    weight: 2,
+                  },
+                } as any,
                 polygon: {
                   allowIntersection: false,
                   drawError: {
@@ -891,6 +991,7 @@ const Map = () => {
                     fillOpacity: 0.2,
                     weight: 2,
                   },
+                  showArea: true,
                 },
               }}
             />
@@ -1309,6 +1410,48 @@ const Map = () => {
               onClick={() => setIsExposureModalOpen(true)}
             />
           </div>
+
+          {/* Display the total area */}
+          {drawnAreaKm2 !== null && (
+            <div
+              style={{
+                backgroundColor: "#1A2238",
+                borderRadius: "5px",
+                padding: "10px",
+                marginBottom: "15px",
+                textAlign: "center",
+              }}
+            >
+              <div
+                style={{
+                  color: "#aaa",
+                  fontSize: "12px",
+                  marginBottom: "5px",
+                }}
+              >
+                Total Area Assessed
+              </div>
+              <div
+                style={{
+                  color: "white",
+                  fontSize: "18px",
+                  fontWeight: "bold",
+                }}
+              >
+                {drawnAreaKm2.toFixed(2)} km²
+              </div>
+            </div>
+          )}
+          {/* <div className="mt-6">
+            <Image
+              src={`${basePath}/infoWhite.svg`}
+              alt="Info"
+              width="16"
+              height="16"
+              style={{ cursor: "pointer" }}
+              onClick={() => setIsExposureModalOpen(true)}
+            />
+          </div> */}
 
           {/* If area API returned something */}
           {apiResponse ? (

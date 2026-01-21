@@ -105,3 +105,17 @@ header, footer {
 .header-link:hover {
   color: #7A7A7A;
 }
+
+.area-tooltip {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+  color: white !important;
+  border: 1px solid #97009c !important;
+  border-radius: 4px !important;
+  padding: 4px 8px !important;
+  font-weight: bold !important;
+  font-size: 12px !important;
+}
+
+.area-tooltip::before {
+  border: none !important;
+}
