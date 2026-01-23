@@ -287,6 +287,24 @@ function getMarkerColor(tags: Record<string, string>): string {
   return "gray";
 }
 
+interface EditStartHandlerProps {
+  onEditStart: () => void;
+}
+
+function EditStartHandler({ onEditStart }: EditStartHandlerProps) {
+  const map = useMap();
+
+  useEffect(() => {
+    map.on("draw:editstart", onEditStart);
+
+    return () => {
+      map.off("draw:editstart", onEditStart);
+    };
+  }, [map, onEditStart]);
+
+  return null;
+}
+
 interface EditVertexHandlerProps {
   onVertexEdit: (layer: any) => void;
 }
@@ -295,17 +313,25 @@ function EditVertexHandler({ onVertexEdit }: EditVertexHandlerProps) {
   const map = useMap();
 
   useEffect(() => {
-    const handleEditVertex = (e: any) => {
-      // e.poly contains the polygon being edited
-      if (e.poly) {
-        onVertexEdit(e.poly);
+    const handleEdit = (e: any) => {
+      // e.poly is used for editvertex, e.layer for editmove/editresize
+      const layer = e.poly || e.layer;
+      if (layer) {
+        onVertexEdit(layer);
       }
     };
 
-    map.on("draw:editvertex", handleEditVertex);
+    // editvertex: fires when polygon vertices are moved
+    // editresize: fires when rectangles are resized
+    // editmove: fires when shapes are dragged
+    map.on("draw:editvertex", handleEdit);
+    map.on("draw:editresize", handleEdit);
+    map.on("draw:editmove", handleEdit);
 
     return () => {
-      map.off("draw:editvertex", handleEditVertex);
+      map.off("draw:editvertex", handleEdit);
+      map.off("draw:editresize", handleEdit);
+      map.off("draw:editmove", handleEdit);
     };
   }, [map, onVertexEdit]);
 
@@ -409,6 +435,8 @@ const Map = () => {
   const urbanRef = useRef<any>(null);
   const cerealsRef = useRef<any>(null);
   const isHandlingEditRef = useRef(false);
+  const lastValidCoordsRef = useRef<number[][][] | null>(null);
+  const featureGroupRef = useRef<L.FeatureGroup | null>(null);
 
   const basePath = process.env.BASEPATH || "";
 
@@ -430,6 +458,21 @@ const Map = () => {
       return coordinates;
     });
   };
+
+  const handleEditStart = useCallback(() => {
+    // Capture the current coordinates of all layers before editing begins
+    if (featureGroupRef.current) {
+      featureGroupRef.current.eachLayer((layer: any) => {
+        if (layer.getLatLngs) {
+          // Store as raw coordinate arrays [lng, lat] format
+          const latLngs = layer.getLatLngs()[0]; // Get the first ring
+          lastValidCoordsRef.current = [
+            latLngs.map((coord: L.LatLng) => [coord.lng, coord.lat]),
+          ];
+        }
+      });
+    }
+  }, []);
 
   /* ---------------------------------
      Toggling layers & side UI things
@@ -645,66 +688,56 @@ const Map = () => {
   };
 
   const calculateAndShowArea = useCallback((layer: any) => {
-  const L = require("leaflet");
-  const leafletCoords = layer.getLatLngs ? layer.getLatLngs() : null;
+    const L = require("leaflet");
+    const leafletCoords = layer.getLatLngs ? layer.getLatLngs() : null;
 
-  if (!leafletCoords || !leafletCoords[0]) return;
+    if (!leafletCoords || !leafletCoords[0]) return;
 
-  let areaInSquareMeters = 0;
+    let areaInSquareMeters = 0;
 
-  if (L.GeometryUtil && L.GeometryUtil.geodesicArea) {
-    areaInSquareMeters = L.GeometryUtil.geodesicArea(leafletCoords[0]);
-  } else {
-    const geoJsonCoords = leafletCoords[0].map((coord: any) => [
-      coord.lng,
-      coord.lat,
-    ]);
-    geoJsonCoords.push(geoJsonCoords[0]);
-    const polygon = turf.polygon([geoJsonCoords]);
-    areaInSquareMeters = turf.area(polygon);
-  }
+    if (L.GeometryUtil && L.GeometryUtil.geodesicArea) {
+      areaInSquareMeters = L.GeometryUtil.geodesicArea(leafletCoords[0]);
+    } else {
+      const geoJsonCoords = leafletCoords[0].map((coord: any) => [
+        coord.lng,
+        coord.lat,
+      ]);
+      geoJsonCoords.push(geoJsonCoords[0]);
+      const polygon = turf.polygon([geoJsonCoords]);
+      areaInSquareMeters = turf.area(polygon);
+    }
 
-  const areaInSquareKm = areaInSquareMeters / 1_000_000;
+    const areaInSquareKm = areaInSquareMeters / 1_000_000;
 
-  const tooltipContent =
-    areaInSquareKm >= 1
-      ? `${areaInSquareKm.toFixed(2)} km²`
-      : `${areaInSquareMeters.toFixed(2)} m²`;
+    const tooltipContent =
+      areaInSquareKm >= 1
+        ? `${areaInSquareKm.toFixed(2)} km²`
+        : `${areaInSquareMeters.toFixed(2)} m²`;
 
-  // Unbind existing tooltip before binding new one
-  if (layer.getTooltip()) {
-    layer.unbindTooltip();
-  }
+    // Unbind existing tooltip before binding new one
+    if (layer.getTooltip()) {
+      layer.unbindTooltip();
+    }
 
-  layer
-    .bindTooltip(tooltipContent, {
-      permanent: true,
-      direction: "center",
-      className: "area-tooltip",
-    })
-    .openTooltip();
+    layer
+      .bindTooltip(tooltipContent, {
+        permanent: true,
+        direction: "center",
+        className: "area-tooltip",
+      })
+      .openTooltip();
 
-  return areaInSquareKm;
-}, []);
+    return areaInSquareKm;
+  }, []);
 
   const handleDrawCreated = (e: any) => {
     const { layer } = e;
     const leafletCoords = layer.getLatLngs();
 
-    // Calculate area
+    // Calculate and show area
     const areaInSquareKm = calculateAndShowArea(layer);
 
     if (!areaInSquareKm) return;
-
-    // console.log(`Drawn polygon area: ${areaInSquareKm.toFixed(2)} km²`);
-
-    if (areaInSquareKm > 100) {
-      alert(
-        `Area exceeding size limit (100 km2).\n\nPlease draw a smaller area.`,
-      );
-      layer.remove();
-      return;
-    }
 
     const formattedCoords = formatCoordinates(leafletCoords);
     setDrawnPolygons([formattedCoords]);
@@ -712,56 +745,18 @@ const Map = () => {
     setAnalysisComplete(false);
   };
 
-const handleDrawEdited = (e: any) => {
-  // Prevent re-entry
-  if (isHandlingEditRef.current) return;
-  isHandlingEditRef.current = true;
+  const handleDrawEdited = (e: any) => {
+    const layers = e.layers;
 
-  // console.log("handleDrawEdited called");
-  const layers = e.layers;
-  let hasOversizedPolygon = false;
-  let oversizedArea = 0;
-
-  layers.eachLayer((layer: any) => {
-    const areaInSquareKm = calculateAndShowArea(layer);
-    if (areaInSquareKm && areaInSquareKm > 100) {
-      hasOversizedPolygon = true;
-      oversizedArea = areaInSquareKm;
-    }
-  });
-
-  if (hasOversizedPolygon) {
-    alert(
-      `The edited area is ${oversizedArea.toFixed(2)} km², which exceeds the maximum limit of 100 km².\n\nYour changes have been reverted. Please reduce the size.`,
-    );
-
-    // Use setTimeout to break out of the event loop before removing
-    setTimeout(() => {
-      layers.eachLayer((layer: any) => {
-        layer.remove();
-      });
-      setDrawnPolygons([]);
-      setDrawnAreaKm2(null);
+    layers.eachLayer((layer: any) => {
+      const leafletCoords = layer.getLatLngs();
+      const formattedCoords = formatCoordinates(leafletCoords);
+      setDrawnPolygons([formattedCoords]);
+      const areaInSquareKm = calculateAndShowArea(layer);
+      setDrawnAreaKm2(areaInSquareKm ?? null);
       setAnalysisComplete(false);
-      isHandlingEditRef.current = false;
-    }, 0);
-
-    return;
-  }
-
-  // If all polygons are valid, update the stored coordinates
-  layers.eachLayer((layer: any) => {
-    calculateAndShowArea(layer);
-    const leafletCoords = layer.getLatLngs();
-    const formattedCoords = formatCoordinates(leafletCoords);
-    setDrawnPolygons([formattedCoords]);
-    const areaInSquareKm = calculateAndShowArea(layer);
-    setDrawnAreaKm2(areaInSquareKm ?? null);
-    setAnalysisComplete(false);
-  });
-
-  isHandlingEditRef.current = false;
-};
+    });
+  };
 
   const handleDrawDeleted = (e: any) => {
     setDrawnPolygons([]);
@@ -782,26 +777,66 @@ const handleDrawEdited = (e: any) => {
     if (!analysisComplete) {
       // Clear charts when starting a new analysis
       setChartData(null);
-      // If analysis is not complete, treat this as "Run Analysis"
-      if (drawnPolygons.length === 0) {
+
+      // Get the current state of the polygon from the map (includes unsaved edits)
+      let currentPolygonCoords: number[][][] | null = null;
+      let currentAreaKm2: number | null = null;
+      let drawnShapesCount = 0;
+
+      if (featureGroupRef.current) {
+        const layers = featureGroupRef.current.getLayers();
+
+        // Count drawn polygon/rectangle layers (exclude markers, etc.)
+        for (const layer of layers) {
+          if ((layer as any).getLatLngs) {
+            drawnShapesCount++;
+
+            // Store the last found shape's data
+            const leafletCoords = (layer as any).getLatLngs();
+            currentPolygonCoords = formatCoordinates(leafletCoords);
+            currentAreaKm2 = calculateAndShowArea(layer) ?? null;
+          }
+        }
+      }
+
+      // Check if no polygon exists
+      if (drawnShapesCount === 0) {
         alert("Please draw a polygon first before running the analysis.");
         return;
       }
-      if (drawnPolygons.length > 1) {
-        alert("Please only draw one polygon at a time for the analysis.");
+
+      // Check if more than one shape exists
+      if (drawnShapesCount > 1) {
+        alert(
+          "Please draw only one polygon or rectangle at a time for the analysis.\n\nDelete the extra shapes and try again.",
+        );
         return;
       }
 
-      // If exactly one polygon is drawn, fetch area data
-      const formattedCoords = drawnPolygons[0];
+      // Update state with current values (effectively "saving" the edits)
+      if (currentPolygonCoords) {
+        setDrawnPolygons([currentPolygonCoords]);
+        setDrawnAreaKm2(currentAreaKm2);
+      }
+
+      // Check if area exceeds limit
+      if (currentAreaKm2 !== null && currentAreaKm2 > 100) {
+        alert(
+          `The selected area is ${currentAreaKm2.toFixed(2)} km², which exceeds the maximum limit of 100 km².\n\nPlease edit the polygon to reduce its size before running the analysis.`,
+        );
+        return;
+      }
+
+      // Run the analysis with the current polygon coordinates
       const controller = new AbortController();
       setAbortController(controller);
 
       try {
-        await fetchAreaData(formattedCoords, controller);
+        await fetchAreaData(currentPolygonCoords!, controller);
       } catch (error) {
         if (error instanceof Error) {
           if (error.name === "AbortError") {
+            // Request was cancelled
           } else {
             console.error("An error occurred:", error.message);
           }
@@ -810,7 +845,7 @@ const handleDrawEdited = (e: any) => {
         }
       } finally {
         setAbortController(null);
-        setIsAnalysisLoading(false); // Ensure loading stops even if canceled
+        setIsAnalysisLoading(false);
       }
     } else {
       // If analysis is complete, act as "Open"
@@ -914,6 +949,92 @@ const handleDrawEdited = (e: any) => {
 
   const [isHovered, setIsHovered] = useState(false);
 
+  interface AnalysisButtonProps {
+    isAnalysisLoading: boolean;
+    analysisComplete: boolean;
+    onClick: () => void;
+    basePath: string;
+  }
+
+  function AnalysisButton({
+    isAnalysisLoading,
+    analysisComplete,
+    onClick,
+    basePath,
+  }: AnalysisButtonProps) {
+    const [isHovered, setIsHovered] = useState(false);
+
+    const windowButtonText = isAnalysisLoading
+      ? "Cancel"
+      : analysisComplete
+        ? "Open"
+        : "Run Analysis";
+
+    return (
+      <button
+        onClick={onClick}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className="leaflet-control-custom"
+        style={{
+          position: "fixed",
+          top: "270px",
+          right: "10px",
+          background: isAnalysisLoading ? "#f44336" : "white",
+          color: isAnalysisLoading ? "white" : "black",
+          border: "1px solid black",
+          borderRadius: "5px",
+          padding: "5px",
+          zIndex: 1000,
+          display: "flex",
+          alignItems: "center",
+          transition: "width 0.3s ease, padding 0.3s ease",
+          overflow: "hidden",
+          whiteSpace: "nowrap",
+          width: isHovered ? "120px" : "40px",
+          justifyContent: isHovered ? "flex-start" : "center",
+        }}
+      >
+        <Image
+          src={`${basePath}/chartWindow.svg`}
+          alt="Chart Window"
+          width="21"
+          height="21"
+        />
+        {isHovered && (
+          <span
+            style={{ marginLeft: "5px", fontSize: "13px", fontWeight: "bold" }}
+          >
+            {windowButtonText}
+          </span>
+        )}
+        {!analysisComplete && isAnalysisLoading && (
+          <div
+            style={{
+              marginLeft: "5px",
+              width: "16px",
+              height: "16px",
+              border: "2px solid #ff8400",
+              borderTop: "2px solid #FDD900",
+              borderRadius: "50%",
+              animation: "spin 1s linear infinite",
+            }}
+          />
+        )}
+        <style jsx>{`
+          @keyframes spin {
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg);
+            }
+          }
+        `}</style>
+      </button>
+    );
+  }
+
   const windowButtonText = isAnalysisLoading
     ? "Cancel"
     : analysisComplete
@@ -980,6 +1101,8 @@ const handleDrawEdited = (e: any) => {
         preferCanvas={true}
       >
         <EditVertexHandler onVertexEdit={calculateAndShowArea} />
+        <EditStartHandler onEditStart={handleEditStart} />
+
         {/* Base tile layer */}
         {useDefaultLayer ? (
           <TileLayer
@@ -1015,7 +1138,7 @@ const handleDrawEdited = (e: any) => {
         )}
 
         {/* FeatureGroup includes the draw controls & Overpass markers */}
-        <FeatureGroup>
+        <FeatureGroup ref={featureGroupRef}>
           {/* Draw controls */}
           {isDrawingMode && (
             <EditControl
@@ -1159,7 +1282,7 @@ const handleDrawEdited = (e: any) => {
       </button>
 
       {/* "Run Analysis"/"Open" floating button */}
-      <button
+      {/* <button
         onClick={handleWindowButtonClick}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -1219,7 +1342,13 @@ const handleDrawEdited = (e: any) => {
             }
           }
         `}</style>
-      </button>
+      </button> */}
+      <AnalysisButton
+        isAnalysisLoading={isAnalysisLoading}
+        analysisComplete={analysisComplete}
+        onClick={handleWindowButtonClick}
+        basePath={basePath}
+      />
 
       {/* If showLegend is true, display legend box */}
       {showLegend && (
