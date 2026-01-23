@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useMap } from "react-leaflet";
+import { useEffect, useState, useRef, useCallback } from "react";
 import Select, { MultiValue } from "react-select";
 import {
   FeatureGroup,
@@ -36,7 +37,7 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 );
 
 const customDrawControlStyles = `
@@ -109,7 +110,7 @@ const reactSelectDarkStyles = {
   menu: (provided: any) => ({
     ...provided,
     backgroundColor: "#2c3e50",
-    zIndex: 9999, // ensure dropdown is on top
+    zIndex: 9999,
   }),
   option: (provided: any, state: any) => ({
     ...provided,
@@ -117,8 +118,8 @@ const reactSelectDarkStyles = {
     backgroundColor: state.isSelected
       ? "#f76501"
       : state.isFocused
-      ? "#34495e"
-      : "transparent",
+        ? "#34495e"
+        : "transparent",
     color: "#fff",
   }),
   multiValue: (provided: any) => ({
@@ -169,7 +170,7 @@ function CoolButton({
   const [isActive, setIsActive] = useState(false);
 
   const baseStyle: React.CSSProperties = {
-    backgroundColor: isChartLoading ? "#f44336" : "#F76501", // Red when loading
+    backgroundColor: isChartLoading ? "#f44336" : "#F76501",
     color: "white",
     border: "none",
     borderRadius: "4px",
@@ -224,7 +225,7 @@ function CoolButton({
 }
 
 function getCategoryFromTags(
-  tags: Record<string, string>
+  tags: Record<string, string>,
 ): AmenityCategory | undefined {
   // 1) Education
   const educationValues = [
@@ -286,6 +287,31 @@ function getMarkerColor(tags: Record<string, string>): string {
   return "gray";
 }
 
+interface EditVertexHandlerProps {
+  onVertexEdit: (layer: any) => void;
+}
+
+function EditVertexHandler({ onVertexEdit }: EditVertexHandlerProps) {
+  const map = useMap();
+
+  useEffect(() => {
+    const handleEditVertex = (e: any) => {
+      // e.poly contains the polygon being edited
+      if (e.poly) {
+        onVertexEdit(e.poly);
+      }
+    };
+
+    map.on("draw:editvertex", handleEditVertex);
+
+    return () => {
+      map.off("draw:editvertex", handleEditVertex);
+    };
+  }, [map, onVertexEdit]);
+
+  return null;
+}
+
 const Map = () => {
   useEffect(() => {
     const L = require("leaflet");
@@ -304,7 +330,7 @@ const Map = () => {
     if (L.GeometryUtil && L.GeometryUtil.readableArea) {
       L.GeometryUtil.readableArea = function (
         area: number,
-        isMetric?: boolean
+        isMetric?: boolean,
       ) {
         const areaKm2 = area / 1000000;
 
@@ -320,7 +346,7 @@ const Map = () => {
   const center: LatLngExpression = [48.1074, 13.2275];
   const bounds: LatLngBounds = new LatLngBounds(
     [-85.05112878, -180.0],
-    [85.05112878, 180.0]
+    [85.05112878, 180.0],
   );
   const [useDefaultLayer, setUseDefaultLayer] = useState(true);
   const [showOverlayLayer, setShowOverlayLayer] = useState(false);
@@ -382,6 +408,7 @@ const Map = () => {
   const populationRef = useRef<any>(null);
   const urbanRef = useRef<any>(null);
   const cerealsRef = useRef<any>(null);
+  const isHandlingEditRef = useRef(false);
 
   const basePath = process.env.BASEPATH || "";
 
@@ -488,7 +515,6 @@ const Map = () => {
       }
 
       const data = await resp.json();
-      // Filter out features that represent rooftop solar panels
       if (data.elements) {
         data.elements = data.elements.filter((el: any) => {
           return !(
@@ -497,7 +523,6 @@ const Map = () => {
         });
       }
 
-      // Check if there are any amenities
       if (!data.elements || data.elements.length === 0) {
         alert("No critical infrastructure available in the area selected.");
         setOverpassData(null);
@@ -507,7 +532,7 @@ const Map = () => {
     } catch (err) {
       console.error(err);
       setOverpassError(
-        err instanceof Error ? err.message : "Unknown Overpass error"
+        err instanceof Error ? err.message : "Unknown Overpass error",
       );
     } finally {
       setIsOverpassLoading(false);
@@ -529,7 +554,7 @@ const Map = () => {
 
   const fetchAreaData = async (
     formattedCoords: number[][][],
-    controller: AbortController
+    controller: AbortController,
   ) => {
     try {
       const apiUrl = `${basePath}/api/area`;
@@ -546,7 +571,6 @@ const Map = () => {
         signal: controller.signal,
       });
 
-      // Get response data regardless of status for better error messages
       const responseData = await response.json().catch(() => null);
 
       if (!response.ok) {
@@ -579,10 +603,8 @@ const Map = () => {
               `Request failed with status ${response.status}`;
         }
 
-        // Set the error for UI display
         setApiError(errorMessage);
 
-        // Throw error with a prefix that we can detect in the catch block
         throw new Error(`Analysis Error: ${errorMessage}`);
       }
 
@@ -592,7 +614,6 @@ const Map = () => {
       setAnalysisComplete(true);
       setIsSideWindowOpen(true);
     } catch (error) {
-      // First, stop the loading animation
       setIsAnalysisLoading(false);
 
       // Use non-blocking approach to allow UI to update first
@@ -600,7 +621,6 @@ const Map = () => {
         if (error instanceof Error) {
           if (error.name === "AbortError") {
             const errorMessage = "Request canceled.";
-            // Show alert after UI has updated
             alert(errorMessage);
             setApiError(errorMessage);
           } else {
@@ -624,44 +644,48 @@ const Map = () => {
     }
   };
 
-  const calculateAndShowArea = (layer: any) => {
-    const L = require("leaflet");
-    const leafletCoords = layer.getLatLngs ? layer.getLatLngs() : null;
+  const calculateAndShowArea = useCallback((layer: any) => {
+  const L = require("leaflet");
+  const leafletCoords = layer.getLatLngs ? layer.getLatLngs() : null;
 
-    if (!leafletCoords || !leafletCoords[0]) return;
+  if (!leafletCoords || !leafletCoords[0]) return;
 
-    let areaInSquareMeters = 0;
+  let areaInSquareMeters = 0;
 
-    if (L.GeometryUtil && L.GeometryUtil.geodesicArea) {
-      areaInSquareMeters = L.GeometryUtil.geodesicArea(leafletCoords[0]);
-    } else {
-      const geoJsonCoords = leafletCoords[0].map((coord: any) => [
-        coord.lng,
-        coord.lat,
-      ]);
-      geoJsonCoords.push(geoJsonCoords[0]);
-      const polygon = turf.polygon([geoJsonCoords]);
-      areaInSquareMeters = turf.area(polygon);
-    }
+  if (L.GeometryUtil && L.GeometryUtil.geodesicArea) {
+    areaInSquareMeters = L.GeometryUtil.geodesicArea(leafletCoords[0]);
+  } else {
+    const geoJsonCoords = leafletCoords[0].map((coord: any) => [
+      coord.lng,
+      coord.lat,
+    ]);
+    geoJsonCoords.push(geoJsonCoords[0]);
+    const polygon = turf.polygon([geoJsonCoords]);
+    areaInSquareMeters = turf.area(polygon);
+  }
 
-    const areaInSquareKm = areaInSquareMeters / 1_000_000;
+  const areaInSquareKm = areaInSquareMeters / 1_000_000;
 
-    // Add or update the permanent tooltip
-    const tooltipContent =
-      areaInSquareKm >= 1
-        ? `${areaInSquareKm.toFixed(2)} km²`
-        : `${areaInSquareMeters.toFixed(2)} m²`;
+  const tooltipContent =
+    areaInSquareKm >= 1
+      ? `${areaInSquareKm.toFixed(2)} km²`
+      : `${areaInSquareMeters.toFixed(2)} m²`;
 
-    layer
-      .bindTooltip(tooltipContent, {
-        permanent: true,
-        direction: "center",
-        className: "area-tooltip",
-      })
-      .openTooltip();
+  // Unbind existing tooltip before binding new one
+  if (layer.getTooltip()) {
+    layer.unbindTooltip();
+  }
 
-    return areaInSquareKm;
-  };
+  layer
+    .bindTooltip(tooltipContent, {
+      permanent: true,
+      direction: "center",
+      className: "area-tooltip",
+    })
+    .openTooltip();
+
+  return areaInSquareKm;
+}, []);
 
   const handleDrawCreated = (e: any) => {
     const { layer } = e;
@@ -672,11 +696,11 @@ const Map = () => {
 
     if (!areaInSquareKm) return;
 
-    console.log(`Drawn polygon area: ${areaInSquareKm.toFixed(2)} km²`);
+    // console.log(`Drawn polygon area: ${areaInSquareKm.toFixed(2)} km²`);
 
     if (areaInSquareKm > 100) {
       alert(
-        `Area exceeding size limit (100 km2).\n\nPlease draw a smaller area.`
+        `Area exceeding size limit (100 km2).\n\nPlease draw a smaller area.`,
       );
       layer.remove();
       return;
@@ -688,25 +712,56 @@ const Map = () => {
     setAnalysisComplete(false);
   };
 
-  const handleDrawEdited = (e: any) => {
-    const layers = e.layers;
-    layers.eachLayer((layer: any) => {
-      const areaInSquareKm = calculateAndShowArea(layer);
+const handleDrawEdited = (e: any) => {
+  // Prevent re-entry
+  if (isHandlingEditRef.current) return;
+  isHandlingEditRef.current = true;
 
-      if (areaInSquareKm && areaInSquareKm > 100) {
-        alert(
-          `The edited area exceeds the maximum limit of 100 km².\n\nPlease reduce the size.`
-        );
-      } else {
-        // Update the stored polygon coordinates and area
-        const leafletCoords = layer.getLatLngs();
-        const formattedCoords = formatCoordinates(leafletCoords);
-        setDrawnPolygons([formattedCoords]);
-        setDrawnAreaKm2(areaInSquareKm ?? null);
-        setAnalysisComplete(false);
-      }
-    });
-  };
+  // console.log("handleDrawEdited called");
+  const layers = e.layers;
+  let hasOversizedPolygon = false;
+  let oversizedArea = 0;
+
+  layers.eachLayer((layer: any) => {
+    const areaInSquareKm = calculateAndShowArea(layer);
+    if (areaInSquareKm && areaInSquareKm > 100) {
+      hasOversizedPolygon = true;
+      oversizedArea = areaInSquareKm;
+    }
+  });
+
+  if (hasOversizedPolygon) {
+    alert(
+      `The edited area is ${oversizedArea.toFixed(2)} km², which exceeds the maximum limit of 100 km².\n\nYour changes have been reverted. Please reduce the size.`,
+    );
+
+    // Use setTimeout to break out of the event loop before removing
+    setTimeout(() => {
+      layers.eachLayer((layer: any) => {
+        layer.remove();
+      });
+      setDrawnPolygons([]);
+      setDrawnAreaKm2(null);
+      setAnalysisComplete(false);
+      isHandlingEditRef.current = false;
+    }, 0);
+
+    return;
+  }
+
+  // If all polygons are valid, update the stored coordinates
+  layers.eachLayer((layer: any) => {
+    calculateAndShowArea(layer);
+    const leafletCoords = layer.getLatLngs();
+    const formattedCoords = formatCoordinates(leafletCoords);
+    setDrawnPolygons([formattedCoords]);
+    const areaInSquareKm = calculateAndShowArea(layer);
+    setDrawnAreaKm2(areaInSquareKm ?? null);
+    setAnalysisComplete(false);
+  });
+
+  isHandlingEditRef.current = false;
+};
 
   const handleDrawDeleted = (e: any) => {
     setDrawnPolygons([]);
@@ -862,8 +917,8 @@ const Map = () => {
   const windowButtonText = isAnalysisLoading
     ? "Cancel"
     : analysisComplete
-    ? "Open"
-    : "Run Analysis";
+      ? "Open"
+      : "Run Analysis";
 
   return (
     <div className="relative flex-1">
@@ -924,6 +979,7 @@ const Map = () => {
         maxBounds={bounds}
         preferCanvas={true}
       >
+        <EditVertexHandler onVertexEdit={calculateAndShowArea} />
         {/* Base tile layer */}
         {useDefaultLayer ? (
           <TileLayer
@@ -963,6 +1019,7 @@ const Map = () => {
           {/* Draw controls */}
           {isDrawingMode && (
             <EditControl
+              key="edit-control"
               position="topright"
               onCreated={handleDrawCreated}
               onEdited={handleDrawEdited}
@@ -1215,8 +1272,8 @@ const Map = () => {
         overpassData &&
         Object.keys(visibleAmenities).some((category) =>
           overpassData?.elements?.some(
-            (el: any) => getCategoryFromTags(el.tags || {}) === category
-          )
+            (el: any) => getCategoryFromTags(el.tags || {}) === category,
+          ),
         ) && (
           <>
             {/* Eye button */}
@@ -1272,7 +1329,7 @@ const Map = () => {
                   if (
                     overpassData?.elements?.some(
                       (el: any) =>
-                        getCategoryFromTags(el.tags || {}) === category
+                        getCategoryFromTags(el.tags || {}) === category,
                     )
                   ) {
                     const categoryLabels = {
@@ -1809,7 +1866,7 @@ const Map = () => {
                   (() => {
                     // Filter out items where year = 2020
                     const filteredChartData = chartData.filter(
-                      (item: any) => item.year !== 2020
+                      (item: any) => item.year !== 2020,
                     );
 
                     let labels: string[] = [];
@@ -1911,7 +1968,7 @@ const Map = () => {
                             onClick={() =>
                               downloadChart(
                                 populationRef,
-                                "population_chart.png"
+                                "population_chart.png",
                               )
                             }
                           >
