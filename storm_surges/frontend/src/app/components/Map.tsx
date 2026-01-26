@@ -1998,6 +1998,26 @@ const Map = () => {
                       (item: any) => item.year !== 2020,
                     );
 
+                    if (displayedOption === "storm") {
+                      filteredChartData.sort((a: any, b: any) => {
+                        const aValue = parseFloat(
+                          a.storm_surge.replace("_", "."),
+                        );
+                        const bValue = parseFloat(
+                          b.storm_surge.replace("_", "."),
+                        );
+                        return aValue - bValue;
+                      });
+                    } else if (displayedOption === "years") {
+                      filteredChartData.sort(
+                        (a: any, b: any) => a.year - b.year,
+                      );
+                    } else if (displayedOption === "ssp") {
+                      filteredChartData.sort((a: any, b: any) =>
+                        a.ssp.localeCompare(b.ssp),
+                      );
+                    }
+
                     let labels: string[] = [];
                     let popValues: number[] = [];
                     let urbanValues: number[] = [];
