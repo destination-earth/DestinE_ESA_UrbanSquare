@@ -259,21 +259,18 @@ const Footer = () => {
     };
   }, []);
 
-  // Function to hide footer
-  const hideFooter = () => {
+const hideFooter = () => {
     if (footerRef.current) {
       setFooterHasRevealed(false);
       footerRef.current.style.transition =
         "bottom 500ms ease-in-out, background-color 500ms ease-in-out";
       footerRef.current.style.bottom = `-${footerHeight}`;
-
-      // Also hide menu when hiding footer
       hideFooterMenu();
+      window.dispatchEvent(new CustomEvent('footer-visibility', { detail: { visible: false } }));
     }
   };
 
-  // Function to show footer
-  const showFooter = () => {
+const showFooter = () => {
     if (footerRef.current) {
       footerRef.current.style.transition =
         "bottom 250ms ease-in-out, background-color 500ms ease-in-out";
@@ -283,6 +280,7 @@ const Footer = () => {
       setTimeout(() => {
         setFooterHasRevealed(true);
       }, 250);
+      window.dispatchEvent(new CustomEvent('footer-visibility', { detail: { visible: true } }));
     }
   };
 

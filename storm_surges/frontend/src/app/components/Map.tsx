@@ -1,6 +1,7 @@
 "use client";
 
 import { useMap } from "react-leaflet";
+import { AttributionControl } from "react-leaflet";
 import { useEffect, useState, useRef, useCallback } from "react";
 import Select, { MultiValue } from "react-select";
 import {
@@ -517,6 +518,36 @@ const Map = () => {
   useEffect(() => {
     setAnalysisComplete(false);
   }, [selectedSSP, confidenceLevel, stormSurge, selectedYear, drawnPolygons]);
+
+useEffect(() => {
+  const attributionContainer = document.querySelector(
+    ".leaflet-bottom.leaflet-right",
+  ) as HTMLElement;
+  if (attributionContainer) {
+    attributionContainer.style.bottom = "64px";
+  }
+
+  const handleFooterVisibility = (e: Event) => {
+    const customEvent = e as CustomEvent<{ visible: boolean }>;
+    const el = document.querySelector(
+      ".leaflet-bottom.leaflet-right",
+    ) as HTMLElement;
+    if (el) {
+      if (customEvent.detail.visible) {
+        el.style.transition = "bottom 250ms ease-in-out";
+        el.style.bottom = "64px";
+      } else {
+        el.style.transition = "bottom 500ms ease-in-out";
+        el.style.bottom = "0px";
+      }
+    }
+  };
+
+  window.addEventListener("footer-visibility", handleFooterVisibility);
+  return () => {
+    window.removeEventListener("footer-visibility", handleFooterVisibility);
+  };
+}, []);
 
   function buildOverpassTags(cats: CategoryOption[]) {
     const allTags: { key: string; value: string }[] = [];
@@ -1100,6 +1131,7 @@ const Map = () => {
         maxBounds={bounds}
         preferCanvas={true}
       >
+        <AttributionControl position="bottomright" prefix={false} />
         <EditVertexHandler onVertexEdit={calculateAndShowArea} />
         <EditStartHandler onEditStart={handleEditStart} />
 
@@ -1108,9 +1140,13 @@ const Map = () => {
           <TileLayer
             url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
             maxZoom={20}
+            attribution='Tiles &copy; <a href="https://www.esri.com/">Esri</a> &mdash; Esri, Maxar, Earthstar Geographics, GIS User Community'
           />
         ) : (
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          />
         )}
 
         {/* Optional overlay layer */}

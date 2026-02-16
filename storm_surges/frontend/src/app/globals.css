@@ -18,17 +18,15 @@
 }
 
 /* Resetting default margin and padding for body and html */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
   overflow: hidden; /* Prevent scrolling */
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    ),
+  background:
+    linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))),
     rgb(var(--background-start-rgb));
 }
 
@@ -42,7 +40,8 @@ body {
   }
 }
 
-header, footer {
+header,
+footer {
   background-color: #f8f9fa;
   padding: 1rem;
   text-align: center;
@@ -92,18 +91,16 @@ header, footer {
   transform: rotate(270deg); /* Rotate the slider to make it vertical */
   transform-origin: center;
   position: relative;
-  
 }
 
-
 .header-link {
-  color: #FFFFFF;
+  color: #ffffff;
   text-decoration: none;
   transition: color 250ms ease-in-out;
 }
 
 .header-link:hover {
-  color: #7A7A7A;
+  color: #7a7a7a;
 }
 
 .area-tooltip {
@@ -118,4 +115,13 @@ header, footer {
 
 .area-tooltip::before {
   border: none !important;
+}
+
+.leaflet-control-attribution {
+  background: rgba(0, 0, 0, 0.5) !important;
+  color: #ccc !important;
+  font-size: 10px;
+}
+.leaflet-control-attribution a {
+  color: #aaa !important;
 }
