@@ -851,9 +851,9 @@ useEffect(() => {
       }
 
       // Check if area exceeds limit
-      if (currentAreaKm2 !== null && currentAreaKm2 > 100) {
+      if (currentAreaKm2 !== null && currentAreaKm2 > 500) {
         alert(
-          `The selected area is ${currentAreaKm2.toFixed(2)} km², which exceeds the maximum limit of 100 km².\n\nPlease edit the polygon to reduce its size before running the analysis.`,
+          `The selected area is ${currentAreaKm2.toFixed(2)} km², which exceeds the maximum limit of 500 km².\n\nPlease edit the polygon to reduce its size before running the analysis.`,
         );
         return;
       }
