@@ -519,35 +519,35 @@ const Map = () => {
     setAnalysisComplete(false);
   }, [selectedSSP, confidenceLevel, stormSurge, selectedYear, drawnPolygons]);
 
-useEffect(() => {
-  const attributionContainer = document.querySelector(
-    ".leaflet-bottom.leaflet-right",
-  ) as HTMLElement;
-  if (attributionContainer) {
-    attributionContainer.style.bottom = "64px";
-  }
-
-  const handleFooterVisibility = (e: Event) => {
-    const customEvent = e as CustomEvent<{ visible: boolean }>;
-    const el = document.querySelector(
+  useEffect(() => {
+    const attributionContainer = document.querySelector(
       ".leaflet-bottom.leaflet-right",
     ) as HTMLElement;
-    if (el) {
-      if (customEvent.detail.visible) {
-        el.style.transition = "bottom 250ms ease-in-out";
-        el.style.bottom = "64px";
-      } else {
-        el.style.transition = "bottom 500ms ease-in-out";
-        el.style.bottom = "0px";
-      }
+    if (attributionContainer) {
+      attributionContainer.style.bottom = "64px";
     }
-  };
 
-  window.addEventListener("footer-visibility", handleFooterVisibility);
-  return () => {
-    window.removeEventListener("footer-visibility", handleFooterVisibility);
-  };
-}, []);
+    const handleFooterVisibility = (e: Event) => {
+      const customEvent = e as CustomEvent<{ visible: boolean }>;
+      const el = document.querySelector(
+        ".leaflet-bottom.leaflet-right",
+      ) as HTMLElement;
+      if (el) {
+        if (customEvent.detail.visible) {
+          el.style.transition = "bottom 250ms ease-in-out";
+          el.style.bottom = "64px";
+        } else {
+          el.style.transition = "bottom 500ms ease-in-out";
+          el.style.bottom = "0px";
+        }
+      }
+    };
+
+    window.addEventListener("footer-visibility", handleFooterVisibility);
+    return () => {
+      window.removeEventListener("footer-visibility", handleFooterVisibility);
+    };
+  }, []);
 
   function buildOverpassTags(cats: CategoryOption[]) {
     const allTags: { key: string; value: string }[] = [];
@@ -2241,11 +2241,25 @@ useEffect(() => {
               The exposure assessment is generated after drawing an area of
               interest on the map using rectangle/polygon buttons the area of
               interest. The values for population and urban area exposure are
-              derived from the Copernicus Global Human Settlement products for
-              population and built-up surface areas. The values for affected
-              cultivated areas are derived from the WorldCereal product from
-              ESA, and they include second maize, spring cereal and winter
-              cereal.
+              derived from the{" "}
+              <a
+                href="https://human-settlement.emergency.copernicus.eu/datasets.php"
+                target="_blank"
+                className="text-orange-500"
+              >
+                Global Human Settlement
+              </a>{" "}
+              products for population and built-up surface areas. The values for
+              affected cultivated areas are derived from the{" "}
+              <a
+                href="https://esa-worldcereal.org/en"
+                target="_blank"
+                className="text-orange-500"
+              >
+                WorldCereal
+              </a>{" "}
+              product from ESA, and they include second maize, spring cereal and
+              winter cereal.
             </p>
           </div>
         </Modal>
@@ -2285,10 +2299,19 @@ useEffect(() => {
               Critical Infrastructures
             </h3>
             <p>
-              The tool connects to Open Street Map and retrieves information
-              about critical infrastructures that are at risk of potential
-              inundation, which can be visualized directly on the map. Four main
-              categories of critical infrastructures are included:
+              The tool connects to{" "}
+              <a
+                href="https://www.openstreetmap.org/#map=8/47.714/13.349
+"
+                target="_blank"
+                className="text-orange-500"
+              >
+                Open Street Map
+              </a>{" "}
+              and retrieves information about critical infrastructures that are
+              at risk of potential inundation, which can be visualized directly
+              on the map. Four main categories of critical infrastructures are
+              included:
             </p>
             <ul style={{ listStyleType: "disc", paddingLeft: "20px" }}>
               <li>Education (schools, universities, etc.)</li>

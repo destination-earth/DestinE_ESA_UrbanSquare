@@ -399,6 +399,8 @@ const Drawer: React.FC<DrawerProps> = ({
               }}
             >
               <p>
+                <h1 className="text-2xl font-bold">Parameters</h1>
+                <br />
                 <strong>Confidence Level</strong>
                 <br />
                 Medium: 50% chance
@@ -484,6 +486,17 @@ const Drawer: React.FC<DrawerProps> = ({
                 the normal predicted astronomical tide. For this study we
                 consider storm surge heights between 0 (none) and 5 metres.
               </p>
+              <br />
+              <h1 className="text-2xl font-bold">Dependencies</h1>
+              <br />
+              <strong>Climate Projections</strong>
+              <br />1 deg IPCC AR6 Sea Level Rise projections.
+              <br />
+              <strong>Land Cover</strong>
+              <br />10m ESA WorldCover.
+              <br />
+              <strong>Digital Elevation Model</strong>
+              <br />Copernicus GLO-30 DEM © DLR e.V. 2010-2014 © Airbus Defence and Space GmbH 2014-2018.
             </div>
           </Modal>
         )}
