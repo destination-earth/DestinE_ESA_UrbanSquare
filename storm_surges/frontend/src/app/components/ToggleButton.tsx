@@ -50,7 +50,7 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({
       onClick={handleClick}
       style={{
         position: "absolute",
-        top: "10px",
+        top: "4px",
         right: "45px",
         background: isDisabled
           ? "#cccccc" // Gray background when disabled
