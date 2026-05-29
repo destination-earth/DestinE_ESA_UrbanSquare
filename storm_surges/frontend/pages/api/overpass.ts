@@ -57,7 +57,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const response = await fetch("https://overpass-api.de/api/interpreter", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded",
-            
+            "User-Agent": "DestinE_UrbanSquare (info@sistema.at)",
        },
       body: new URLSearchParams({ data: overpassQuery }),
     });

@@ -95,7 +95,7 @@ const radioCSS = `
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.45);
+    color: rgba(255,255,255,0.85);
     margin-bottom: 10px;
   }
 `;
